@@ -74,7 +74,7 @@ window.APPS_DATA = [
    }
   ],
   "unverified": [],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "portal": "https://console.cloud.google.com/auth/overview",
   "bespoke": true,
   "waitShort": "2 days–6 wks"
@@ -90,7 +90,7 @@ window.APPS_DATA = [
   },
   "portal": "https://console.developers.google.com/auth/clients",
   "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "id": "googlecalendar",
   "name": "Google Calendar",
   "slug": "googlecalendar",
@@ -317,7 +317,7 @@ window.APPS_DATA = [
   },
   "portal": "https://console.developers.google.com/auth/clients",
   "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "id": "googledrive",
   "name": "Google Drive",
   "slug": "googledrive",
@@ -576,7 +576,7 @@ window.APPS_DATA = [
   },
   "portal": "https://console.developers.google.com/auth/clients",
   "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "id": "googlesheets",
   "name": "Google Sheets",
   "slug": "googlesheets",
@@ -795,7 +795,7 @@ window.APPS_DATA = [
   },
   "portal": "https://console.developers.google.com/auth/clients",
   "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "id": "youtube",
   "name": "YouTube",
   "slug": "youtube",
@@ -1245,7 +1245,7 @@ window.APPS_DATA = [
    "Partner Center account verification time is not stated on the pages checked.",
    "Which tenants have risk-based step-up consent turned on is not stated."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "microsoftteams",
@@ -1462,7 +1462,7 @@ window.APPS_DATA = [
    "Whether Teams Graph APIs work for personal Microsoft accounts was not confirmed.",
    "Composio's Teams toolkit page has no setup FAQ, so the Outlook guide's Entra steps are assumed to apply."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "github",
@@ -1646,7 +1646,7 @@ window.APPS_DATA = [
   "unverified": [
    "GitHub's comparison page still calls OAuth app tokens long-lived by default, while the creation page says expiry is on by default for new apps."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "linear",
@@ -1791,7 +1791,7 @@ window.APPS_DATA = [
    "Linear's own docs don't describe the 'Public' toggle that third-party guides say is needed for other workspaces to authorize the app.",
    "Integration directory review time is not published."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "jira",
@@ -1986,7 +1986,7 @@ window.APPS_DATA = [
    "Access token lifetime isn't stated; the token response gives it in expires_in.",
    "Composio's toolkit page says managed OAuth is available, but composio.dev/auth/jira says Composio does not provide managed Jira credentials."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "confluence",
@@ -2175,7 +2175,7 @@ window.APPS_DATA = [
    "Marketplace approval time for 3LO integrations is not published.",
    "Access token lifetime isn't stated; the token response gives it in expires_in."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "figma",
@@ -2368,7 +2368,7 @@ window.APPS_DATA = [
    "Figma does not publish a review duration.",
    "The review guidelines page covers 'Figma Community Apps'; it's not explicit that every item applies to REST API OAuth apps."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "waitShort": "Not stated"
  },
  {
@@ -2507,7 +2507,7 @@ window.APPS_DATA = [
    "Which fields (privacy policy, terms of use, company details) are mandatory for a public integration was not confirmed.",
    "Notion's access token lifetime was not confirmed."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "hubspot",
@@ -2684,7 +2684,7 @@ window.APPS_DATA = [
    "Refresh token lifetime is not stated in the OAuth quickstart.",
    "Whether installs beyond 25 on migrated legacy apps keep working was not confirmed in fetched docs."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "salesforce",
@@ -2858,7 +2858,7 @@ window.APPS_DATA = [
    "Whether a 'Local' External Client App can authorize users from other orgs without packaging was not confirmed in fetched Salesforce docs.",
    "Access token lifetime is not stated in the fetched pages."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "pipedrive",
@@ -3013,7 +3013,7 @@ window.APPS_DATA = [
    "Whether the developer sandbox account is free, and how long access takes, is not stated.",
    "No install cap for private apps is stated, but no page explicitly says there is none."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "zendesk",
@@ -3191,7 +3191,7 @@ window.APPS_DATA = [
    "Sponsored account approval time and cost are not stated.",
    "What happens on rejection is not described on the current global OAuth page."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "setupShort": "~45 min"
  },
  {
@@ -3349,7 +3349,7 @@ window.APPS_DATA = [
    "Privacy policy and terms requirements sit in the developer terms, which were not fetched.",
    "A search snippet said reviews take 7-14 days; the fetched page says up to seven business days."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "waitShort": "Up to 7 days"
  },
  {
@@ -3513,7 +3513,7 @@ window.APPS_DATA = [
   "unverified": [
    "Slack does not publish a fee for creating or listing apps; $0 is inferred."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "discord",
@@ -3662,7 +3662,7 @@ window.APPS_DATA = [
    "Discord's App Verification help article returned 403, so exact verification requirements, review time, and what happens to an unverified bot at 100 servers were not confirmed.",
    "No fee for Discord apps found; $0 is inferred."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "zoom",
@@ -3851,7 +3851,7 @@ window.APPS_DATA = [
    "Zoom does not publish a Marketplace review duration.",
    "No developer fee found; $0 is inferred."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "waitShort": "Not stated"
  },
  {
@@ -4034,7 +4034,7 @@ window.APPS_DATA = [
    "The fetched pages do not name the exact scopes Community Management grants.",
    "No developer fee found; $0 is inferred."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "twitter",
@@ -4197,7 +4197,7 @@ window.APPS_DATA = [
    "docs.x.com did not resolve from this network; X facts come from the official xdevplatform/docs GitHub source that docs.x.com is built from.",
    "Per-endpoint request rate limits were not checked."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "reddit",
@@ -4343,7 +4343,7 @@ window.APPS_DATA = [
    "The OAuth2 and API wikis are archived (last edited 2016 and 2015) and may be out of date.",
    "Commercial agreement pricing and turnaround are not published."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "shopify",
@@ -4525,7 +4525,7 @@ window.APPS_DATA = [
    "Shopify does not publish an App Store review duration.",
    "Portal URL partners.shopify.com not fetched; Composio's guide starts from the Dev Dashboard in Shopify Admin."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "xero",
@@ -4699,7 +4699,7 @@ window.APPS_DATA = [
    "Xero does not publish how long certification takes.",
    "Granular scope names were not checked against Composio's default Xero scopes."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "quickbooks",
@@ -4865,7 +4865,7 @@ window.APPS_DATA = [
    "The 40-minute questionnaire estimate is ours, not Intuit's.",
    "Portal URL path not confirmed; docs say My Hub > App dashboard."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "stripe",
@@ -5031,7 +5031,7 @@ window.APPS_DATA = [
    "Whether a Connect platform needs Stripe review before live-mode OAuth was not confirmed.",
    "Composio's guide suggests read_only,read_write scopes, which conflicts with Stripe limiting read_only to extensions."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "dropbox",
@@ -5189,7 +5189,7 @@ window.APPS_DATA = [
   "unverified": [
    "Dropbox does not publish how long production review takes."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "waitShort": "Not stated"
  },
  {
@@ -5338,7 +5338,7 @@ window.APPS_DATA = [
    "Box does not state how long Box Integrations review takes.",
    "Composio has no Box own-credentials guide; portal URL app.box.com/developers/console not fetched."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "asana",
@@ -5507,7 +5507,7 @@ window.APPS_DATA = [
    "Asana's distribution page says Any workspace lets any workspace authorize with the URL, while the submit page says submission is needed beyond your own organization; which one is enforced was not confirmed.",
    "No fee for submission is mentioned in the docs."
   ],
-  "checked": "2026-10-28",
+  "checked": "2026-10-29",
   "waitShort": "~1 week"
  },
  {
@@ -5663,7 +5663,7 @@ window.APPS_DATA = [
    "Exact origin Composio needs in Allowed origins is not documented by Composio for Trello.",
    "Public Power-Up directory review is not described in the fetched pages."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "airtable",
@@ -5822,7 +5822,7 @@ window.APPS_DATA = [
   "unverified": [
    "No user cap or plan requirement for unshared integrations is stated in the docs."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "clickup",
@@ -5938,7 +5938,7 @@ window.APPS_DATA = [
    "ClickUp docs do not mention scopes or a review process.",
    "Composio's redirect URI for ClickUp is taken from its other OAuth guides; no ClickUp-specific Composio guide exists (404)."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "monday",
@@ -6113,7 +6113,7 @@ window.APPS_DATA = [
    "Full marketplace review duration beyond the first response is not stated.",
    "Which OAuth flow (legacy or 2.1) Composio uses was not confirmed."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "calendly",
@@ -6270,7 +6270,7 @@ window.APPS_DATA = [
    "Docs do not say whether Sandbox apps can authorize real customer accounts.",
    "No application or approval step was found in the current docs, contrary to the brief's note."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  },
  {
   "id": "mailchimp",
@@ -6409,6 +6409,6 @@ window.APPS_DATA = [
    "Mailchimp Marketplace listing review steps and timing were not checked.",
    "Composio's redirect URI for Mailchimp is taken from its other OAuth guides; no Mailchimp-specific Composio guide exists (404)."
   ],
-  "checked": "2026-10-28"
+  "checked": "2026-10-29"
  }
 ];

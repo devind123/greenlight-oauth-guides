@@ -95,6 +95,8 @@ def _fix_urls(o):
     if isinstance(o, str): return REDIRECTS.get(o, o)
     return o
 apps[:] = [_fix_urls(a) for a in apps]
+# every guide was re-checked in the full audit on Oct 29
+for a in apps: a['checked'] = '2026-10-29'
 from collections import Counter
 AC = Counter(v.get('verdict') for v in AUD)
 AUDIT = {'total': len(AUD), 'counts': dict(AC), 'checked': '2026-10-29', 'items': [{k: v.get(k) for k in ('app', 'field', 'text', 'src', 'verdict', 'quote', 'fix', 'note')} for v in AUD if v.get('verdict') != 'confirmed'], 'confirmedSample': [{k: v.get(k) for k in ('app', 'field', 'text', 'src', 'quote')} for v in AUD if v.get('verdict') == 'confirmed']}

@@ -4,7 +4,6 @@ const I = {
   chev: '<svg class="i sm" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
   check: '<svg class="i sm" viewBox="0 0 24 24" style="color:var(--ok)"><path d="M20 6 9 17l-5-5"/></svg>',
   cross: '<svg class="i sm" viewBox="0 0 24 24" style="color:var(--bad)"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-  bulb: '<svg class="i sm" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 3z"/></svg>',
   warn: '<svg class="i sm" viewBox="0 0 24 24" style="margin-top:2px"><path d="M12 3 2 20h20zM12 10v4M12 17h.01"/></svg>',
   play: '<svg class="i sm" viewBox="0 0 24 24" style="width:11px;height:11px;fill:currentColor"><path d="M6 4l14 8-14 8z"/></svg>',
   sun: '<svg class="i sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
@@ -29,8 +28,6 @@ setTheme(document.documentElement.dataset.theme || 'light');
 /* app marks, used only to identify the app */
 const L = {
   gmail: s => `<svg viewBox="52 42 88 66" width="${s}" height="${s * .75}" aria-hidden="true"><path fill="#4285f4" d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6"/><path fill="#34a853" d="M120 108h14c3.32 0 6-2.69 6-6V59l-20 15"/><path fill="#fbbc04" d="M120 48v26l20-15v-8c0-7.42-8.47-11.65-14.4-7.2"/><path fill="#ea4335" d="M72 74V48l24 18 24-18v26L96 92"/><path fill="#c5221f" d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2"/></svg>`,
-  slack: s => `<svg viewBox="0 0 24 24" width="${s}" height="${s}"><rect x="9" y="2" width="4" height="10" rx="2" fill="#36c5f0"/><rect x="12" y="9" width="10" height="4" rx="2" fill="#2eb67d"/><rect x="11" y="12" width="4" height="10" rx="2" fill="#ecb22e"/><rect x="2" y="11" width="10" height="4" rx="2" fill="#e01e5a"/></svg>`,
-  box: (c, t, fg = '#fff') => s => `<svg viewBox="0 0 24 24" width="${s}" height="${s}"><rect x=".5" y=".5" width="23" height="23" rx="5" fill="${c}" stroke="${c === '#fff' ? '#ddd' : c}"/><text x="12" y="16.5" text-anchor="middle" font-family="Geist,Arial" font-weight="700" font-size="${t.length > 1 ? 10 : 13}" fill="${fg}">${t}</text></svg>`,
 };
 
 /* ---------- views ---------- */
@@ -369,7 +366,7 @@ $('#flow').addEventListener('click', e => {
   if ((x = q('[data-help]'))) { openAgent(); runTask('help', x.dataset.help); return; }
   if ((x = q('[data-fix]'))) { openAgent(); runTask('fix', x.dataset.fix); return; }
   if ((x = q('[data-check]'))) { testConnection(S(x.dataset.check)); return; }
-  if ((x = q('[data-mark]'))) { const s = S(x.dataset.mark); s.done = true; s.how = 'marked'; if (s.k === 'submit') S('wait').sub = 'Oct 28'; openK = null; update(); return; }
+  if ((x = q('[data-mark]'))) { const s = S(x.dataset.mark); s.done = true; s.how = 'marked'; if (s.k === 'submit') S('wait').sub = new Date().toLocaleDateString('en', { month: 'short', day: 'numeric' }); openK = null; update(); return; }
   if ((x = q('[data-undo]'))) { const s = S(x.dataset.undo); s.done = false; s.how = null; if (s.k === 'submit') S('wait').sub = null; openK = s.k; update(); return; }
   if (q('[data-approve]')) { const s = S('wait'); s.done = true; s.how = 'marked'; openK = null; update(); toast('Approved. Next: create the auth config.'); return; }
   if (q('[data-email]')) { openAgent(); runTask('email'); return; }
@@ -726,26 +723,8 @@ $('#copyPrompt').onclick = () => copy(AGENT_PROMPT(), 'Prompt copied');
 
 /* ================= LIBRARY ================= */
 /* ================= PLANNER ================= */
-const PLAN = {
-  gmail: { n: 'Gmail', logo: L.gmail, m: true, own: [0.3, 6], lab: 'Google review + CASA', crit: 1, f: 'Gmail stops at 100 users until verified.' },
-  slack: { n: 'Slack', logo: L.slack, m: true, own: [0.3, 8], lab: 'Marketplace review', f: 'Slack: unlisted apps get 1 history call a minute.' },
-  hubspot: { n: 'HubSpot', logo: L.box('#ff7a59', 'H'), m: true, own: [0.3, 2], lab: 'Listing review', f: 'HubSpot stops at 25 installs until listed.' },
-  xero: { n: 'Xero', logo: L.box('#13b5ea', 'x'), m: false, own: [0, 0.4], lab: 'Own app, ~1 hr', f: 'Xero: no managed app. Free plan: 5 connections, 50 until certified.' },
-  github: { n: 'GitHub', logo: L.box('#111', 'GH'), m: true, own: [0, 0.2], lab: 'Own app, minutes' },
-  shopify: { n: 'Shopify', logo: L.box('#5e8e3e', 'S'), m: false, own: [0.3, 5], lab: 'App Store review', crit: 1, f: 'Shopify: no managed app. Review before public use.' },
-};
 const picked = new Set(['gmail', 'slack', 'hubspot', 'xero']);
-function renderPlan() {
-  $('#pick').innerHTML = Object.entries(PLAN).map(([k, a]) => `<button class="${picked.has(k) ? 'on' : ''}" data-pk="${k}" aria-pressed="${picked.has(k)}">${a.logo(18)}${a.n}</button>`).join('');
-  const list = [...picked].map(k => PLAN[k]); const blocked = list.filter(a => !a.m);
-  const launch = blocked.length ? Math.max(...blocked.map(a => a.own[1])) : 0; const full = list.length ? Math.max(...list.map(a => a.own[1])) : 0;
-  const fmt = w => w < 1 ? 'This week' : `~${Math.ceil(w)} wks`;
-  $('#sum').innerHTML = `<div><span class="k">Live today</span><span class="v">${list.filter(a => a.m).length} / ${list.length}</span></div><div><span class="k">Earliest launch</span><span class="v">${list.length ? fmt(launch) : '—'}</span></div><div><span class="k">All on your own apps</span><span class="v">${list.length ? fmt(full) : '—'}</span></div>`;
-  const W = 9, p = w => Math.min(100, w / W * 100);
-  $('#gt').innerHTML = `<div class="nm" style="color:var(--fg3);font-size:12.5px">App</div><div class="lane"><div class="scale">${[...Array(W)].map((_, i) => `<span>${i ? 'Wk ' + i : 'Today'}</span>`).join('')}</div></div>` +
-    [...list].sort((a, b) => b.own[1] - a.own[1]).map(a => `<div class="nm">${a.logo(18)}${a.n}${a.crit ? '<span class="tier t-hard" style="margin-left:auto;font-size:11px">critical</span>' : ''}</div><div class="lane">${a.m ? `<div class="gb m" style="left:0;width:${p(a.own[1])}%">Managed, live</div>` : ''}<div class="gb ${a.m ? 'o' : 'w'}" style="left:${p(a.own[0])}%;width:${Math.max(p(a.own[1] - a.own[0]), 8)}%">${a.lab}</div></div>`).join('');
-  $('#flags').innerHTML = list.filter(a => a.f).map(a => `<div class="flag">${I.warn}<span>${a.f}</span></div>`).join('') || '<p style="color:var(--fg2)">Nothing to flag.</p>';
-}
+function renderPlan() { /* defined in library.js, built from the guides' data */ }
 $('#pick').onclick = e => { const b = e.target.closest('[data-pk]'); if (!b) return; const k = b.dataset.pk; picked.has(k) ? picked.delete(k) : picked.add(k); renderPlan(); };
 
 update(); renderPlan();
