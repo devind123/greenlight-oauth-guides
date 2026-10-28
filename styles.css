@@ -848,3 +848,14 @@ a.ev{text-decoration:none}
 .shell:not(.ag) .agentcol{border-left:0}body{overflow-x:clip}
 .pchip{text-align:left}
 .tc.t-3{background:var(--fg)}
+.step .sh{grid-template-columns:auto minmax(0,1fr) auto auto 16px}
+.step .sh:not(:has(.wtag)){grid-template-columns:auto minmax(0,1fr) auto 16px}
+.wtag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--blufg);background:var(--blubg);padding:3px 8px;white-space:nowrap}
+@container main (max-width:600px){.wtag{font-size:0;padding:4px}.wtag svg{margin:0}}
+
+/* app cards inside the agent */
+.cards{display:grid;gap:8px;margin-top:10px}
+.acard.mini{height:auto;padding:12px;gap:10px;grid-template-rows:auto auto auto}
+.acard.mini .am{padding-top:8px}
+.acard.mini .ago{position:static;display:inline-flex;gap:5px;align-items:center;font-size:12.5px;color:var(--blufg)}
+.acard.mini:hover .ago{text-decoration:underline}

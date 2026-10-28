@@ -42,7 +42,9 @@ function show(v, arg) {
   VIEWS.forEach(n => $('#v-' + n).hidden = n !== v);
   $$('.nav[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === (v === 'app' ? 'library' : v)));
   if (v === 'app') renderAppGuide(arg);
-  try { history.replaceState(null, '', '#' + (v === 'app' ? 'app/' + arg : v)); } catch (e) {}
+  /* real history entries, so the browser's back button moves between pages */
+  const want = '#' + (v === 'app' ? 'app/' + arg : v);
+  try { if (location.hash !== want) history[window.__navReplace ? 'replaceState' : 'pushState'](null, '', want); } catch (e) {}
   window.scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => {
@@ -337,7 +339,7 @@ function renderFlow() {
       ${s.wait && s.sub ? `<p class="hint">Submitted ${s.sub}. Google replies by email. Paste it here and the agent explains what they want.</p>` : ''}
       ${stepActions(s)}`;
     return `<div class="node ${state}${cur === s ? ' cur' : ''}" id="n-${s.k}"><div class="rail"><span class="dot" aria-hidden="true"></span></div>
-    <div class="step${s.wait ? ' wait' : ''}${isOpen ? ' open' : ''}"><button class="sh" data-step="${s.k}" aria-expanded="${isOpen}"><span class="who ${cls}">${lab}</span><span class="st"><b>${t}</b>${s.d ? `<small>${s.d}</small>` : ''}</span>${stepStatus(s, tr)}<span class="chev">${I.chev}</span></button>
+    <div class="step${s.wait ? ' wait' : ''}${isOpen ? ' open' : ''}"><button class="sh" data-step="${s.k}" aria-expanded="${isOpen}"><span class="who ${cls}">${lab}</span><span class="st"><b>${t}</b>${s.d ? `<small>${s.d}</small>` : ''}</span>${s.url ? `<span class="wtag" title="Has a step-by-step visual walkthrough"><svg class="i sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>Walkthrough</span>` : ''}${stepStatus(s, tr)}<span class="chev">${I.chev}</span></button>
     <div class="more">${body}</div></div></div>`;
   }).join('')}</div>`).join('');
   const done = ALL().filter(s => s.done).length;
@@ -392,7 +394,9 @@ const shell = $('#shell'), dlog = $('#dlog');
 let greeted = false, busy = false;
 function openAgent() {
   shell.classList.add('ag'); $('#agentcol').setAttribute('aria-hidden', 'false');
-  if (!greeted) { greeted = true; say(`I can find which Gmail tools your code uses, do <b>${ALL().filter(s => s.w === 'agent').length} of the ${ALL().length} steps</b>, check your homepage and repo, and prepare everything else for you. I'll ask before changing your repo or Composio project.`); }
+  if (!greeted) { greeted = true; say(!$('#v-guide').hidden
+    ? `I can find which Gmail tools your code uses, do <b>${ALL().filter(s => s.w === 'agent').length} of the ${ALL().length} steps</b>, check your homepage and repo, and prepare everything else for you. I'll ask before changing your repo or Composio project.`
+    : `Ask me about any of the <b>${window.APPS_DATA ? window.APPS_DATA.length : 37} apps</b> in the library: how hard it is, what it needs, how long approval takes. I can compare apps, or write a guide live for any app that isn't here.`); }
   setTimeout(() => $('#cInput').focus({ preventScroll: true }), 340);
 }
 function closeAgent() { shell.classList.remove('ag'); $('#agentcol').setAttribute('aria-hidden', 'true'); }
@@ -667,22 +671,25 @@ function ruleAnswer(v) {
 }
 /* questions the built-in answers don't cover go to the model, grounded in this guide's data */
 async function askLLM(v, fallback) {
+  const pendingCard = window.__cardNext; window.__cardNext = null;
   const ctx = window.agentContext ? window.agentContext() : null;
-  const fail = () => fallback ? fallback() : reply(NO_ANSWER);
+  const fail = () => { window.__cardNext = pendingCard; return fallback ? fallback() : reply(NO_ANSWER); };
   if (!ctx) return fail();
   const dots = add('<span class="typing"><i></i><i></i><i></i></span><small class="thinking">Reading this guide\'s sources…</small>', 'msg');
   try {
     const r = await fetch('/api/ask', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: v, ctx: JSON.stringify(ctx) }) }).then(x => x.json());
     dots.remove();
     if (r.error || !r.answer) return fail();
-    const el = say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from this guide's data${r.covered ? '' : ' · not covered by the guide'}</small>`);
+    const el = say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from this guide's data${r.covered ? '' : ' · not covered by the guide'}</small>` + (pendingCard && window.appCardHtml ? window.appCardHtml(pendingCard) : window.appCardsFor ? window.appCardsFor(v) : ''));
     dlog.scrollTop = dlog.scrollHeight; return el;
   } catch (e) { dots.remove(); return fail(); }
 }
 const NO_ANSWER = { html: 'I don\'t have a sourced answer for that yet, and I won\'t guess. Here\'s what I can help with:', next: ['What\'s next?', 'How long will review take?', 'Can my agent read emails?', 'What does CASA cost?'] };
 async function reply(r) {
   const dots = add('<span class="typing"><i></i><i></i><i></i></span>', 'msg'); await sleep(450 + Math.random() * 350); dots.remove();
-  const el = say(r.html + (r.src ? cite(...r.src) : ''));
+  if (!r.card && window.__cardNext) r.card = window.__cardNext;
+  window.__cardNext = null;
+  const el = say(r.html + (r.src ? cite(...r.src) : '') + (r.card && window.appCardHtml ? window.appCardHtml(r.card) : ''));
   if (r.acts && r.acts.length) {
     const row = document.createElement('div'); row.className = 'acts-row';
     r.acts.forEach(([label, fn]) => { const b = document.createElement('button'); b.className = 'btn sm'; b.textContent = label; b.onclick = () => { row.querySelectorAll('button').forEach(x => x.disabled = true); const out = fn(); if (out) reply({ html: out }); }; row.appendChild(b); });

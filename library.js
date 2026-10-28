@@ -277,15 +277,18 @@ answer = function (v) {
   return appRules(a, v);
 };
 function appRules(a, v) {
-  const q = v.toLowerCase(), list = (arr, empty) => arr && arr.length ? `<ul class="alist">${arr.map(x => `<li>${esc(x.text)} ${evl(x.ev || 'docs', x.src)}</li>`).join('')}</ul>` : empty;
-  if (/limit|cap\b|before approv|restrict/.test(q)) return reply({ html: `<b>${a.name}, before approval:</b>${list(a.limits, ' No limits found in the docs.')}` });
-  if (/require|need|privacy|policy|verify|verification/.test(q)) return reply({ html: `<b>${a.name} requires:</b>${list(a.requirements, ' Nothing beyond a standard OAuth app.')}` });
-  if (/watch|gotcha|careful|problem|issue|token|expire/.test(q)) return reply({ html: `<b>Watch out for:</b>${list(a.gotchas, ' Nothing specific found.')}` });
-  if (/how long|wait|review|approv|time/.test(q)) return reply({ html: a.review && a.review.required ? `${esc(a.review.what || 'Review')}: <b>${esc(a.review.wait || 'not stated')}</b> ${evl(a.review.ev || 'est', a.review.src)}. Setup on your side: ${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>` : `No provider review found. Setup: ${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>` });
-  if (/cost|price|pay|\$/.test(q)) return reply({ html: a.cost ? `${esc(a.cost.text)} ${evl(a.cost.ev || 'est', a.cost.src)}` : 'No cost found in the docs.' });
-  if (/managed|composio/.test(q)) return reply({ html: a.managed === 'yes' ? `Yes, Composio has a managed ${a.name} app. ${evl('docs', a.managedSrc)}` : `Composio needs your own ${a.name} credentials. ${evl('docs', a.managedSrc)}` });
-  if (/step|how do i|set ?up|start/.test(q)) return reply({ html: `<ol class="fixlist">${(a.steps || []).map(s => `<li>${esc(s.t)}${s.who === 'agent' ? ' <span class="who w-agent">Agent</span>' : ''}</li>`).join('')}</ol>` });
-  if (/unverified|not sure|confirm/.test(q)) return reply({ html: a.unverified && a.unverified.length ? `I couldn't confirm:<ul class="alist">${a.unverified.map(u => `<li>${esc(u)}</li>`).join('')}</ul>` : 'Everything in this guide has a source.' });
+  const r0 = appRules0(a, v); return r0;
+}
+function appRules0(a, v) {
+  const q = v.toLowerCase(), list = (arr, empty) => arr && arr.length ? `<ul class="alist">${arr.map(x => `<li>${esc(unprefix(x.text))} ${evl(x.ev || 'docs', x.src)}</li>`).join('')}</ul>` : empty;
+  if (/cost|price|pay|\$/.test(q)) return reply({ card: a, html: a.cost ? `${esc(a.cost.text)} ${evl(a.cost.ev || 'est', a.cost.src)}` : 'No cost found in the docs.' });
+  if (/limit|cap\b|before approv|restrict/.test(q)) return reply({ card: a, html: `<b>${a.name}, before approval:</b>${list(a.limits, ' No limits found in the docs.')}` });
+  if (/require|need|privacy|policy|verify|verification/.test(q)) return reply({ card: a, html: `<b>${a.name} requires:</b>${list(a.requirements, ' Nothing beyond a standard OAuth app.')}` });
+  if (/watch|gotcha|careful|problem|issue|token|expire/.test(q)) return reply({ card: a, html: `<b>Watch out for:</b>${list(a.gotchas, ' Nothing specific found.')}` });
+  if (/how long|wait|review|approv|time/.test(q)) return reply({ card: a, html: a.review && a.review.required ? `${esc(a.review.what || 'Review')}: <b>${esc(a.review.wait || 'not stated')}</b> ${evl(a.review.ev || 'est', a.review.src)}. Setup on your side: ${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>` : `No provider review found. Setup: ${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>` });
+  if (/managed|composio/.test(q)) return reply({ card: a, html: a.managed === 'yes' ? `Yes, Composio has a managed ${a.name} app. ${evl('docs', a.managedSrc)}` : `Composio needs your own ${a.name} credentials. ${evl('docs', a.managedSrc)}` });
+  if (/step|how do i|set ?up|start/.test(q)) return reply({ card: a, html: `<ol class="fixlist">${(a.steps || []).map(s => `<li>${esc(s.t)}${s.who === 'agent' ? ' <span class="who w-agent">Agent</span>' : ''}</li>`).join('')}</ol>` });
+  if (/unverified|not sure|confirm/.test(q)) return reply({ card: a, html: a.unverified && a.unverified.length ? `I couldn't confirm:<ul class="alist">${a.unverified.map(u => `<li>${esc(u)}</li>`).join('')}</ul>` : 'Everything in this guide has a source.' });
   return askLLM(v);
 }
 
@@ -416,7 +419,7 @@ function sanitizeGuide(g) {
     gen: g && g.gen ? { model: T(g.gen.model, 40), searches: [], pages: +g.gen.pages || 0, quotesChecked: +g.gen.quotesChecked || 0, quotesFound: +g.gen.quotesFound || 0, seconds: +g.gen.seconds || 0 } : null,
   };
 }
-async function openShared(s) { try { const g = sanitizeGuide(await unpackGuide(s)); addGenerated(g); show('app', g.id); history.replaceState(null, '', '#gen/' + s); } catch (e) { toast('That shared guide link is damaged'); show('generate'); } }
+async function openShared(s) { try { const g = sanitizeGuide(await unpackGuide(s)); addGenerated(g); window.__navReplace = true; show('app', g.id); window.__navReplace = false; history.replaceState(null, '', '#gen/' + s); } catch (e) { toast('That shared guide link is damaged'); show('generate'); } }
 document.addEventListener('click', async e => {
   if (!e.target.closest('[data-sharegen]') || !curApp) return;
   copy(location.origin + location.pathname + '#gen/' + await packGuide(curApp), 'Guide link copied. It works for anyone, no account needed');
@@ -533,15 +536,91 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-vf]'
 const slim = a => ({ name: a.name, category: a.category, difficulty: a.difficulty, composioAuth: a.auth, composioManaged: a.managed, managedSource: a.managedSrc, oneLiner: a.oneLiner, setupTime: a.setup && a.setup.time, review: a.review, cost: a.cost, limits: a.limits, requirements: a.requirements, gotchas: a.gotchas, steps: a.steps, notConfirmed: a.unverified, whoCanConnect: (CH.aud || {})[a.id], permissions: CH.perms[a.id] && CH.perms[a.id].options.map(o => ({ task: o.task, scope: o.scope, tier: o.tier, src: o.src })), setupAttempt: probeOf(a) && { outcome: probeOf(a).outcome, providerSaid: probeOf(a).text, takeaway: probeOf(a).takeaway } });
 window.agentContext = () => {
   if (!$('#v-app').hidden && curApp) return { page: 'guide', app: slim(curApp), composio: { managedAppTradeoffs: 'Users see "Composio wants to access your account"; default scopes may not cover everything; quota shared across all Composio users; 15-minute minimum polling', src: COMPOSIO_SRC } };
-  if (!$('#v-guide').hidden) { const g = APP('gmail'); return { page: 'gmail guide', app: slim(g), chosenScopes: need(), tier: maxTier() >= 0 ? TIERS[maxTier()].n : 'not chosen yet', tiers: TIERS.map(t => ({ tier: t.n, review: t.review, wait: t.wait, needs: t.needs, yearlyCost: t.cost })), scopeTiers: Object.fromEntries(Object.entries(SC).map(([k, v]) => [k, TIERS[v.t].n])), toolScopes: TOOLS.map(t => ({ tool: t.n, scopes: t.s, tier: TIERS[t.tier].n })), toolScopeNote: 'Tool-to-scope mapping is inferred from Google API docs; gmail.labels only manages labels, applying labels to messages needs gmail.modify', sources: Object.values(SRCS).map(s => s[1]), nextStep: (current() || {}).t }; }
+  if (!$('#v-guide').hidden || (ctxApp && ctxApp.id === 'gmail')) { const g = APP('gmail'); return { page: 'gmail guide', app: slim(g), chosenScopes: need(), tier: maxTier() >= 0 ? TIERS[maxTier()].n : 'not chosen yet', tiers: TIERS.map(t => ({ tier: t.n, review: t.review, wait: t.wait, needs: t.needs, yearlyCost: t.cost })), scopeTiers: Object.fromEntries(Object.entries(SC).map(([k, v]) => [k, TIERS[v.t].n])), toolScopes: TOOLS.map(t => ({ tool: t.n, scopes: t.s, tier: TIERS[t.tier].n })), toolScopeNote: 'Tool-to-scope mapping is inferred from Google API docs; gmail.labels only manages labels, applying labels to messages needs gmail.modify', sources: Object.values(SRCS).map(s => s[1]), nextStep: (current() || {}).t }; }
   if (ctxApp) return { page: 'library', app: slim(ctxApp) };
   return { page: 'library', apps: APPS.filter(a => !a.generated).map(a => ({ name: a.name, difficulty: a.difficulty, managed: a.managed, approvalWait: shortWait(a), keyLimit: a.limits && a.limits[0] && a.limits[0].text, src: a.limits && a.limits[0] && a.limits[0].src })) };
+};
+
+/* ================= AGENT ROUTER =================
+   One entry point for everything typed to the agent: small talk, navigation, any app by name
+   (typos included), lists and comparisons, page-specific answers, and the grounded model as fallback.
+   Whenever an answer is about an app, it ends with a card that opens that app's guide. */
+const ALIAS = { gmail: ['gmail', 'google mail'], googledrive: ['google drive', 'gdrive', 'drive'], googlesheets: ['google sheets', 'gsheets', 'sheets', 'spreadsheets'], googlecalendar: ['google calendar', 'gcal', 'calendar'], microsoftteams: ['microsoft teams', 'ms teams', 'teams'], outlook: ['outlook', 'office 365 mail'], twitter: ['twitter', 'x.com', 'x twitter'], quickbooks: ['quickbooks', 'qbo', 'intuit'], monday: ['monday.com', 'monday'], youtube: ['youtube', 'yt'], salesforce: ['salesforce', 'sfdc'] };
+const lev = (a, b) => { if (Math.abs(a.length - b.length) > 2) return 9; const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+function findApps(text) {
+  const q = ' ' + String(text).toLowerCase().replace(/[^a-z0-9. ]+/g, ' ') + ' ', toks = q.trim().split(/\s+/), hits = [];
+  for (const a of APPS) {
+    const names = [...new Set([a.name.toLowerCase().split(' (')[0], a.id, ...(ALIAS[a.id] || [])])];
+    const exact = names.some(n => q.includes(' ' + n + ' '));
+    const fuzzy = !exact && names.some(n => !n.includes(' ') && n.length >= 4 && toks.some(t => t.length >= 4 && (lev(t, n) <= (n.length >= 7 ? 2 : 1) || (t.length >= 4 && n.startsWith(t) && t.length >= n.length - 2))));
+    if (exact || fuzzy) hits.push({ a, exact, at: q.indexOf(names.find(n => q.includes(n)) || '~') });
+  }
+  return hits.sort((x, y) => (y.exact - x.exact) || (x.at - y.at)).map(h => h.a).filter((a, i, arr) => arr.indexOf(a) === i);
+}
+const appCard = a => { const d = DIFF[a.difficulty]; return `<button class="acard mini" data-app="${a.id}" type="button">
+  <span class="ah">${logo(a, 30)}<span class="an"><b>${esc(a.name)}</b><small>${esc(a.category)}</small></span><span class="tier ${d.cls}">${d.n}</span></span>
+  <span class="am"><span><small>Setup</small>${esc(a.setupShort || (a.setup ? a.setup.time : '—'))}</span><span><small>Approval</small>${esc(shortWait(a))}</span>${a.managed === 'yes' ? '<span class="mchip">Managed</span>' : a.managed === 'no' ? '<span class="ownchip">Own app</span>' : ''}</span>
+  <span class="ago">Open guide<svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>`; };
+window.appCardHtml = a => `<div class="cards">${appCard(a)}</div>`;
+window.appCardsFor = (text, max = 2) => { const ls = findApps(text).slice(0, max); return ls.length ? `<div class="cards">${ls.map(appCard).join('')}</div>` : ''; };
+function overview(a) {
+  ctxApp = a;
+  const d = DIFF[a.difficulty], P = CH.perms[a.id], A = (CH.aud || {})[a.id];
+  let html;
+  if (a.id === 'gmail') html = `<b>Gmail</b> depends on what your agent does. Sending only is <b>Sensitive</b>: Google review in 3–10 business days, no audit. Reading or drafting mail is <b>Restricted</b>: about 6 weeks plus a yearly security assessment. You can launch today on Composio's managed app and switch later.`;
+  else html = `<b>${esc(a.name)}</b> is <b>${d.n}</b>: ${esc(cap((a.oneLiner || d.blurb).replace(/\.$/, '')))}. ${a.managed === 'yes' ? "You can launch today on Composio's managed app." : a.managed === 'no' ? 'Composio has no managed app here, so you need your own from day one.' : ''} ${a.review && a.review.required ? `Approval: ${esc(first(a.review.what || 'review'))}, ${esc(shortWait(a))}.` : 'No mandatory provider review found.'}${P ? ' The permissions you pick change what approval you need.' : ''}${A && A.private && A.private.works === 'yes' && !/^same as public/i.test(A.private.text || '') ? ' Team-only use needs no review.' : ''}`;
+  return { html: html + `<div class="cards">${appCard(a)}</div>`, next: [`What are the limits before approval?`, `What does ${a.name} require?`, 'How long is the review?'] };
+}
+const SMALL = [
+  [/^(hi|hey|hello|yo|hola|good (morning|afternoon|evening))\b/, () => ({ html: 'Hi! I know the setup guides for 37 apps and can write a new one for any app. What are you connecting?', next: ['How do I set up Gmail?', 'Which apps need a review?', 'Generate a guide for Typeform'] })],
+  [/^(thanks|thank you|thx|ty|cool|great|nice|ok|okay|got it)\b/, () => ({ html: 'Anytime. Ask about any app, or open one from the library.', next: ['Which apps are easiest?', 'Compare Slack and Discord'] })],
+  [/what (is|does) (this|greenlight|this site|this app)|who are you|what can you do|^help\b|how does this work/, () => ({ html: 'Greenlight shows what it takes to run an app on <b>your own</b> OAuth app: effort, approval wait, limits and blockers, all sourced. I can explain any guide, compare apps, find apps by requirement, and write a guide live for apps that aren\'t in the library.', next: ['How do I set up Gmail?', 'Which apps have install caps?', 'Generate a guide for Webflow'] })],
+];
+const NAV = [[/\b(library|all apps|app list)\b/, 'library', 'Here\'s the library.'], [/\bplanner|launch plan/, 'planner', 'Opened the launch planner.'], [/verification|audit|fact.?check|sources checked/, 'verify', 'Opened the verification log.'], [/\bgenerate\b|new guide|write a guide/, 'generate', 'Opened guide generation.']];
+const prevAnswer = answer;
+answer = function (v) {
+  window.__cardNext = null;
+  const q = v.toLowerCase().trim().replace(/[?!.]+$/, '');
+  for (const [re, f] of SMALL) if (re.test(q)) return reply(f());
+  const apps = findApps(q);
+  /* "generate a guide for X": open the guide if we have it, otherwise start live generation */
+  const gm = q.match(/(?:generate|create|make|write|research)\s+(?:a\s+)?(?:guide|one)?\s*(?:for|on|about)?\s+(.{2,60})$/);
+  if (gm) {
+    const target = gm[1].replace(/^(the|an?)\s+/, '').trim(), have = findApps(target)[0];
+    if (have) return reply({ html: `${esc(have.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(have)}</div>`, next: ['Generate a fresh one anyway?'] });
+    show('generate'); $('#genInput').value = target; genCheckLib(); $('#genForm').requestSubmit();
+    return reply({ html: `Researching <b>${esc(target)}</b> live: Composio's docs first, then the provider's official pages. Watch the steps on the page; the guide opens when it's ready.` });
+  }
+  /* navigation */
+  if (/^(open|go to|take me to|show( me)?|navigate to)\b/.test(q) && !apps.length) for (const [re, view, msg] of NAV) if (re.test(q)) { show(view); return reply({ html: msg }); }
+  /* lists and comparisons across apps */
+  const cross = crossAnswer(q); if (cross) { if (apps.length === 1 && !/which|list|show|apps/.test(q)) { } else return reply(cross); }
+  /* one app named */
+  if (apps.length === 1) {
+    const a = apps[0];
+    if (/^(open|go to|show|take me to)\b/.test(q)) { show('app', a.id); return reply({ html: `Opened the ${esc(a.name)} guide.`, next: [`What are the limits before approval?`, 'How long is the review?'] }); }
+    const facet = /limit|cap\b|cost|price|pay|review|approv|how long|wait|require|need|watch|gotcha|token|expire|managed|composio|permission|scope|admin|team|private|internal|step/.test(q);
+    const generic = /^(how (do|can|to) (i )?(do|set ?up|setup|connect|integrate|use|get started with)|(give|show) me (a |the )?guide|guide|setup|set up|tell me about|about|what about|how hard|is \S+ hard|how difficult)/.test(q) || q.split(/\s+/).length <= 3;
+    if (generic) return reply(overview(a));
+    if (a.id === 'gmail') { window.__cardNext = a; ctxApp = a; return baseAnswer(v); }
+    if (!facet && !isLong(v)) return reply(overview(a));
+    if (isLong(v)) { ctxApp = a; return askLLM(v, () => appRules(a, v)); }
+    ctxApp = a;
+    if (isLong(v)) return askLLM(v, () => appRules(a, v));
+    return appRules(a, v);
+  }
+  return prevAnswer(v);
 };
 
 /* ---------- boot ---------- */
 { const g = APP('gmail'); if (g && $('#gProbe')) $('#gProbe').innerHTML = probeBox(g); }
 const gsc = $$('#v-guide .src a'); $('#gSrcCount').textContent = `${gsc.length} · ${[...gsc].filter(a => a.querySelector('.ev.est')).length} third-party`;
 renderLibrary(); renderPlan();
-function route() { const h = (location.hash || '').slice(1); if (h.startsWith('gen/')) { openShared(h.slice(4)); return; } if (h.startsWith('app/')) show('app', h.slice(4)); else show(VIEWS.includes(h) ? h : 'guide'); }
+function route() {
+  const h = (location.hash || '').slice(1);
+  window.__navReplace = true;
+  try { if (h.startsWith('gen/')) openShared(h.slice(4)); else if (h.startsWith('app/')) show('app', h.slice(4)); else show(VIEWS.includes(h) ? h : 'library'); }
+  finally { window.__navReplace = false; }
+}
 route();
-window.addEventListener('hashchange', route);
+window.addEventListener('popstate', route);
