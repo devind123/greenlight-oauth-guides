@@ -1,0 +1,652 @@
+{
+ "xero": {
+  "varies": true,
+  "why": "Core accounting scopes work for any app, but payroll scopes need a payroll-admin user (UK also needs partner access) and some scopes need partner certification or a financial services partnership.",
+  "order": [
+   "standard",
+   "payrolladmin",
+   "partner",
+   "financial"
+  ],
+  "options": [
+   {
+    "k": "readinvoices",
+    "task": "Read invoices",
+    "scope": "accounting.invoices.read",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Web and PKCE apps – Since March 2026, all new and existing Web and PKCE apps have been assigned granular scopes.",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/",
+    "note": "Granular scope listed with no certification requirement; broad accounting.transactions remains until September 2027."
+   },
+   {
+    "k": "writeinvoices",
+    "task": "Create and edit invoices",
+    "scope": "accounting.invoices",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "accounting.invoices New View and manage invoices",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/",
+    "note": "Listed among standard organisation scopes."
+   },
+   {
+    "k": "pnl",
+    "task": "Read the profit and loss report",
+    "scope": "accounting.reports.profitandloss.read",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "accounting.reports.profitandloss.read New View profit and loss",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/",
+    "note": ""
+   },
+   {
+    "k": "contacts",
+    "task": "Create and update contacts",
+    "scope": "accounting.contacts",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "accounting.contacts View and manage your contacts",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/",
+    "note": ""
+   },
+   {
+    "k": "payrollau",
+    "task": "Read employees in Australian payroll",
+    "scope": "payroll.employees.read (Payroll AU)",
+    "tier": "payrolladmin",
+    "ev": "docs",
+    "quote": "In addition, only Xero users with payroll administrator access can authorise access to payroll endpoints.",
+    "src": "https://developer.xero.com/documentation/api/payrollau/overview",
+    "note": "The NZ payroll overview page was not fetched, so NZ is not confirmed."
+   },
+   {
+    "k": "payrolluk",
+    "task": "Create UK pay runs",
+    "scope": "payroll.payruns (Payroll UK)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "You'll need partner permissions provided by Xero.",
+    "src": "https://developer.xero.com/documentation/api/payrolluk/overview",
+    "note": "The UK page also says only payroll administrators can authorise payroll endpoints."
+   },
+   {
+    "k": "practicemgr",
+    "task": "Read Practice Manager jobs",
+    "scope": "practicemanager.job.read",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "To access the Practice Manager API you will need to first register as an app partner and complete a security self-assessment questionnaire.",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/",
+    "note": ""
+   },
+   {
+    "k": "cashval",
+    "task": "Read bank statement and reconciliation data for lending",
+    "scope": "finance.cashvalidation.read",
+    "tier": "financial",
+    "ev": "docs",
+    "quote": "The Finance API is a closed API that is only available to those that have an established (Financial Services) partnership with Xero for lending purposes.",
+    "src": "https://developer.xero.com/documentation/api/finance/overview",
+    "note": "Bank Feeds (bankfeedsv2) is also limited to financial services partners and approved app partners."
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard scope",
+    "effect": "Any Xero app can request it, and a user with the Standard or Adviser role approves it when connecting.",
+    "quote": "In order to authorise any API connection the Xero user must have the Standard or Adviser role.",
+    "src": "https://developer.xero.com/documentation/api/payrollau/overview"
+   },
+   "payrolladmin": {
+    "n": "Payroll admin consent",
+    "effect": "The person who connects the organisation must be a Xero payroll administrator.",
+    "quote": "In addition, only Xero users with payroll administrator access can authorise access to payroll endpoints.",
+    "src": "https://developer.xero.com/documentation/api/payrollau/overview"
+   },
+   "partner": {
+    "n": "Xero partner certification",
+    "effect": "You must register as a Xero app partner and get the scope enabled by Xero before you can request it.",
+    "quote": "The following scopes are only available after additional certification. If you require access to these scopes please let us know once you register to be a partner.",
+    "src": "https://developer.xero.com/documentation/guides/oauth2/scopes/"
+   },
+   "financial": {
+    "n": "Financial services partnership",
+    "effect": "Only a lender or financial institution with a signed financial services partnership with Xero can get this API.",
+    "quote": "The Bank Feeds API is available to financial institutions with an established financial services partnership with Xero and approved app partners.",
+    "src": "https://developer.xero.com/documentation/api/bankfeeds/overview"
+   }
+  }
+ },
+ "dropbox": {
+  "varies": true,
+  "why": "User scopes are approved by each Dropbox user, but team scopes produce a team-linked token that a Dropbox team admin must authorize.",
+  "order": [
+   "user",
+   "teamadmin"
+  ],
+  "options": [
+   {
+    "k": "download",
+    "task": "Download a file",
+    "scope": "files.content.read",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Required scope: files.content.read",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/download.md",
+    "note": "User authentication."
+   },
+   {
+    "k": "upload",
+    "task": "Upload a file",
+    "scope": "files.content.write",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Required scope: files.content.write",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/upload.md",
+    "note": "User authentication."
+   },
+   {
+    "k": "search",
+    "task": "Search files and folders",
+    "scope": "files.metadata.read",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Required scope: files.metadata.read",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/search-v-2.md",
+    "note": "User authentication."
+   },
+   {
+    "k": "sharelink",
+    "task": "Create a shared link",
+    "scope": "sharing.write",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Required scope: sharing.write",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/sharing/create-shared-link-with-settings.md",
+    "note": "User authentication."
+   },
+   {
+    "k": "listmembers",
+    "task": "List members of a team",
+    "scope": "members.read",
+    "tier": "teamadmin",
+    "ev": "docs",
+    "quote": "Required scope: members.read",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/business-endpoints/team/members-list-v-2.md",
+    "note": "Endpoint uses Team authentication."
+   },
+   {
+    "k": "addmembers",
+    "task": "Add members to a team",
+    "scope": "members.write",
+    "tier": "teamadmin",
+    "ev": "docs",
+    "quote": "Required scope: members.write",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/business-endpoints/team/members-add-v-2.md",
+    "note": "Endpoint uses Team authentication."
+   },
+   {
+    "k": "auditlog",
+    "task": "Read the team activity log",
+    "scope": "events.read",
+    "tier": "teamadmin",
+    "ev": "docs",
+    "quote": "Required scope: events.read",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/business-endpoints/team-log/get-events.md",
+    "note": "Endpoint uses Team authentication."
+   },
+   {
+    "k": "memberfiles",
+    "task": "Read or write any team member's files",
+    "scope": "team_data.member",
+    "tier": "teamadmin",
+    "ev": "docs",
+    "quote": "Legacy apps must have Team member file access permissions while scoped apps must have the team_data.member scope selected.",
+    "src": "https://docs.dropboxapi.com/dropbox-api/api-reference/business-endpoints/overview.md",
+    "note": "Used with the Dropbox-API-Select-User header on a team token."
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "User consent",
+    "effect": "The signed-in Dropbox user approves the scopes for their own account on the authorization page.",
+    "quote": "This level of access is then communicated to the end user on the Dropbox app authorization page where the user consents to sharing their data.",
+    "src": "https://docs.dropboxapi.com/dropbox-api/docs/oauth"
+   },
+   "teamadmin": {
+    "n": "Team admin",
+    "effect": "A Dropbox team administrator must authorize the app, and the token belongs to the whole team.",
+    "quote": "An app that uses these endpoints will need to be authorized by a team administrator.",
+    "src": "https://docs.dropboxapi.com/dropbox-api/docs/team-administration"
+   }
+  }
+ },
+ "github": {
+  "varies": true,
+  "why": "For GitHub Apps, account and repository permissions can be granted by the user or a repo admin, but organization permissions or Repository administration need an organization owner; OAuth app scopes do not change approval.",
+  "order": [
+   "user",
+   "repoadmin",
+   "owner"
+  ],
+  "options": [
+   {
+    "k": "email",
+    "task": "Read the user's email addresses",
+    "scope": "Email addresses (account permission, read)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Account permissions allow your app to access resources related to a user if the user has also authorized your app.",
+    "src": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app",
+    "note": "Granted by the user at authorization, not at installation."
+   },
+   {
+    "k": "readcode",
+    "task": "Read files in a repository",
+    "scope": "Contents (repository permission, read)",
+    "tier": "repoadmin",
+    "ev": "docs",
+    "quote": "GET /repos/{owner}/{repo}/contents/{path} read",
+    "src": "https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps",
+    "note": "Listed under Repository permissions for Contents; on a personal account the user installs it themselves."
+   },
+   {
+    "k": "issues",
+    "task": "Create issues",
+    "scope": "Issues (repository permission, write)",
+    "tier": "repoadmin",
+    "ev": "docs",
+    "quote": "POST /repos/{owner}/{repo}/issues write",
+    "src": "https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps",
+    "note": "Listed under Repository permissions for Issues."
+   },
+   {
+    "k": "prs",
+    "task": "Open pull requests",
+    "scope": "Pull requests (repository permission, write)",
+    "tier": "repoadmin",
+    "ev": "docs",
+    "quote": "POST /repos/{owner}/{repo}/pulls write",
+    "src": "https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps",
+    "note": "Listed under Repository permissions for Pull requests."
+   },
+   {
+    "k": "createrepo",
+    "task": "Create repositories in an organization",
+    "scope": "Administration (repository permission, write)",
+    "tier": "owner",
+    "ev": "docs",
+    "quote": "If your app only needs \"Administration\" permission to create repositories, request the \"Repository creation\" permission instead.",
+    "src": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app",
+    "note": "Administration needs an owner; whether a repo admin can install an app with only Repository creation is not stated."
+   },
+   {
+    "k": "invite",
+    "task": "Invite people to the organization",
+    "scope": "Members (organization permission, write)",
+    "tier": "owner",
+    "ev": "docs",
+    "quote": "POST /orgs/{org}/invitations write",
+    "src": "https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps",
+    "note": "Listed under Organization permissions for Members."
+   },
+   {
+    "k": "projects",
+    "task": "Add items to organization projects",
+    "scope": "Projects (organization permission, write)",
+    "tier": "owner",
+    "ev": "docs",
+    "quote": "POST /orgs/{org}/projectsV2/{project_number}/drafts write",
+    "src": "https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps",
+    "note": "Listed under Organization permissions for Projects."
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "User authorization",
+    "effect": "Any user can install the app on their personal account or authorize it to act for them.",
+    "quote": "Anyone can install GitHub Apps on their personal account.",
+    "src": "https://docs.github.com/en/apps/using-github-apps/installing-a-github-app-from-a-third-party"
+   },
+   "repoadmin": {
+    "n": "Repository admin",
+    "effect": "In an organization, a repository admin can install the app on repos they administer, unless the owner has blocked this.",
+    "quote": "Repository admins can install GitHub Apps in the organization that owns the repository if the app does not request any organization permissions or the \"Repository administration\" permission.",
+    "src": "https://docs.github.com/en/apps/using-github-apps/installing-a-github-app-from-a-third-party"
+   },
+   "owner": {
+    "n": "Organization owner",
+    "effect": "An organization owner must install the app; other members can only send the owner a request.",
+    "quote": "Instead of installing the app, GitHub will send a notification to the organization owner to request the organization owner to install the app.",
+    "src": "https://docs.github.com/en/apps/using-github-apps/installing-a-github-app-from-a-third-party"
+   }
+  },
+  "notes": "OAuth apps are approved per app, not per scope: when OAuth app access restrictions are on, members must request owner approval for any OAuth app."
+ },
+ "jira": {
+  "varies": true,
+  "why": "Any user can consent to any scope with no Atlassian review per scope, but admin scopes only work when the consenting user is a project admin or Jira admin.",
+  "order": [
+   "user",
+   "projectadmin",
+   "jiraadmin"
+  ],
+  "options": [
+   {
+    "k": "search",
+    "task": "Search issues with JQL",
+    "scope": "read:jira-work",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Issues are included in the response where the user has: Browse projects project permission for the project containing the issue.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/",
+    "note": ""
+   },
+   {
+    "k": "create",
+    "task": "Create an issue",
+    "scope": "write:jira-work",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Permissions required: Browse projects and Create issues project permissions for the project in which the issue or subtask is created.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/",
+    "note": ""
+   },
+   {
+    "k": "comment",
+    "task": "Comment on an issue",
+    "scope": "write:jira-work",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Permissions required: Browse projects and Add comments project permission for the project that the issue containing the comment is in.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-comments/",
+    "note": ""
+   },
+   {
+    "k": "webhook",
+    "task": "Register a webhook for issue changes",
+    "scope": "read:jira-work, manage:jira-webhook",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Permissions required: Only Connect and OAuth 2.0 apps can use this operation.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-webhooks/",
+    "note": "No admin permission is listed for this operation."
+   },
+   {
+    "k": "version",
+    "task": "Create a project version (release)",
+    "scope": "manage:jira-project",
+    "tier": "projectadmin",
+    "ev": "docs",
+    "quote": "Permissions required: Administer Jira global permission or Administer Projects project permission for the project the version is added to.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-versions/",
+    "note": ""
+   },
+   {
+    "k": "project",
+    "task": "Create a project",
+    "scope": "manage:jira-configuration",
+    "tier": "jiraadmin",
+    "ev": "docs",
+    "quote": "Permissions required: Administer Jira global permission.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-projects/",
+    "note": ""
+   },
+   {
+    "k": "audit",
+    "task": "Read the audit log",
+    "scope": "manage:jira-configuration",
+    "tier": "jiraadmin",
+    "ev": "docs",
+    "quote": "Permissions required: Administer Jira global permission.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-audit-records/",
+    "note": ""
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "Any user",
+    "effect": "Any user can consent, and the app can only do what that user's project permissions allow.",
+    "quote": "Note, the permissions held by the user an app is acting for always constrain the app, regardless of the app's scopes.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+   },
+   "projectadmin": {
+    "n": "Project admin",
+    "effect": "The person who connects must be an admin of that project (or a Jira admin), or the calls fail.",
+    "quote": "Permissions required: Administer Jira global permission or Administer Projects project permission for the project the version is added to.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-versions/"
+   },
+   "jiraadmin": {
+    "n": "Jira admin",
+    "effect": "The person who connects must hold the Administer Jira global permission, or the calls fail.",
+    "quote": "For example, if a Jira app has the manage:jira-project scope but the user does not have the Administer Jira permission, the app can not create projects.",
+    "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+   }
+  }
+ },
+ "salesforce": {
+  "varies": false,
+  "why": "Admin pre-authorization is a per-app Permitted Users policy that each org admin sets, and the OAuth scopes page lists no scope that triggers extra approval.",
+  "quote": "Admin approved users are pre-authorized—Allows only users with the associated profile or permission set to access the app without first authorizing it.",
+  "src": "https://help.salesforce.com/s/articleView?id=xcloud.connected_app_manage_oauth.htm&type=5"
+ },
+ "reddit": {
+  "varies": false,
+  "why": "Reddit requires approval for all Data API access, plus separate written approval for commercial use; this depends on purpose, not on the OAuth scopes requested.",
+  "quote": "Approval is required: You must request access and get explicit approval before accessing any Reddit data through our API",
+  "src": "https://support.reddithelp.com/hc/en-us/articles/42728983564564-Responsible-Builder-Policy"
+ },
+ "twitter": {
+  "varies": true,
+  "why": "OAuth scopes need only user consent, but some endpoints are limited to the Enterprise plan whatever the scopes.",
+  "order": [
+   "payperuse",
+   "enterprise"
+  ],
+  "options": [
+   {
+    "k": "post",
+    "task": "Post on the user's behalf",
+    "scope": "tweet.write",
+    "tier": "payperuse",
+    "ev": "docs",
+    "quote": "tweet.write Tweet and Retweet for you.",
+    "src": "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code.md",
+    "note": "Priced per request under pay-per-use (Post: Create)."
+   },
+   {
+    "k": "dm",
+    "task": "Send direct messages",
+    "scope": "dm.write",
+    "tier": "payperuse",
+    "ev": "docs",
+    "quote": "dm.write Send and manage Direct Messages for you.",
+    "src": "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code.md",
+    "note": "Priced per request under pay-per-use (DM Interaction: Create)."
+   },
+   {
+    "k": "recent",
+    "task": "Search posts from the last 7 days",
+    "scope": "App keys and tokens",
+    "tier": "payperuse",
+    "ev": "docs",
+    "quote": "Search Posts from the last 7 days. Available to all developers.",
+    "src": "https://docs.x.com/x-api/posts/search/introduction.md",
+    "note": "The page lists keys and tokens as a prerequisite but names no specific scope."
+   },
+   {
+    "k": "archive",
+    "task": "Search the full post archive",
+    "scope": "App keys and tokens",
+    "tier": "payperuse",
+    "ev": "docs",
+    "quote": "Full-archive search is available to pay-per-use and Enterprise customers.",
+    "src": "https://docs.x.com/x-api/posts/search/introduction.md",
+    "note": "Enterprise gets longer queries (4,096 characters)."
+   },
+   {
+    "k": "semantic",
+    "task": "Stream posts matched by meaning (embedding operator)",
+    "scope": "App-only Bearer Token",
+    "tier": "enterprise",
+    "ev": "docs",
+    "quote": "The embedding: semantic operator is available only for Filtered Stream on Enterprise plans with Embedding tier access.",
+    "src": "https://docs.x.com/x-api/posts/filtered-stream/introduction.md",
+    "note": "Basic filtered stream with core operators is available on pay-per-use."
+   },
+   {
+    "k": "firehose",
+    "task": "Stream the full firehose or sampled volume streams",
+    "scope": "OAuth 2.0 App-Only",
+    "tier": "enterprise",
+    "ev": "docs",
+    "quote": "To use these APIs, you must first set up an account with our enterprise sales team.",
+    "src": "https://docs.x.com/x-api/posts/volume-streams/introduction.md",
+    "note": ""
+   },
+   {
+    "k": "compliance",
+    "task": "Listen for post and user compliance events",
+    "scope": "App-level access",
+    "tier": "enterprise",
+    "ev": "docs",
+    "quote": "These streams are available with Enterprise access and are designed to help partners that ingest high volumes of data 'listen' for compliance events such as Post edit events.",
+    "src": "https://docs.x.com/x-api/compliance/streams/introduction.md",
+    "note": "Auth type for these streams was not confirmed."
+   }
+  ],
+  "tiers": {
+   "payperuse": {
+    "n": "Pay-per-use",
+    "effect": "Any approved developer account can call it after buying credits, and the user consents to the OAuth scopes.",
+    "quote": "The X API uses pay-per-usage pricing. No subscriptions—pay only for what you use.",
+    "src": "https://docs.x.com/x-api/getting-started/pricing.md"
+   },
+   "enterprise": {
+    "n": "Enterprise plan",
+    "effect": "You must apply to X for an Enterprise plan; no OAuth scope unlocks these endpoints.",
+    "quote": "These endpoints are only available on Enterprise plans:",
+    "src": "https://docs.x.com/enterprise-api/introduction.md"
+   }
+  },
+  "notes": "Account Activity is listed as Enterprise-exclusive on the Enterprise intro page, but its own page says Enterprise or Pay Per Use access, so it is left out. Pay-per-use is capped at 3 million post reads per month."
+ },
+ "figma": {
+  "varies": true,
+  "why": "Most scopes work in any OAuth app (public apps get one Figma review), but some need an Enterprise plan, org:* scopes need an organization admin, and some only work in private apps.",
+  "order": [
+   "standard",
+   "enterpriseplan",
+   "orgadmin",
+   "privateonly"
+  ],
+  "options": [
+   {
+    "k": "readfile",
+    "task": "Read the contents of a file",
+    "scope": "file_content:read",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "file_content:read Read the contents of files, such as nodes and the editor type.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "comment",
+    "task": "Post comments on a file",
+    "scope": "file_comments:write",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "file_comments:write Post and delete comments and comment reactions in files.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "webhooks",
+    "task": "Create webhooks for file changes",
+    "scope": "webhooks:write",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "webhooks:write Create and manage webhooks.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "variables",
+    "task": "Read design variables",
+    "scope": "file_variables:read",
+    "tier": "enterpriseplan",
+    "ev": "docs",
+    "quote": "file_variables:read Read variables in files. Note: Enterprise plan only.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "libanalytics",
+    "task": "Read design system analytics",
+    "scope": "library_analytics:read",
+    "tier": "enterpriseplan",
+    "ev": "docs",
+    "quote": "library_analytics:read Read your design system analytics. Note: Enterprise plan only.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "activitylog",
+    "task": "Read organization activity logs",
+    "scope": "org:activity_log_read",
+    "tier": "orgadmin",
+    "ev": "docs",
+    "quote": "org:activity_log_read Read organization activity logs. Note: Enterprise plan only. Must be an organization admin.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "folders",
+    "task": "Create folders",
+    "scope": "folders:write",
+    "tier": "privateonly",
+    "ev": "docs",
+    "quote": "folders:write Create folders. Available only to private OAuth apps in an Enterprise plan.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   },
+   {
+    "k": "invite",
+    "task": "Invite members to a team",
+    "scope": "team_members:write",
+    "tier": "privateonly",
+    "ev": "docs",
+    "quote": "team_members:write Invite members to teams. Available only to private OAuth apps in an Enterprise plan.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/",
+    "note": ""
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard scope",
+    "effect": "Any OAuth app can request it; a public app needs Figma's one-time review, then each user consents.",
+    "quote": "When you publish a public OAuth app, Figma reviews it.",
+    "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+   },
+   "enterpriseplan": {
+    "n": "Enterprise plan only",
+    "effect": "The scope only works for users on a Figma Enterprise plan.",
+    "quote": "file_variables:read Read variables in files. Note: Enterprise plan only.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/"
+   },
+   "orgadmin": {
+    "n": "Organization admin",
+    "effect": "The person who connects must be an admin of an Enterprise organization.",
+    "quote": "org:activity_log_read Read organization activity logs. Note: Enterprise plan only. Must be an organization admin.",
+    "src": "https://developers.figma.com/docs/rest-api/scopes/"
+   },
+   "privateonly": {
+    "n": "Private app only",
+    "effect": "Only a private app for your own Enterprise team or org can use it, so customers can't connect with it.",
+    "quote": "Private OAuth apps can be used to make requests on behalf of users in team or organization you associated your app with when you created it.",
+    "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+   }
+  }
+ }
+}

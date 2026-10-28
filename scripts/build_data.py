@@ -62,6 +62,44 @@ for a in apps:
         for x in a.get(key) or []:
             if x['text'] in FIX: x['text'] = FIX[x['text']]; x['fixed'] = True; fixed += 1
 log.append(f'corrected {fixed} claims from fact-check')
+# Full audit (research/audit/result*.json): every sourced claim re-checked against its page.
+AUD = []
+for f in sorted(glob.glob(R + '/audit/result*.json')):
+    try: AUD += json.load(open(f))
+    except Exception as e: log.append(f'BAD audit file {f}: {e}')
+afix = {'fixed': 0, 'moved': 0}
+byid = {a['id']: a for a in apps}
+for v in AUD:
+    a = byid.get(v.get('app'))
+    if not a: continue
+    fld, i, verdict, fx = v.get('field'), v.get('i', 0), v.get('verdict'), (v.get('fix') or '').strip()
+    if fld in ('limits', 'requirements', 'gotchas'):
+        arr = a.get(fld) or []
+        x = next((c for c in arr if c.get('text') == v.get('text')), arr[i] if i < len(arr) else None)
+        if not x or verdict in ('confirmed', 'unreachable'): continue
+        if fx and verdict in ('partly', 'contradicted', 'not_found'):
+            x['text'] = fx; x['fixed'] = True; afix['fixed'] += 1
+        elif verdict in ('not_found', 'contradicted'):
+            arr.remove(x); a.setdefault('unverified', []).append(f"{x['text']} (not found on the cited page in the full audit)"); afix['moved'] += 1
+    elif fld == 'review' and fx and verdict in ('partly', 'contradicted') and ' | wait: ' in fx:
+        w, wt = fx.split(' | wait: ', 1); a['review']['what'] = w.strip(); a['review']['wait'] = wt.strip(); afix['fixed'] += 1
+    elif fld == 'review' and verdict in ('not_found', 'contradicted') and not fx:
+        a['review']['ev'] = 'est'; afix['moved'] += 1
+    elif fld == 'cost' and verdict in ('not_found', 'contradicted', 'partly'):
+        a['cost']['ev'] = 'est'; afix['moved'] += 1
+# follow known redirects so source links land on the current page
+REDIRECTS = {'https://developers.asana.com/docs/submit-your-app': 'https://developers.asana.com/docs/publish-your-app', 'https://developers.asana.com/docs/manage-distribution': 'https://developers.asana.com/docs/share-your-app'}
+def _fix_urls(o):
+    if isinstance(o, dict): return {k: _fix_urls(v) for k, v in o.items()}
+    if isinstance(o, list): return [_fix_urls(v) for v in o]
+    if isinstance(o, str): return REDIRECTS.get(o, o)
+    return o
+apps[:] = [_fix_urls(a) for a in apps]
+from collections import Counter
+AC = Counter(v.get('verdict') for v in AUD)
+AUDIT = {'total': len(AUD), 'counts': dict(AC), 'checked': '2026-10-29', 'items': [{k: v.get(k) for k in ('app', 'field', 'text', 'src', 'verdict', 'quote', 'fix', 'note')} for v in AUD if v.get('verdict') != 'confirmed'], 'confirmedSample': [{k: v.get(k) for k in ('app', 'field', 'text', 'src', 'quote')} for v in AUD if v.get('verdict') == 'confirmed']}
+open(OUT + '/data/audit.js', 'w').write('/* Full audit: every sourced claim re-checked against its page (research/audit). */\nwindow.AUDIT = ' + json.dumps(AUDIT, ensure_ascii=False) + ';\n')
+log.append(f"full audit: {len(AUD)} claims, corrected {afix['fixed']}, moved/downgraded {afix['moved']}")
 V = json.load(open(R + '/verify.json'))
 for v in V:
     v['corrected'] = FIX.get(v['claim'])

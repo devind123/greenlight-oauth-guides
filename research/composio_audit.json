@@ -1,0 +1,335 @@
+[
+ {
+  "id": "gmail",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "googlecalendar",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "googledrive",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "googlesheets",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "youtube",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "outlook",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth",
+  "managedMatch": true
+ },
+ {
+  "id": "microsoftteams",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth",
+  "managedMatch": true
+ },
+ {
+  "id": "github",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "linear",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "jira",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0 (3LO)",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "confluence",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0 (3LO)",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "figma",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "notion",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "hubspot",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "salesforce",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth",
+  "managedMatch": true
+ },
+ {
+  "id": "pipedrive",
+  "status": 200,
+  "ourManaged": "no",
+  "composioManaged": "no",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "zendesk",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "intercom",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "slack",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "discord",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "zoom",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "linkedin",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "twitter",
+  "status": 200,
+  "ourManaged": "no",
+  "composioManaged": "no",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "reddit",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "shopify",
+  "status": 200,
+  "ourManaged": "no",
+  "composioManaged": "no",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or Server-to-server OAuth",
+  "managedMatch": true
+ },
+ {
+  "id": "xero",
+  "status": 200,
+  "ourManaged": "no",
+  "composioManaged": "no",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "quickbooks",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "stripe",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0 (Connect) or API key",
+  "composioAuth": "API key or OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "dropbox",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "box",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "asana",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "trello",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 1.0",
+  "composioAuth": "OAuth 1.0",
+  "managedMatch": true
+ },
+ {
+  "id": "airtable",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "clickup",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0 or API key",
+  "managedMatch": true
+ },
+ {
+  "id": "monday",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "calendly",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ },
+ {
+  "id": "mailchimp",
+  "status": 200,
+  "ourManaged": "yes",
+  "composioManaged": "yes",
+  "ourAuth": "OAuth 2.0",
+  "composioAuth": "OAuth 2.0",
+  "managedMatch": true
+ }
+]

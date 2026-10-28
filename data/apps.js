@@ -98,8 +98,8 @@ window.APPS_DATA = [
   "oneLiner": "Calendar event scopes are sensitive; verify past 100 users",
   "review": {
    "required": true,
-   "what": "Google OAuth sensitive scope verification (includes brand verification)",
-   "wait": "3-5 business days (Google's FAQ estimates 10)",
+   "what": "Google OAuth sensitive scope verification (branding must be published first)",
+   "wait": "typically 3-5 business days",
    "ev": "docs",
    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
   },
@@ -125,9 +125,10 @@ window.APPS_DATA = [
     "src": "https://support.google.com/cloud/answer/15549945"
    },
    {
-    "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+    "text": "Before approval: unverified apps that request sensitive or restricted scopes are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
     "ev": "docs",
-    "src": "https://support.google.com/cloud/answer/13463817"
+    "src": "https://support.google.com/cloud/answer/13463817",
+    "fixed": true
    }
   ],
   "requirements": [
@@ -324,8 +325,8 @@ window.APPS_DATA = [
   "oneLiner": "Full drive scope is restricted: CASA audit every year",
   "review": {
    "required": true,
-   "what": "Google restricted scope verification plus a CASA security assessment (drive.file alone needs no scope review)",
-   "wait": "Several weeks (Google's FAQ estimates 6 weeks)",
+   "what": "Google restricted scope verification, plus a CASA security assessment if the app stores or transmits restricted-scope data on servers",
+   "wait": "can take several weeks",
    "ev": "docs",
    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
   },
@@ -893,9 +894,10 @@ window.APPS_DATA = [
     "src": "https://support.google.com/cloud/answer/13464325"
    },
    {
-    "text": "Composio says its managed YouTube app's quota is shared across users and recommends your own app for production.",
+    "text": "Composio says its managed YouTube app's quota can be shared across users and recommends creating your own Google Cloud OAuth app for production.",
     "ev": "docs",
-    "src": "https://docs.composio.dev/toolkits/youtube"
+    "src": "https://docs.composio.dev/toolkits/youtube",
+    "fixed": true
    },
    {
     "text": "YouTube runs periodic audits and requires a form if your company changes control.",
@@ -1061,9 +1063,10 @@ window.APPS_DATA = [
     "src": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience"
    },
    {
-    "text": "Before verification: with risk-based step-up consent on, users in other tenants can't consent to multitenant apps registered after 8 Nov 2020 that ask for more than sign-in and profile.",
+    "text": "Before verification: with risk-based step-up consent on, users in other tenants can't consent to most unverified multitenant apps registered after 8 Nov 2020 that ask for more than sign-in and profile.",
     "ev": "docs",
-    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview",
+    "fixed": true
    }
   ],
   "requirements": [
@@ -1136,9 +1139,10 @@ window.APPS_DATA = [
     "src": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
    },
    {
-    "text": "If an admin consents without prompt=consent, the consent only covers the admin's own account.",
+    "text": "If the app needs admin consent and an admin consents without prompt=consent, the consent only covers the admin's own account.",
     "ev": "docs",
-    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant",
+    "fixed": true
    },
    {
     "text": "Client secrets last 24 months at most, and Microsoft recommends under 12 months.",
@@ -1151,9 +1155,10 @@ window.APPS_DATA = [
     "src": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
    },
    {
-    "text": "Multitenant apps must call the /common or /organizations endpoint, not a tenant-specific one.",
+    "text": "Multitenant apps send sign-in requests to /common (or /organizations), but later token requests for an already signed-in user should go to that user's tenant endpoint.",
     "ev": "docs",
-    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant",
+    "fixed": true
    }
   ],
   "steps": [
@@ -1360,9 +1365,10 @@ window.APPS_DATA = [
     "src": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
    },
    {
-    "text": "Multitenant apps must call the /common or /organizations endpoint, not a tenant-specific one.",
+    "text": "Multitenant apps send sign-in requests to /common (or /organizations if they don't support personal accounts), but later token calls for an already signed-in user should go to that user's tenant endpoint.",
     "ev": "docs",
-    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant",
+    "fixed": true
    }
   ],
   "steps": [
@@ -1530,9 +1536,10 @@ window.APPS_DATA = [
     "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
    },
    {
-    "text": "GitHub App user tokens also expire after 8 hours by default; installation tokens expire after 1 hour.",
+    "text": "GitHub App installation tokens expire after 1 hour, and GitHub App user access tokens can expire and be renewed with a refresh token.",
     "ev": "docs",
-    "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps"
+    "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps",
+    "fixed": true
    },
    {
     "text": "Non-expiring OAuth tokens are revoked automatically if unused for one year.",
@@ -2203,9 +2210,10 @@ window.APPS_DATA = [
     "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
    },
    {
-    "text": "Before approval: a private app only works for users in the team or org it belongs to.",
+    "text": "A private app only works for users in the team or org it belongs to, and it needs no Figma review.",
     "ev": "docs",
-    "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+    "src": "https://developers.figma.com/docs/rest-api/oauth-apps/",
+    "fixed": true
    }
   ],
   "requirements": [
@@ -2766,9 +2774,10 @@ window.APPS_DATA = [
     "src": "https://developer.salesforce.com/docs/platform/sfdx-dev/guide/sfdx-dev-auth-connected-app.html"
    },
    {
-    "text": "Apps that skip pre-testing rarely pass review, and each resubmission adds 2-3 weeks.",
+    "text": "Apps that skip pre-testing rarely pass review, and re-testing a resubmission typically takes 2-3 weeks (an estimate).",
     "ev": "docs",
-    "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html"
+    "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html",
+    "fixed": true
    }
   ],
   "steps": [
@@ -2938,9 +2947,10 @@ window.APPS_DATA = [
     "src": "https://docs.composio.dev/toolkits/pipedrive"
    },
    {
-    "text": "\"App not found\" usually means the client ID/secret don't match or the app isn't available to that user.",
+    "text": "\"App not found\" usually means the OAuth app isn't approved or available for that user; also check that the client ID and secret belong to the same app.",
     "ev": "docs",
-    "src": "https://docs.composio.dev/toolkits/pipedrive"
+    "src": "https://docs.composio.dev/toolkits/pipedrive",
+    "fixed": true
    }
   ],
   "steps": [
@@ -3251,14 +3261,16 @@ window.APPS_DATA = [
   ],
   "gotchas": [
    {
-    "text": "The authorization URL must use the regional host (US, EU or AU) matching the customer's workspace.",
+    "text": "Each region (US, EU, AU) has its own authorization host; matching it avoids an extra region-selection step and is required only when the customer signs in with Google.",
     "ev": "docs",
-    "src": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth"
+    "src": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth",
+    "fixed": true
    },
    {
-    "text": "You may be asked to cut scopes and resubmit, which restarts the review.",
+    "text": "You may be asked to adjust your scopes and resubmit the app for review.",
     "ev": "docs",
-    "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app"
+    "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app",
+    "fixed": true
    },
    {
     "text": "OAuth is off until you tick \"Use OAuth\" on the app's Authentication page.",
@@ -3575,9 +3587,10 @@ window.APPS_DATA = [
     "src": "https://docs.composio.dev/toolkits/discord"
    },
    {
-    "text": "Since June 10, 2026, App Verification and Privileged Intent review are separate processes.",
+    "text": "As of June 10, 2026, the privileged intent review threshold is based on more than 10,000 unique users instead of 100+ servers, and approved apps must reapply annually.",
     "ev": "docs",
-    "src": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review"
+    "src": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review",
+    "fixed": true
    },
    {
     "text": "Approved privileged intent access must be reapplied for every year.",
@@ -3701,19 +3714,22 @@ window.APPS_DATA = [
   ],
   "requirements": [
    {
-    "text": "Publishing to external users requires domain validation for privacy, terms, redirect, webhook and home URLs.",
+    "text": "Publishing requires one-time domain validation for the privacy policy, OAuth redirect, chat subscription bot, webhook callback and home URLs.",
     "ev": "docs",
-    "src": "https://developers.zoom.us/docs/build-flow/publish"
+    "src": "https://developers.zoom.us/docs/build-flow/publish",
+    "fixed": true
    },
    {
-    "text": "Reviewers need test account credentials, and first submissions must use the Production client ID.",
+    "text": "Zoom asks for test credentials so reviewers can fully test the app, and first-time submissions must use the Production Client ID during authorization.",
     "ev": "docs",
-    "src": "https://developers.zoom.us/docs/build-flow/publish"
+    "src": "https://developers.zoom.us/docs/build-flow/publish",
+    "fixed": true
    },
    {
-    "text": "Sharing a beta URL externally requires SSDLC docs, SAST and DAST results, and a privacy policy.",
+    "text": "Sharing a beta URL externally requires SSDLC docs, SAST and DAST results, a privacy policy, any three of five extra security artifacts, and TLS 1.2 or higher.",
     "ev": "docs",
-    "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+    "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps",
+    "fixed": true
    },
    {
     "text": "Published apps must provide Terms of Use, a privacy policy and user support.",
@@ -3915,9 +3931,10 @@ window.APPS_DATA = [
     "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow"
    },
    {
-    "text": "Composio's organization tools need w_organization_social or rw_organization_admin, which are not open permissions.",
+    "text": "Composio's LinkedIn organization tools need w_organization_social to post as an organization, rw_organization_admin for page and share statistics, and r_organization_admin for company info.",
     "ev": "docs",
-    "src": "https://docs.composio.dev/toolkits/linkedin"
+    "src": "https://docs.composio.dev/toolkits/linkedin",
+    "fixed": true
    },
    {
     "text": "w_member_social and r_organization_admin cannot be used together.",
@@ -4081,9 +4098,10 @@ window.APPS_DATA = [
   ],
   "gotchas": [
    {
-    "text": "Access tokens last two hours, and refresh tokens are only issued with the offline.access scope.",
+    "text": "By default, access tokens are valid for two hours unless the offline.access scope is used, and refresh tokens are only issued with the offline.access scope.",
     "ev": "docs",
-    "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/authentication/oauth-2-0/authorization-code.mdx"
+    "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/authentication/oauth-2-0/authorization-code.mdx",
+    "fixed": true
    },
    {
     "text": "Credentials are shown once; losing them means regenerating and invalidating the old ones.",
@@ -4343,7 +4361,7 @@ window.APPS_DATA = [
   },
   "review": {
    "required": true,
-   "what": "Shopify App Store review (public distribution), plus protected customer data review if you read customer data",
+   "what": "Public distribution requires Shopify approval and Shopify App Store registration",
    "wait": "not stated",
    "ev": "docs",
    "src": "https://shopify.dev/docs/apps/launch/distribution"
@@ -4360,16 +4378,18 @@ window.APPS_DATA = [
     "src": "https://shopify.dev/docs/apps/launch/distribution"
    },
    {
-    "text": "Before approval: protected customer data needs no review only while the app is installed solely on development stores.",
+    "text": "Before approval: a public app can use protected customer data without review only while installed solely on development stores; custom apps get level 1 and 2 access without review.",
     "ev": "docs",
-    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data",
+    "fixed": true
    }
   ],
   "requirements": [
    {
-    "text": "Public apps must request protected customer data access, and level 1 and 2 access requires review.",
+    "text": "Public apps that use protected customer data must request access, and level 1 and 2 access requires review.",
     "ev": "docs",
-    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data",
+    "fixed": true
    },
    {
     "text": "App Store apps must subscribe to the customers/data_request, customers/redact and shop/redact compliance webhooks.",
@@ -4758,9 +4778,10 @@ window.APPS_DATA = [
     "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq"
    },
    {
-    "text": "Development and production keys are separate, and sandbox redirect URIs can use localhost.",
+    "text": "Sandbox and production redirect URIs are set separately, and sandbox redirect URIs can use localhost without HTTPS.",
     "ev": "docs",
-    "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/set-redirect-uri"
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/set-redirect-uri",
+    "fixed": true
    },
    {
     "text": "The com.intuit.quickbooks.payment scope can cause Cloudflare Error 1016 if Payments is not enabled.",
@@ -5233,9 +5254,10 @@ window.APPS_DATA = [
     "src": "https://support.box.com/hc/en-us/articles/360044196653-Managing-custom-apps"
    },
    {
-    "text": "Box disables all unpublished platform apps when that enterprise setting is on.",
+    "text": "With Disable unpublished platform apps by default on, Box disables unpublished platform apps whose status an admin never manually changed; admins can re-enable them in Platform Apps.",
     "ev": "docs",
-    "src": "https://support.box.com/hc/en-us/articles/49348283011731-Enterprise-Settings-Platform-Apps"
+    "src": "https://support.box.com/hc/en-us/articles/49348283011731-Enterprise-Settings-Platform-Apps",
+    "fixed": true
    },
    {
     "text": "Redirect URIs are checked by exact match.",
@@ -5337,7 +5359,7 @@ window.APPS_DATA = [
    "what": "Asana app submission review (needed to serve any workspace or list in the App Directory)",
    "wait": "Initial response within one week",
    "ev": "docs",
-   "src": "https://developers.asana.com/docs/submit-your-app"
+   "src": "https://developers.asana.com/docs/publish-your-app"
   },
   "cost": {
    "text": "$0",
@@ -5348,7 +5370,7 @@ window.APPS_DATA = [
    {
     "text": "Before submission, Asana says the app is for your own organization, development, or internal tools.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/submit-your-app"
+    "src": "https://developers.asana.com/docs/publish-your-app"
    },
    {
     "text": "Rate limit is per token: 150 requests/min on free domains, 1,500/min on paid domains.",
@@ -5370,24 +5392,25 @@ window.APPS_DATA = [
    {
     "text": "Submission requires a privacy policy URL and a support page URL.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/submit-your-app"
+    "src": "https://developers.asana.com/docs/publish-your-app"
    },
    {
     "text": "Submission requires an app icon, images, a short description and a 250+ character long description.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/submit-your-app"
+    "src": "https://developers.asana.com/docs/publish-your-app"
    },
    {
     "text": "Apps submitted to the App Directory must be shared to Any workspace.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/manage-distribution"
+    "src": "https://developers.asana.com/docs/share-your-app"
    }
   ],
   "gotchas": [
    {
-    "text": "Access tokens last one hour; refresh tokens are long-lived until the user revokes access.",
+    "text": "Access tokens typically last one hour (3600 seconds); refresh tokens are long-lived and are used to get new access tokens when old ones expire.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/oauth"
+    "src": "https://developers.asana.com/docs/oauth",
+    "fixed": true
    },
    {
     "text": "Turning on Full permissions means you cannot request specific scopes.",
@@ -5407,12 +5430,12 @@ window.APPS_DATA = [
    {
     "text": "Enterprise admins can control which apps are allowed from the admin console.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/manage-distribution"
+    "src": "https://developers.asana.com/docs/share-your-app"
    },
    {
     "text": "Switching from Any workspace to Specific workspace blocks new authorizations from other workspaces.",
     "ev": "docs",
-    "src": "https://developers.asana.com/docs/manage-distribution"
+    "src": "https://developers.asana.com/docs/share-your-app"
    }
   ],
   "steps": [
@@ -5457,11 +5480,11 @@ window.APPS_DATA = [
    },
    {
     "t": "Asana manage distribution",
-    "u": "https://developers.asana.com/docs/manage-distribution"
+    "u": "https://developers.asana.com/docs/share-your-app"
    },
    {
     "t": "Asana submit your app",
-    "u": "https://developers.asana.com/docs/submit-your-app"
+    "u": "https://developers.asana.com/docs/publish-your-app"
    },
    {
     "t": "Asana rate limits",
@@ -5680,9 +5703,10 @@ window.APPS_DATA = [
     "src": "https://airtable.com/developers/web/api/rate-limits"
    },
    {
-    "text": "Keep token requests below 10 per second per token.",
+    "text": "Keep refresh requests below 10 per second per token.",
     "ev": "docs",
-    "src": "https://airtable.com/developers/web/api/oauth-reference"
+    "src": "https://airtable.com/developers/web/api/oauth-reference",
+    "fixed": true
    }
   ],
   "requirements": [
@@ -5981,9 +6005,10 @@ window.APPS_DATA = [
     "src": "https://developer.monday.com/apps/docs/oauth"
    },
    {
-    "text": "Marketplace apps are reviewed on product, engineering, security, privacy, support, docs and legal.",
+    "text": "Marketplace apps are reviewed on product, engineering, security, privacy, content, assets, support, documentation and legal.",
     "ev": "docs",
-    "src": "https://developer.monday.com/apps/docs/submit-your-app"
+    "src": "https://developer.monday.com/apps/docs/submit-your-app",
+    "fixed": true
    }
   ],
   "gotchas": [

@@ -16,7 +16,7 @@ A developer building an AI agent wants their users to connect Gmail, Slack or Hu
 | Page | What it shows |
 |---|---|
 | **Library** | 37 researched guides with filters for difficulty, category and Composio-managed. Each guide covers effort, approval wait, limits before approval, requirements, gotchas, steps and sources. An agent bar answers questions across apps, such as "which apps need a review?" or "compare HubSpot and Salesforce". |
-| **Choices on every guide** | Use Composio's managed app or your own (with what you give up, from Composio's docs). Only your team or any customer (36 apps, researched). For 8 apps where permissions change the review (Google Calendar, Drive, Sheets, YouTube, Outlook, Teams, LinkedIn, Shopify), pick what your agent does and see the tier. Stats and the launch path update with every choice. |
+| **Choices on every guide** | Use Composio's managed app or your own (with what you give up, from Composio's docs). Only your team or any customer (36 apps, researched). For 19 apps where permissions change the review or who must approve (Google Calendar, Drive, Sheets, YouTube, Outlook, Teams, LinkedIn, Shopify, Slack, Discord, HubSpot, Zoom, QuickBooks, Xero, Dropbox, GitHub, Jira, X, Figma), pick what your agent does and see the tier. Where Composio also accepts an API key (10 apps), that's a third route with no OAuth app at all. Stats and the launch path update with every choice. |
 | **Gmail guide** | The deep example. You pick what your agent does, and it works out the minimum scopes, the Google review tier, wait, cost and audit, and a cheaper alternative. Steps have statuses, checks, "Ask agent" and "Fix with agent". |
 | **Generate a guide** | **Live.** Type any app name or website. An agent researches the provider's official docs and writes a guide in the same format, with every quote checked against its page. The result can be shared as a link. |
 | **Verification log** | How the guides were checked: a random 45-claim sample re-checked against sources, what was corrected, and what we couldn't confirm. |
@@ -84,7 +84,14 @@ npm run dev                     # http://localhost:4321
 
 ## Verification
 
-From the research: **506** claims are backed by a source, and **87** items are honestly marked "Not confirmed".
+**Full audit:** eight separate agents re-opened the source for **all 527** sourced claims.
+- **499** were confirmed word for word.
+- **27** were partly right and **1** wasn't on its page; all 28 were rewritten to what the page supports.
+- **0** were contradicted or unreachable.
+
+Composio's managed and auth facts were re-checked against the live toolkit pages for all 37 apps; all matched.
+
+An earlier random **45**-claim re-check, with at least one claim per app, came first:
 
 From the re-check of **45** randomly sampled claims, with at least one per app:
 - **38** were confirmed word for word;
@@ -97,7 +104,7 @@ Other things we found and fixed include:
 - Composio's managed X app was removed in February 2026.
 - Two unsourced CASA figures were removed.
 
-Details are in the in-app Verification log, `research/verify.json` and `research/sample.json`.
+Details are in the in-app Verification log, `research/audit/`, `research/composio_audit.json`, `research/verify.json` and `research/sample.json`.
 
 ## Setup attempts (tested)
 
@@ -130,7 +137,7 @@ Well over the suggested 6–8 hours. Much of it went into research and fact-chec
   - They take 30–60 s.
   - They use Gemini's free tier, which is sometimes overloaded. A fallback chain across four models covers most of that. If all four are busy, the page shows what it found and offers a retry.
   - Free Gemini 3 models can't use Google Search grounding. So we search with DuckDuckGo, which works locally but is blocked from Vercel's servers. In production the agent falls back to official doc URLs it knows, and each one is fetched and checked.
-- **Library coverage.** Only 45 of 506 sourced claims were independently re-checked; the rest are sourced but not individually re-verified. A few official sites couldn't be read during research: Notion's and Box's developer sites, and some Reddit and Discord help pages. Those guides lean on Composio's docs and official doc repos, and say so.
+- **Library coverage.** Every sourced claim was re-checked once against its page (Oct 29). Docs change, so the checked date matters. Permission tiers marked "inferred" (Google Calendar and YouTube) aren't published by Google. A few official sites couldn't be read during research: Notion's and Box's developer sites, and some Reddit and Discord help pages. Those guides lean on Composio's docs and official doc repos, and say so.
 - **Some permission tiers are inferred.** Google labels Drive and Sheets scope tiers, but not Calendar or YouTube. Those show "inferred" (not on Google's restricted list). Microsoft admin consent comes from the Graph permissions reference table.
 - **Gmail tool-to-scope mapping is inferred** from Google's API docs, because Composio doesn't publish a per-tool scope map. It's tagged `inferred`.
 - **The side-panel agent is mostly built-in answers.**
@@ -155,4 +162,5 @@ dev-server.mjs              local server (static + /api/generate)
 research/                   agent brief, raw research per batch, sample + verification results
 scripts/build_data.py       raw research -> data/apps.js, data/verify.js
 scripts/build_choices.py    research/choices -> data/choices.js (audience + permission catalogues)
+scripts/audit_composio.mjs  re-check managed/auth facts against docs.composio.dev -> data/composio.js
 ```

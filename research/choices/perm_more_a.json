@@ -1,0 +1,470 @@
+{
+ "slack": {
+  "varies": true,
+  "why": "Most scopes can be installed by any workspace member, but some need a workspace admin or an Enterprise org admin, and some only work fully for Marketplace-listed or internal apps.",
+  "order": [
+   "standard",
+   "marketplace-review",
+   "workspace-admin",
+   "enterprise-org-admin"
+  ],
+  "options": [
+   {
+    "k": "send_message",
+    "task": "Post messages as the app in channels",
+    "scope": "chat:write",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "When admin approval is not required, workspace members can install the app directly.",
+    "src": "https://docs.slack.dev/ai/slackbot-mcp-client/admin-approval",
+    "note": "A workspace can still turn on admin approval for all apps, whatever the scopes."
+   },
+   {
+    "k": "read_channel_history",
+    "task": "Read message history in public channels",
+    "scope": "channels:history",
+    "tier": "marketplace-review",
+    "ev": "docs",
+    "quote": "This rate limit reduction will apply only to applications that are commercially distributed outside of the Marketplace (also called “unlisted” apps).",
+    "src": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps",
+    "note": "Not a block: unlisted commercial apps get 1 request per minute and 15 objects per call on conversations.history/replies; internal and Marketplace apps are unaffected."
+   },
+   {
+    "k": "search_messages",
+    "task": "Search workspace messages for an agent with the Real-time Search API",
+    "scope": "search:read.public",
+    "tier": "marketplace-review",
+    "ev": "docs",
+    "quote": "The RTS API is available for directory-published apps and internal apps only.",
+    "src": "https://docs.slack.dev/apis/web-api/real-time-search-api",
+    "note": "Private channel, DM and file search scopes need both an admin and the end user to grant access; the legacy search:read scope is not accepted in the Marketplace."
+   },
+   {
+    "k": "approve_slack_connect",
+    "task": "Approve or decline Slack Connect channel invitations",
+    "scope": "conversations.connect:manage",
+    "tier": "workspace-admin",
+    "ev": "docs",
+    "quote": "Since approval requires more authority than accepting invitations, apps with this feature can only be installed by a workspace owner or admin.",
+    "src": "https://docs.slack.dev/apis/slack-connect/using-slack-connect-api-methods",
+    "note": ""
+   },
+   {
+    "k": "org_conversation_search",
+    "task": "Search and inspect conversations across an Enterprise org",
+    "scope": "admin.conversations:read",
+    "tier": "enterprise-org-admin",
+    "ev": "docs",
+    "quote": "The app requesting this scope must be installed by an Admin or Owner of an Enterprise organization.",
+    "src": "https://docs.slack.dev/reference/scopes/admin.conversations.read",
+    "note": "admin.* scopes are on the list the Marketplace review says apps must not request, so this suits internal apps only."
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Any member",
+    "effect": "Any workspace member can install the app and approve the scopes on the consent screen, unless the workspace requires admin approval.",
+    "quote": "When admin approval is not required, workspace members can install the app directly.",
+    "src": "https://docs.slack.dev/ai/slackbot-mcp-client/admin-approval"
+   },
+   "marketplace-review": {
+    "n": "Marketplace or internal",
+    "effect": "To use it at full strength for outside customers, list the app in the Slack Marketplace, which means a functional review of each scope.",
+    "quote": "Feedback from this part of the review generally takes up to 10 weeks for new submissions",
+    "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+   },
+   "workspace-admin": {
+    "n": "Workspace admin",
+    "effect": "A workspace owner or admin has to be the person who installs the app.",
+    "quote": "apps with this feature can only be installed by a workspace owner or admin.",
+    "src": "https://docs.slack.dev/apis/slack-connect/using-slack-connect-api-methods"
+   },
+   "enterprise-org-admin": {
+    "n": "Enterprise org admin",
+    "effect": "An Enterprise org admin or owner must install the app on the whole org, not on one workspace.",
+    "quote": "Also, the app must be installed on the entire org, not on an individual workspace.",
+    "src": "https://docs.slack.dev/reference/scopes/admin.conversations.read"
+   }
+  }
+ },
+ "discord": {
+  "varies": true,
+  "why": "Ordinary scopes and standard intents need no review, privileged gateway intents need a toggle and later Discord review, and several scopes are limited to approved partners.",
+  "order": [
+   "standard",
+   "privileged-intent",
+   "approved-partner"
+  ],
+  "options": [
+   {
+    "k": "bot_in_server",
+    "task": "Add a bot to a server to post and respond in channels",
+    "scope": "bot",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "they’ll be prompted to add the bot to a guild in which they have proper permissions.",
+    "src": "https://discord.com/developers/docs/topics/oauth2",
+    "note": "The person adding the bot needs the right permissions in that server."
+   },
+   {
+    "k": "slash_commands",
+    "task": "Register slash commands in a server",
+    "scope": "applications.commands",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "applications.commands allows your app to add commands to a guild - included by default with the bot scope",
+    "src": "https://discord.com/developers/docs/topics/oauth2",
+    "note": ""
+   },
+   {
+    "k": "list_user_servers",
+    "task": "List the servers a signed-in user belongs to",
+    "scope": "guilds",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "guilds allows /users/@me/guilds to return basic information about all of a user’s guilds",
+    "src": "https://discord.com/developers/docs/topics/oauth2",
+    "note": ""
+   },
+   {
+    "k": "read_message_content",
+    "task": "Read the text of messages in server channels",
+    "scope": "bot + MESSAGE_CONTENT intent",
+    "tier": "privileged-intent",
+    "ev": "docs",
+    "quote": "Like other privileged intents, MESSAGE_CONTENT must be approved for your app.",
+    "src": "https://discord.com/developers/docs/events/gateway",
+    "note": "Without it, content fields come back empty except for DMs, mentions and the app's own messages."
+   },
+   {
+    "k": "read_member_list",
+    "task": "Read a server's member list and member updates",
+    "scope": "bot + GUILD_MEMBERS intent",
+    "tier": "privileged-intent",
+    "ev": "docs",
+    "quote": "Currently, those intents include: GUILD_PRESENCES GUILD_MEMBERS MESSAGE_CONTENT",
+    "src": "https://discord.com/developers/docs/events/gateway",
+    "note": ""
+   },
+   {
+    "k": "read_user_dms",
+    "task": "See a user's DMs and group DMs",
+    "scope": "dm_channels.read",
+    "tier": "approved-partner",
+    "ev": "docs",
+    "quote": "dm_channels.read allows your app to see information about the user’s DMs and group DMs - only available to approved partners",
+    "src": "https://discord.com/developers/docs/topics/oauth2",
+    "note": ""
+   },
+   {
+    "k": "join_voice",
+    "task": "Connect to voice on a user's behalf",
+    "scope": "voice",
+    "tier": "approved-partner",
+    "ev": "docs",
+    "quote": "voice allows your app to connect to voice on user’s behalf and see all the voice members - only available to approved partners",
+    "src": "https://discord.com/developers/docs/topics/oauth2",
+    "note": ""
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard",
+    "effect": "No Discord review; the user or server manager just authorizes the app.",
+    "quote": "Standard intents can be passed by default. You don’t need any additional permissions or configurations.",
+    "src": "https://discord.com/developers/docs/events/gateway"
+   },
+   "privileged-intent": {
+    "n": "Privileged intent",
+    "effect": "Toggle the intent in the Developer Portal, then apply for review once the app passes 10,000 users or needs verification at 100+ servers.",
+    "quote": "When an app has more than 10,000 unique users who can see your app across all the servers it’s in, it requires review for continued access to Privileged Intents.",
+    "src": "https://discord.com/developers/docs/events/gateway"
+   },
+   "approved-partner": {
+    "n": "Approved partner",
+    "effect": "Ask a Discord account representative for partner access; without approval the OAuth flow may fail.",
+    "quote": "To inquire about access about scopes that are only available to approved partners, speak to your Discord account representative",
+    "src": "https://discord.com/developers/docs/topics/oauth2"
+   }
+  }
+ },
+ "hubspot": {
+  "varies": true,
+  "why": "Normal CRM scopes need only the installing user's consent, but Sensitive Data scopes need HubSpot approval for Marketplace apps, a Super admin to install, and an Enterprise account.",
+  "order": [
+   "standard",
+   "sensitive-approval"
+  ],
+  "options": [
+   {
+    "k": "read_contacts",
+    "task": "Read contact records",
+    "scope": "crm.objects.contacts.read",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Required scopes: scopes that must be authorized by the user and must be present in the scope query parameter in your app’s install URL for successful installation.",
+    "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+    "note": "The installing user must have access to every requested scope, or a Super Admin must install."
+   },
+   {
+    "k": "update_contacts",
+    "task": "Create and update contacts",
+    "scope": "crm.objects.contacts.write",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Create, delete, and make changes to [contacts]",
+    "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+    "note": ""
+   },
+   {
+    "k": "update_deals",
+    "task": "Create and update deals",
+    "scope": "crm.objects.deals.write",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Create, delete, or make changes to [deals]",
+    "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+    "note": ""
+   },
+   {
+    "k": "read_custom_objects",
+    "task": "Read custom object records",
+    "scope": "crm.objects.custom.read",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Available to *Enterprise* accounts only.",
+    "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+    "note": "No extra review, but only Enterprise HubSpot accounts can grant it."
+   },
+   {
+    "k": "read_sensitive_contact_fields",
+    "task": "Read Sensitive Data properties on contacts",
+    "scope": "crm.objects.contacts.sensitive.read",
+    "tier": "sensitive-approval",
+    "ev": "docs",
+    "quote": "you’ll need to request access to specific sensitive scopes from HubSpot’s Ecosystem Quality team.",
+    "src": "https://developers.hubspot.com/docs/api-reference/latest/crm/properties/sensitive-data",
+    "note": "Applies to legacy public and Marketplace-bound apps; privately distributed apps can add the scope in config."
+   },
+   {
+    "k": "read_highly_sensitive_contact_fields",
+    "task": "Read Highly Sensitive Data properties (e.g. SSN) on contacts",
+    "scope": "crm.objects.contacts.highly_sensitive.read",
+    "tier": "sensitive-approval",
+    "ev": "docs",
+    "quote": "If you want to access Highly Sensitive Data, you'll need [additional scopes]",
+    "src": "https://developers.hubspot.com/docs/api-reference/latest/crm/properties/sensitive-data",
+    "note": "The page's anchor labels highly sensitive scopes as beta; I could not find a separate process beyond the Sensitive Data one."
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard",
+    "effect": "The installing user approves the scopes; no extra HubSpot approval is needed for the scope itself.",
+    "quote": "The user installing the app must have access to all requested scopes.",
+    "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide"
+   },
+   "sensitive-approval": {
+    "n": "Sensitive Data",
+    "effect": "For public or Marketplace apps, get the scopes allowlisted by HubSpot's Ecosystem Quality team, then have a Super admin in an Enterprise account authorize.",
+    "quote": "Once you’ve notified your app users, a Super admin in their account will need to:",
+    "src": "https://developers.hubspot.com/docs/api-reference/latest/crm/properties/sensitive-data"
+   }
+  }
+ },
+ "zoom": {
+  "varies": true,
+  "why": "Each granular scope's suffix decides who can grant it: any user, an account admin, or an admin in a master account.",
+  "order": [
+   "user",
+   "admin",
+   "master"
+  ],
+  "options": [
+   {
+    "k": "create_meeting",
+    "task": "Create a meeting for the signed-in user",
+    "scope": "meeting:write:meeting",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "`meeting:write:meeting` `meeting:write:meeting:admin`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": "The :admin variant of the same scope lets the app act for other users in the account."
+   },
+   {
+    "k": "list_meetings",
+    "task": "List the signed-in user's meetings",
+    "scope": "meeting:read:list_meetings",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "`meeting:read:list_meetings` `meeting:read:list_meetings:admin`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": ""
+   },
+   {
+    "k": "meeting_summary",
+    "task": "Get a meeting or webinar summary",
+    "scope": "meeting:read:summary",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "`meeting:read:summary` `meeting:read:summary:admin`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": ""
+   },
+   {
+    "k": "list_recordings",
+    "task": "List a user's cloud recordings",
+    "scope": "cloud_recording:read:list_user_recordings",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "`cloud_recording:read:list_user_recordings`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": ""
+   },
+   {
+    "k": "list_users",
+    "task": "List all users in the Zoom account",
+    "scope": "user:read:list_users:admin",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "`user:read:list_users:admin`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": "Only an :admin variant is listed for this endpoint."
+   },
+   {
+    "k": "participant_report",
+    "task": "Get meeting participant reports",
+    "scope": "report:read:list_meeting_participants:admin",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "`report:read:list_meeting_participants:admin`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": "Only :admin and :master variants are listed for this endpoint."
+   },
+   {
+    "k": "sub_account_meetings",
+    "task": "Create meetings in sub accounts of a master account",
+    "scope": "meeting:write:meeting:master",
+    "tier": "master",
+    "ev": "docs",
+    "quote": "`meeting:write:meeting:master`",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-granular",
+    "note": ""
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "User-level",
+    "effect": "Any individual user can authorize the scope for their own data.",
+    "quote": "Access scope without an access value indicates the scope is tied to data claims that can be granted by individual users.",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-overview/"
+   },
+   "admin": {
+    "n": "Admin-level",
+    "effect": "Build an admin-managed app and have an account admin add it for all users.",
+    "quote": "admin - The access scope is tied to data claims that can only be granted by users with administrator role.",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-overview/"
+   },
+   "master": {
+    "n": "Master account",
+    "effect": "An admin in a master account must grant it, for master and sub-account setups only.",
+    "quote": "master - The access scope is tied to data claims that can only be granted by users with administrator role in a master account in the master-sub account set up.",
+    "src": "https://developers.zoom.us/docs/integrations/oauth-scopes-overview/"
+   }
+  }
+ },
+ "quickbooks": {
+  "varies": true,
+  "why": "Core accounting and payments scopes are open to every app, but premium API scopes (projects, custom fields, sales tax, payroll compensation) only appear for paid Silver, Gold or Platinum partners.",
+  "order": [
+   "standard",
+   "premium-tier"
+  ],
+  "options": [
+   {
+    "k": "create_invoice",
+    "task": "Create and send invoices",
+    "scope": "com.intuit.quickbooks.accounting",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Grants access to the QuickBooks Online Accounting API, which focuses on accounting data.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": ""
+   },
+   {
+    "k": "read_reports",
+    "task": "Read customers, bills and financial reports",
+    "scope": "com.intuit.quickbooks.accounting",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Grants access to the QuickBooks Online Accounting API, which focuses on accounting data.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": ""
+   },
+   {
+    "k": "process_payment",
+    "task": "Charge a card or bank account",
+    "scope": "com.intuit.quickbooks.payment",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "If it only needs access to payments data, select the payments scope.",
+    "src": "https://developer.intuit.com/app/developer/qbpayments/docs/get-started/start-developing-your-app",
+    "note": "I could not confirm on official Intuit pages that the payments scope needs its own approval; third-party guides say it is US only."
+   },
+   {
+    "k": "manage_projects",
+    "task": "Create and manage projects",
+    "scope": "project-management.project",
+    "tier": "premium-tier",
+    "ev": "docs",
+    "quote": "Grants access to read and write Project data.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": "Projects API is listed as a premium API."
+   },
+   {
+    "k": "custom_fields",
+    "task": "Read and write custom field definitions",
+    "scope": "app-foundations.custom-field-definitions",
+    "tier": "premium-tier",
+    "ev": "docs",
+    "quote": "Grants access to read and write Custom Fields definitions data.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": "Custom Fields API is listed as a premium API."
+   },
+   {
+    "k": "sales_tax",
+    "task": "Calculate sales tax on transactions",
+    "scope": "indirect-tax.tax-calculation.quickbooks",
+    "tier": "premium-tier",
+    "ev": "docs",
+    "quote": "Grants access to the Sales Tax API.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": "Sales Tax API is listed as a premium API."
+   },
+   {
+    "k": "payroll_pay_types",
+    "task": "Read payroll pay types",
+    "scope": "payroll.compensation.read",
+    "tier": "premium-tier",
+    "ev": "docs",
+    "quote": "Compensation data can only be queried for customers using QuickBooks Payroll.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/scopes",
+    "note": "Payroll Compensation API is listed as a premium API and is not available in sandbox."
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard",
+    "effect": "Pass the App Assessment Questionnaire to get production keys, then the customer approves the scopes.",
+    "quote": "Note: The Show Credentials switch appears only after the App Assessment Questionnaire is approved.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+   },
+   "premium-tier": {
+    "n": "Premium API",
+    "effect": "Subscribe to the paid Silver tier or higher, then enable the restricted scopes on the app's Permissions page.",
+    "quote": "Premium APIs are part of the Intuit App Partner Program and are available to Silver, Gold, and Platinum partners only. Builder tier partners do not have access to premium APIs.",
+    "src": "https://developer.intuit.com/app/developer/qbo/docs/learn/premium-apis"
+   }
+  }
+ }
+}

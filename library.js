@@ -63,7 +63,7 @@ function renderLibrary() {
     out.innerHTML = `<div class="lgrid">${list.map(a => {
       const d = DIFF[a.difficulty];
       return `<button class="acard" data-app="${a.id}">
-        <span class="ah">${logo(a, 34)}<span class="an"><b>${a.name}</b><small>${a.category}</small></span><span class="tier ${d.cls}">${d.n}</span></span>
+        <span class="ah">${logo(a, 34)}<span class="an"><b>${esc(a.name)}</b><small>${a.category}</small></span><span class="tier ${d.cls}">${d.n}</span></span>
         <span class="aone">${esc(cap(a.oneLiner || ''))}</span>
         <span class="am"><span><small>Setup</small>${a.setupShort || (a.setup ? a.setup.time : '—')}</span><span><small>Approval</small>${esc(shortWait(a))}</span>${a.managed === 'yes' ? '<span class="mchip" title="Composio has a managed app">Managed</span>' : a.managed === 'no' ? '<span class="ownchip" title="Composio needs your own credentials">Own app</span>' : ''}</span>
         <span class="ago">Open guide<svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
@@ -93,18 +93,23 @@ const PERM_TIERS = {
   linkedin: { order: ['open', 'partner'], t: { open: { n: 'Self-serve', diff: 'easy', review: 'Self-serve, no application' }, partner: { n: 'Partner program', diff: 'gated', review: 'Apply to a LinkedIn partner program first', wait: 'Not stated' } } },
   shopify: { order: ['standard', 'protected-1', 'protected-2'], t: { standard: { n: 'Standard data', diff: 'hard', review: 'App Store review if listed' }, 'protected-1': { n: 'Protected data, Level 1', diff: 'hard', review: 'Protected customer data request and review' }, 'protected-2': { n: 'Protected data, Level 2', diff: 'hard', review: 'Level 2 protected data: stricter requirements and review' } } },
 };
-const familyOf = id => /^google|^youtube/.test(id) ? 'google' : /outlook|teams/.test(id) ? 'microsoft' : id === 'linkedin' ? 'linkedin' : id === 'shopify' ? 'shopify' : null;
+const familyOf = id => /^google|^youtube/.test(id) ? 'google' : /outlook|teams/.test(id) ? 'microsoft' : id === 'linkedin' ? 'linkedin' : id === 'shopify' ? 'shopify' : (CH.perms[id] && CH.perms[id].order) ? 'own' : null;
+/* apps researched later define their own ordered tiers in the data */
+const famTiers = (fam, P) => fam === 'own' ? { order: P.order, t: Object.fromEntries(P.order.map(k => [k, { n: (P.tiers[k] || {}).n || k, review: (P.tiers[k] || {}).effect }])) } : PERM_TIERS[fam];
+const CO = window.COMPOSIO || {};
+const hasKey = a => ((CO[a.id] || {}).auths || []).includes('API key');
 const AS = {};
 function stateOf(a) { return AS[a.id] || (AS[a.id] = { route: 'own', aud: 'public', perms: new Set() }); }
 function viewOf(a, st) {
   const rv = a.review || {}, vw = { diff: a.difficulty, time: a.setup ? a.setup.time : '—', wait: shortWait(a), waitFull: reviewTxt(a), waitTag: rv.required && rv.ev ? evl(rv.ev, rv.src) : '', notes: [] };
   if (st.route === 'managed') return Object.assign(vw, { diff: 'easy', time: '0 min', wait: 'None', waitFull: "Uses Composio's approved app", waitTag: evl('docs', COMPOSIO_SRC) });
+  if (st.route === 'apikey') return Object.assign(vw, { diff: 'easy', time: '~5 min', wait: 'None', waitFull: 'No OAuth app, so no provider review', waitTag: evl('docs', (CO[a.id] || {}).src) });
   const P = CH.perms[a.id], fam = familyOf(a.id);
   if (P && fam && st.perms.size) {
-    const F = PERM_TIERS[fam], picked = P.options.filter(o => st.perms.has(o.k));
+    const F = famTiers(fam, P), picked = P.options.filter(o => st.perms.has(o.k));
     const top = picked.map(o => o.tier).sort((x, y) => F.order.indexOf(y) - F.order.indexOf(x))[0];
     const T = Object.assign({}, F.t[top] || {}, (P.tiers || {})[top] || {});
-    vw.tier = { key: top, n: T.n || top, review: T.effect || T.review, src: T.src, ev: T.ev || 'docs' };
+    vw.tier = { key: top, n: T.n || top, review: T.effect || T.review, src: T.src, ev: T.ev || 'docs', fam };
     if (T.diff) vw.diff = T.diff;
     if (T.wait) { vw.wait = T.wait; vw.waitFull = T.wait; vw.waitTag = T.src ? evl(T.ev || 'docs', T.src) : ''; }
   }
@@ -119,20 +124,34 @@ function setupPanel(a, st, vw) {
   const man = a.managed === 'yes', A = (CH.aud || {})[a.id], P = CH.perms[a.id], fam = familyOf(a.id);
   const seg = (name, opts, cur) => `<div class="seg" role="radiogroup">${opts.map(([v, l]) => `<button type="button" data-set="${name}" data-val="${v}" class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
   const rows = [];
-  if (man) rows.push(`<div class="srow"><span class="sk">How users connect</span>${seg('route', [['managed', "Composio's app"], ['own', 'Your own app']], st.route)}<span class="shint">${st.route === 'managed' ? 'Ready today. Nothing to set up.' : 'Your name on the consent screen.'}</span></div>`);
+  const routes = [...(man ? [['managed', "Composio's app"]] : []), ['own', 'Your own OAuth app'], ...(hasKey(a) ? [['apikey', 'API key']] : [])];
+  if (routes.length > 1) rows.push(`<div class="srow"><span class="sk">How users connect</span>${seg('route', routes, st.route)}<span class="shint">${st.route === 'managed' ? 'Ready today. Nothing to set up.' : st.route === 'apikey' ? 'Each user pastes their own key. No OAuth app.' : 'Your name on the consent screen.'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works !== 'no' && !/^same as public/i.test(A.private.text || '')) rows.push(`<div class="srow"><span class="sk">Who connects</span>${seg('aud', [['private', 'Only my team'], ['public', 'Any customer']], st.aud)}<span class="shint">${st.aud === 'private' ? esc(A.private.who || '') : 'Customers outside your organization'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works === 'no') rows.push(`<div class="srow"><span class="sk">Who connects</span><span class="tier t-hard">No private option</span><span class="shint">${esc(A.private.text || '')} ${A.private.src ? evl('docs', A.private.src) : ''}</span></div>`);
   if (st.route === 'own' && P && fam) {
-    const F = PERM_TIERS[fam];
+    const F = famTiers(fam, P);
     rows.push(`<div class="srow top"><span class="sk">What your agent does</span><div class="pchips">${P.options.map(o => { const T = F.t[o.tier] || {}, on = st.perms.has(o.k); return `<button type="button" class="pchip${on ? ' on' : ''}" data-perm="${o.k}" aria-pressed="${on}" title="${esc(o.scope || '')}"><span class="tc t-${F.order.indexOf(o.tier)}"></span>${esc(o.task)}<small>${esc(T.n || o.tier)}${o.ev === 'inferred' ? ' · inferred' : ''}</small></button>`; }).join('')}</div></div>`);
   }
   if (!rows.length) return '';
   let res = '';
-  if (st.route === 'managed') res = `<b>Composio's app:</b> live today, no review. Composio calls it "fine for internal tools, prototypes, and development". ${evl('docs', COMPOSIO_SRC)}`;
+  if (st.route === 'apikey') res = `<b>API key:</b> Composio also connects to ${esc(a.name)} with an API key, so you need no OAuth app and no provider review. ${evl('docs', (CO[a.id] || {}).src)}`;
+  else if (st.route === 'managed') res = `<b>Composio's app:</b> live today, no review. Composio calls it "fine for internal tools, prototypes, and development". ${evl('docs', COMPOSIO_SRC)}`;
   else if (vw.private) res = `<b>Only your team:</b> ${esc(vw.private.text || '')} ${vw.private.src ? evl('docs', vw.private.src) : ''}`;
   else if (vw.tier) { const ps = P.options.filter(o => st.perms.has(o.k)); res = `<b>${esc(vw.tier.n)}:</b> ${esc(vw.tier.review || '')}${vw.tier.src ? ' ' + evl(vw.tier.ev || 'docs', vw.tier.src) : ''}${ps.some(o => o.ev === 'inferred' && o.tier === vw.tier.key) ? ' <span class="ev est" title="Google does not publish a tier for this scope; inferred from its restricted list">tier inferred</span>' : ''}${[...new Set(ps.flatMap(o => String(o.note || '').split(/;\s*|\.\s+/)).map(s => s.trim().replace(/\.$/, '')).filter(s => s.length > 20 && !/listed|table|this page|inferred|label|quote|reference|cell|source/i.test(s)))].slice(0, 2).map(s => `<span class="snote">${esc(cap(s))}.</span>`).join('')} <span class="scopes">${[...new Set(ps.map(o => String(o.scope || '').split(' (')[0]))].map(s => `<code>${esc(s)}</code>`).join('')}</span>`; }
   else if (P && fam && st.route === 'own') res = 'Pick what your agent does to see the permissions it needs and the review that follows.';
   return `<div class="pad"><div class="wrap"><div class="setup">${rows.join('')}${res ? `<div class="sres">${res}</div>` : ''}</div></div></div>`;
+}
+function apiKeyBody(a) {
+  const src = (CO[a.id] || {}).src;
+  return `<div class="pad"><div class="wrap body"><div class="mainc">
+    <section><div class="h"><h2>What you get, and what you give up</h2></div>
+      <ul class="checks req"><li>${I.check}<span>No OAuth app to create, no consent screen, no provider review. ${evl('docs', src)}</span></li><li>${I.check}<span>Works for your own team today.</span></li></ul>
+      <ul class="checks" style="margin-top:8px"><li>${I.warn}<span>Each user has to create a key in ${esc(a.name)} and paste it into your app. There's no "Connect" button.</span></li><li>${I.warn}<span>The key's access is whatever ${esc(a.name)} grants keys, not scopes you choose. Check ${esc(a.name)}'s docs before you rely on it.</span></li></ul></section>
+    <section><div class="h"><h2>Steps</h2><small>1 of 2 by the agent</small></div><div class="gsteps">
+      <div class="gstep"><span class="gn">1</span><span class="who w-agent">Agent</span><span class="gtt">Create ${/^[aeiou]/i.test(a.name) ? 'an' : 'a'} ${esc(a.name)} auth config with API key auth in Composio</span><span class="time">2 min</span></div>
+      <div class="gstep"><span class="gn">2</span><span class="who w-you">You</span><span class="gtt">Ask each user for their ${esc(a.name)} API key when they connect</span><span class="time">—</span></div></div>
+      <div class="acts" style="margin-top:10px"><button class="btn sm" data-set="route" data-val="own">See the OAuth app guide</button><button class="btn sm askag" data-askapp>${AGENT_ICON}Ask agent</button></div></section>
+  </div><aside class="rail-c"><div class="box"><div class="bh">Composio values</div><div class="bb"><div class="kvs"><div><span>Auth options</span><span>${esc(((CO[a.id] || {}).auths || []).join(' · '))} ${evl('docs', src)}</span></div><div><span>Toolkit</span><span><code>${a.slug}</code></span></div></div></div></div></aside></div></div>`;
 }
 function managedBody(a) {
   const pro = ['Live today: no OAuth app of your own, no provider review, no waiting.', 'It is the default auth whenever Composio offers a managed app.'];
@@ -165,7 +184,7 @@ function probeBox(a) {
     ${r.shot ? `<a class="pshot" href="${r.shot}" target="_blank" rel="noopener" title="Open screenshot"><img src="${r.shot}" alt="${esc(a.name)} response to a placeholder client ID" loading="lazy"></a>` : ''}
     <span class="tier ${o[0]}" style="justify-self:start">${o[1]}</span>
     <p class="ptake">${esc(r.takeaway || '')}</p>
-    ${r.outcome === 'rejects' && r.text ? `<q class="pq">${esc((t => { try { return decodeURIComponent(t); } catch (e) { return t; } })(r.text).replace(/^Sign in with Google\s*/, ''))}</q>` : ''}
+    ${r.outcome === 'rejects' && r.text ? `<q class="pq">${esc((t => { try { const j = JSON.parse(t); return j.errorMessage || j.error_description || (j.error && (j.error.message || j.error)) || t; } catch (e) { } try { return decodeURIComponent(t); } catch (e) { return t; } })(r.text).replace(/^Sign in with Google\s*/, ''))}</q>` : ''}
     <small class="pmeta">Opened ${esc(host)} with Composio's redirect URI and a placeholder client ID · ${new Date(r.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</small>
   </div></div>`;
 }
@@ -187,7 +206,7 @@ function renderAppGuide(id) {
         : { cls: 'now', badge: ['Start here', 'here'], title: a.slug ? 'Managed app unclear' : 'No Composio toolkit found', time: '—', line: a.slug ? `Composio's docs don't say. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` : `Check Composio for a ${esc(a.name)} toolkit, or build a custom integration.` },
     { cls: '', title: 'Create your own app', time: `${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>`, line: a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : 'Works for your own account right away.' },
     vw.private ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Use it in your team', time: esc(vw.wait), line: `${esc(vw.private.text || '')}` }
-    : vw.tier ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(vw.wait)} ${vw.waitTag}`, line: `${esc(String(vw.tier.review || '').replace(/\.$/, ''))}. Then any user can connect.` }
+    : vw.tier ? { cls: 'goal', badge: ['Goal', 'goal'], title: vw.tier.fam === 'google' ? 'Get approved' : 'What it takes', time: vw.tier.fam === 'google' ? `${esc(vw.wait)} ${vw.waitTag}` : esc(vw.tier.n), line: `${esc(String(vw.tier.review || '').replace(/\.$/, ''))}.${vw.tier.fam === 'google' ? ' Then any user can connect.' : ''}` }
     : rv.required ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(shortWait(a))} ${rv.ev ? evl(rv.ev, rv.src) : ''}`, line: `${esc(first(rv.what || 'Provider review'))}. Then any user can connect.` }
                 : { cls: 'goal', badge: ['Goal', 'goal'], title: 'Ship to everyone', time: 'No review', line: 'No provider review found in the docs.' },
   ];
@@ -195,7 +214,7 @@ function renderAppGuide(id) {
   V.innerHTML = `
   <div class="band pad"><div class="wrap">
     <button class="back" data-view="library"><svg class="i sm" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Library</button>
-    <div class="titlerow"><span class="lg lgbig">${logo(a, 34)}</span><div><h1>${a.name}</h1><p>${esc(cap(a.oneLiner || ''))}</p></div></div>
+    <div class="titlerow"><span class="lg lgbig">${logo(a, 34)}</span><div><h1>${esc(a.name)}</h1><p>${esc(cap(a.oneLiner || ''))}</p></div></div>
     ${a.noOAuth ? `<div class="genbanner info">${I.check}<span><b>No OAuth app needed.</b> Composio connects to ${esc(a.name)} with ${esc(a.auth || 'an API key')}: each user pastes their own key. The OAuth details below only matter if you build your own OAuth flow. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div>` : ''}
     ${a.thin ? `<div class="genbanner warn">${I.warn}<span><b>Thin guide.</b> Only ${[...(a.limits || []), ...(a.requirements || []), ...(a.gotchas || [])].length} fact(s) could be confirmed in the official docs. Treat this as a starting point.</span></div>` : ''}
     ${a.generated ? `<div class="genbanner"><span class="dotlive"></span><span><b>Generated live by the agent</b> · ${a.gen ? `${a.gen.model}, ${a.gen.pages || a.gen.searches.length} pages read, ${a.gen.seconds}s · <b>${a.gen.quotesFound} of ${a.gen.quotesChecked}</b> quotes found on the source page` : ''} · not reviewed by a person yet</span></div>` : ''}
@@ -213,7 +232,7 @@ function renderAppGuide(id) {
     </div>
   </div></div>
   ${setupPanel(a, st, vw)}
-  ${st.route === 'managed' ? managedBody(a) : `
+  ${st.route === 'managed' ? managedBody(a) : st.route === 'apikey' ? apiKeyBody(a) : `
   <div class="pad"><div class="wrap access">
     <div class="sec-h"><h2>${man ? 'Launch today, switch to your own app later' : 'Bring your own app from day one'}</h2></div>
     <div class="journey">${stages.map((s, i) => `${i ? '<span class="jarrow" aria-hidden="true"><svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' : ''}<div class="stage ${s.cls}"><span class="stop"><span class="snum">${i + 1}</span><b class="stitle">${s.title}</b>${s.badge ? `<span class="sbadge ${s.badge[1]}">${s.badge[0]}</span>` : ''}</span><span class="stime">${s.time}</span><span class="sline">${s.line}</span></div>`).join('')}</div>
@@ -228,7 +247,7 @@ function renderAppGuide(id) {
     </div>
     <aside class="rail-c">
       <div class="box"><div class="bh">Composio values</div><div class="bb">
-        <div class="kvs"><div><span>Auth</span><span>${esc(a.auth || 'OAuth 2.0')}</span></div><div><span>Managed app</span><span>${man ? 'Available' : a.managed === 'no' ? 'Not available' : a.managed === 'n/a' ? 'Not needed (no OAuth)' : 'Unknown'} ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span>${a.slug ? `<code>${a.slug}</code>` : 'Not found'}</span></div></div>
+        <div class="kvs"><div><span>Auth options</span><span>${esc(((CO[a.id] || {}).auths || [a.auth || 'OAuth 2.0']).join(' · '))}</span></div><div><span>Managed app</span><span>${man ? 'Available' : a.managed === 'no' ? 'Not available' : a.managed === 'n/a' ? 'Not needed (no OAuth)' : 'Unknown'} ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span>${a.slug ? `<code>${a.slug}</code>` : 'Not found'}</span></div></div>
         <div class="urlbox"><div style="min-width:0"><span class="k">REDIRECT URI</span><span class="v">backend.composio.dev/api/v3/toolkits/auth/callback</span></div><button class="iconbtn" aria-label="Copy redirect URI" data-copy="${REDIRECT}"><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
       </div></div>
       ${probeBox(a)}
@@ -367,10 +386,37 @@ async function packGuide(g) { const cs = new Blob([JSON.stringify(g)]).stream().
 async function unpackGuide(s) { const ds = new Blob([unb64u(s)]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return JSON.parse(await new Response(ds).text()); }
 function addGenerated(g) { const i = APPS.findIndex(x => x.id === g.id); if (i >= 0) APPS.splice(i, 1); APPS.push(g); }
 async function openGenerated(g) {
-  addGenerated(g); show('app', g.id);
+  g = sanitizeGuide(g); addGenerated(g); show('app', g.id);
   try { history.replaceState(null, '', '#gen/' + await packGuide(g)); } catch (e) { }
 }
-async function openShared(s) { try { const g = await unpackGuide(s); addGenerated(g); show('app', g.id); history.replaceState(null, '', '#gen/' + s); } catch (e) { toast('That shared guide link is damaged'); show('generate'); } }
+/* a shared link is untrusted input: keep only known fields, plain text and http(s) URLs */
+function sanitizeGuide(g) {
+  const T = (v, n = 400) => String(v == null ? '' : v).replace(/[<>]/g, '').slice(0, n);
+  const U = v => typeof v === 'string' && /^https:\/\/[^\s"'<>`]+$/.test(v) ? v : null;
+  const C = arr => (Array.isArray(arr) ? arr : []).slice(0, 12).map(x => ({ text: T(x && x.text), ev: x && x.ev === 'docs' ? 'docs' : 'est', src: U(x && x.src) })).filter(x => x.text);
+  const D = ['easy', 'medium', 'hard', 'gated'], M = ['yes', 'no', 'unknown', 'n/a'];
+  const name = T(g && g.name, 60) || 'Shared guide';
+  return {
+    id: 'gen-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), name, generated: true,
+    slug: /^[a-z0-9_]+$/.test((g && g.slug) || '') ? g.slug : null,
+    logoUrl: U(g && g.logoUrl) && /^https:\/\/logos\.composio\.dev\/api\/[a-z0-9_]+$/.test(g.logoUrl) ? g.logoUrl : null,
+    category: CATS.includes(g && g.category) ? g.category : 'Productivity', auth: T(g && g.auth, 40),
+    managed: M.includes(g && g.managed) ? g.managed : 'unknown', managedSrc: U(g && g.managedSrc),
+    difficulty: D.includes(g && g.difficulty) ? g.difficulty : 'medium', oneLiner: T(g && g.oneLiner, 90),
+    setup: { time: T(g && g.setup && g.setup.time, 20), ev: 'est' },
+    review: g && g.review ? { required: !!g.review.required, what: T(g.review.what, 160), wait: T(g.review.wait, 60), ev: g.review.ev === 'docs' ? 'docs' : 'est', src: U(g.review.src) } : { required: false },
+    cost: g && g.cost ? { text: T(g.cost.text, 80), ev: g.cost.ev === 'docs' ? 'docs' : 'est', src: U(g.cost.src) } : null,
+    limits: C(g && g.limits), requirements: C(g && g.requirements), gotchas: C(g && g.gotchas),
+    steps: (Array.isArray(g && g.steps) ? g.steps : []).slice(0, 8).map(s => ({ who: s && s.who === 'agent' ? 'agent' : 'you', t: T(s && s.t, 160), time: T(s && s.time, 12) })),
+    portal: U(g && g.portal), docs: U(g && g.docs),
+    sources: (Array.isArray(g && g.sources) ? g.sources : []).slice(0, 15).map(s => ({ t: T(s && s.t, 80), u: U(s && s.u) })).filter(s => s.u),
+    unverified: (Array.isArray(g && g.unverified) ? g.unverified : []).slice(0, 12).map(x => T(x, 200)),
+    checked: /^\d{4}-\d{2}-\d{2}$/.test((g && g.checked) || '') ? g.checked : null,
+    noOAuth: !!(g && g.noOAuth), thin: !!(g && g.thin),
+    gen: g && g.gen ? { model: T(g.gen.model, 40), searches: [], pages: +g.gen.pages || 0, quotesChecked: +g.gen.quotesChecked || 0, quotesFound: +g.gen.quotesFound || 0, seconds: +g.gen.seconds || 0 } : null,
+  };
+}
+async function openShared(s) { try { const g = sanitizeGuide(await unpackGuide(s)); addGenerated(g); show('app', g.id); history.replaceState(null, '', '#gen/' + s); } catch (e) { toast('That shared guide link is damaged'); show('generate'); } }
 document.addEventListener('click', async e => {
   if (!e.target.closest('[data-sharegen]') || !curApp) return;
   copy(location.origin + location.pathname + '#gen/' + await packGuide(curApp), 'Guide link copied. It works for anyone, no account needed');
@@ -446,39 +492,39 @@ const LEARNED = [
   ['Composio contradicts itself on Jira', "The toolkit page says managed auth exists; an older Composio page says it doesn't. We follow the toolkit page and flag it.", 'jira'],
   ['Unpublished limits stay unpublished', 'Several providers (Shopify, Xero, Intuit, Zoom, Figma) state no review time. We show "Not stated" instead of guessing.', null],
 ];
-let vFilter = 'all';
+let vFilter = 'fixed';
 function renderVerify() {
-  const docsClaims = APPS.filter(a => !a.generated).reduce((n, a) => n + ['limits', 'requirements', 'gotchas'].reduce((m, k) => m + (a[k] || []).filter(x => (x.ev || 'docs') === 'docs').length, 0), 0);
+  if (!window.AUDIT) { $('#vlog').innerHTML = '<p class="hint" style="padding:40px 0">Loading the audit…</p>'; const s = document.createElement('script'); s.src = 'data/audit.js'; s.onload = renderVerify; document.head.appendChild(s); return; }
+  const AU = window.AUDIT, c = AU.counts, fixed = AU.items.length;
   const unv = APPS.filter(a => !a.generated).reduce((n, a) => n + (a.unverified || []).length, 0);
-  const ok = V.filter(v => v.verdict === 'confirmed').length, part = V.filter(v => v.verdict === 'partly').length, bad = V.filter(v => !['confirmed', 'partly'].includes(v.verdict)).length;
-  const rows = V.filter(v => vFilter === 'all' || (vFilter === 'confirmed' ? v.verdict === 'confirmed' : v.verdict !== 'confirmed'));
+  const row = (v, kind) => { const a = APP(v.app); return `<div class="vrow ${kind}">
+      <span class="vapp">${a ? logo(a, 20) : ''}<span>${a ? esc(a.name) : esc(v.app)}</span></span>
+      <span class="vclaim">${kind === 'fixed' && v.fix ? `<s>${esc(v.text)}</s><span class="vfix">${esc(v.fix)}</span>` : esc(v.text)}${kind === 'fixed' && v.note ? `<small>${esc(v.note)}</small>` : ''}${v.quote ? `<q>${esc(v.quote)}</q>` : ''}</span>
+      <span class="vver"><span class="tier ${kind === 'fixed' ? 't-med' : 't-easy'}">${kind === 'fixed' ? (v.verdict === 'not_found' ? 'Not found, corrected' : 'Corrected') : 'Confirmed'}</span>${v.src ? `<a class="ev docs" href="${esc(v.src)}" target="_blank" rel="noopener">source ↗</a>` : ''}</span></div>`; };
+  const list = vFilter === 'confirmed' ? AU.confirmedSample.map(v => row(v, 'ok')) : AU.items.map(v => row(v, 'fixed'));
   $('#vlog').innerHTML = `
-    <div class="lhead2"><div><h1>Verification log</h1><p>How the guides were researched and checked, and what we corrected along the way.</p></div><span class="pill">Checked ${new Date((V[0] || {}).checked || Date.now()).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span></div>
+    <div class="lhead2"><div><h1>Verification log</h1><p>How the guides were researched and checked, and what we corrected along the way.</p></div><span class="pill">Audited ${new Date(AU.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span></div>
     <div class="vstats">
-      <div><b>${docsClaims}</b><span>claims with a source</span></div>
-      <div><b>${V.length}</b><span>re-checked at random</span></div>
-      <div class="ok"><b>${ok}</b><span>confirmed word for word</span></div>
-      <div class="warn"><b>${part}</b><span>partly right, corrected</span></div>
-      <div><b>${bad}</b><span>wrong or unreachable</span></div>
+      <div><b>${AU.total}</b><span>sourced claims, all re-checked</span></div>
+      <div class="ok"><b>${c.confirmed || 0}</b><span>confirmed word for word</span></div>
+      <div class="warn"><b>${fixed}</b><span>partly right or not found, corrected</span></div>
+      <div><b>${(c.contradicted || 0)}</b><span>contradicted by the page</span></div>
+      <div><b>${Object.keys(PR).length}</b><span>OAuth flows tested live</span></div>
       <div><b>${unv}</b><span>items we could not confirm</span></div>
     </div>
     <div class="vsteps">
-      <div><span class="snum">1</span><b>Research</b><p>Six agents read each provider's official developer docs and its Composio toolkit page. Every claim stores the URL it came from; estimates are tagged est.</p></div>
-      <div><span class="snum">2</span><b>Re-check</b><p>A separate agent re-opened the sources for ${V.length} random claims (at least one per app) and judged each one strictly against the page text.</p></div>
-      <div><span class="snum">3</span><b>Correct</b><p>We fixed every partly-right claim (below). Anything no page states sits in each guide's "Not confirmed" box.</p></div>
+      <div><span class="snum">1</span><b>Research</b><p>Agents read each provider's official developer docs and its Composio toolkit page. Every claim stores the URL it came from; estimates are tagged est.</p></div>
+      <div><span class="snum">2</span><b>Full re-check</b><p>Eight separate agents re-opened the source for every one of the ${AU.total} claims and judged each strictly against the page text, with a verbatim quote.</p></div>
+      <div><span class="snum">3</span><b>Correct and test</b><p>Every partly-right claim was rewritten to what the page supports. Composio's managed and auth facts were re-checked for all 37 apps (all matched), and each provider's OAuth flow was started live.</p></div>
       <div><span class="snum">4</span><b>Live guides</b><p>Generated guides check themselves: code confirms each quote is on its page, and moves the rest to "Not confirmed".</p></div>
     </div>
     <section><div class="h"><h2>What we learned and corrected</h2></div><div class="vlearn">${LEARNED.map(([t, d, id]) => { const a = id && APP(id); return `<div>${a ? logo(a, 22) : '<span class="lg-img" style="width:22px;height:22px"><b>•</b></span>'}<span><b>${t}</b><small>${d}</small></span></div>`; }).join('')}</div></section>
     <section><div class="h"><h2>Setup attempts</h2><small>${Object.keys(PR).length} providers · real browser · placeholder client ID</small></div>
       <p class="hint" style="margin-bottom:10px">An agent started each provider's OAuth flow with Composio's redirect URI and a placeholder client ID, then recorded what the provider did. It shows how each provider fails, which is what you'll see while debugging your own setup.</p>
-      <div class="pgrid">${Object.entries(OUT).map(([k, o]) => { const list = Object.values(PR).filter(r => r.outcome === k); return `<div class="pcol"><div class="pch"><span class="tier ${o[0]}">${o[1]}</span><b>${list.length}</b></div><div class="aplist">${list.map(r => { const a = APPS.find(x => x.slug === r.id || x.id === r.id); return a ? `<a class="pchipl" href="${r.shot || '#'}" target="_blank" rel="noopener" title="${esc(r.text || '')}">${logo(a, 16)}<span>${a.name}</span></a>` : ''; }).join('')}</div></div>`; }).join('')}</div>
+      <div class="pgrid">${Object.entries(OUT).map(([k, o]) => { const ls = Object.values(PR).filter(r => r.outcome === k); return `<div class="pcol"><div class="pch"><span class="tier ${o[0]}">${o[1]}</span><b>${ls.length}</b></div><div class="aplist">${ls.map(r => { const a = APPS.find(x => x.slug === r.id || x.id === r.id); return a ? `<a class="pchipl" href="${r.shot || '#'}" target="_blank" rel="noopener" title="${esc(r.text || '')}">${logo(a, 16)}<span>${esc(a.name)}</span></a>` : ''; }).join('')}</div></div>`; }).join('')}</div>
     </section>
-    <section><div class="h"><h2>Sample re-check</h2><div class="seg" id="vSeg"><button data-vf="all" class="${vFilter === 'all' ? 'on' : ''}">All ${V.length}</button><button data-vf="confirmed" class="${vFilter === 'confirmed' ? 'on' : ''}">Confirmed ${ok}</button><button data-vf="fixed" class="${vFilter === 'fixed' ? 'on' : ''}">Corrected ${part + bad}</button></div></div>
-      <div class="vtable">${rows.map(v => { const a = APP(v.app); return `<div class="vrow ${v.verdict}">
-        <span class="vapp">${a ? logo(a, 20) : ''}<span>${a ? a.name : v.app}</span></span>
-        <span class="vclaim">${v.corrected ? `<s>${esc(v.claim)}</s><span class="vfix">${esc(v.corrected)}</span>` : esc(v.claim)}${v.note && v.verdict !== 'confirmed' ? `<small>${esc(v.note)}</small>` : ''}<q>${esc(v.quote || '')}</q></span>
-        <span class="vver"><span class="tier ${v.verdict === 'confirmed' ? 't-easy' : 't-med'}">${v.verdict === 'confirmed' ? 'Confirmed' : v.corrected ? 'Corrected' : 'Partly'}</span><a class="ev docs" href="${v.src}" target="_blank" rel="noopener">source ↗</a></span>
-      </div>`; }).join('')}</div></section>`;
+    <section><div class="h"><h2>Full re-check</h2><div class="seg" id="vSeg"><button data-vf="fixed" class="${vFilter !== 'confirmed' ? 'on' : ''}">Corrected ${fixed}</button><button data-vf="confirmed" class="${vFilter === 'confirmed' ? 'on' : ''}">Confirmed ${c.confirmed || 0}</button></div></div>
+      <div class="vtable">${list.join('')}</div></section>`;
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-vf]'); if (!b) return; vFilter = b.dataset.vf; renderVerify(); });
 { const s0 = show; show = function (v, arg) { s0(v, arg); if (v === 'verify') renderVerify(); }; }
