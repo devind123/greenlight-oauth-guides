@@ -657,6 +657,10 @@ a.ev{text-decoration:none}
 .lasksugs{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 10px 48px}
 .lasksugs button{border:1px solid var(--line);background:var(--band);padding:3px 10px;font-size:12.5px;color:var(--fg2)}
 .lasksugs button:hover{color:var(--fg);border-color:var(--line2)}
+.laskgen{align-items:center;margin-top:-4px}.laskgen[hidden]{display:none}
+.laskgen .lgk{font-size:12px;color:var(--fg3);margin-right:2px}
+.laskgen button{display:inline-flex;align-items:center;gap:6px;background:var(--panel)}
+.laskgen .lg-img{border:0;padding:0;background:none}.laskgen .lg-img b{font-size:11px}
 .aplist{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .aplist button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:3px 8px 3px 4px;font-size:12.5px;color:var(--fg)}
 .aplist button:hover{border-color:var(--fg2)}

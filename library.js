@@ -3,6 +3,7 @@
    Logos are Composio's own toolkit logos, saved locally in /logos. */
 const APPS = (window.APPS_DATA || []).slice().sort((a, b) => a.name.localeCompare(b.name));
 const APP = id => APPS.find(a => a.id === id);
+const LIB = () => APPS.filter(a => !a.generated);   // the researched library; generated guides live only in the agent's memory
 const DIFF = {
   easy: { n: 'Easy', cls: 't-easy', col: 'var(--ok)', lv: 1, blurb: 'Minutes, no review' },
   medium: { n: 'Medium', cls: 't-med', col: 'var(--warn)', lv: 2, blurb: 'Works now, limits until approved' },
@@ -28,15 +29,15 @@ const LS = { q: '', diff: 'all', cat: 'all', managed: false, view: 'grid' };
 try { LS.view = localStorage.getItem('gl-libview') || 'grid'; } catch (e) {}
 function libFiltered(ignore) {
   const q = LS.q.toLowerCase();
-  return APPS.filter(a => (ignore === 'diff' || LS.diff === 'all' || a.difficulty === LS.diff)
+  return LIB().filter(a => (ignore === 'diff' || LS.diff === 'all' || a.difficulty === LS.diff)
     && (ignore === 'cat' || LS.cat === 'all' || a.category === LS.cat)
     && (!LS.managed || a.managed === 'yes')
     && (!q || a.name.toLowerCase().includes(q) || a.category.toLowerCase().includes(q) || (a.oneLiner || '').toLowerCase().includes(q)));
 }
 function renderLibrary() {
-  const srcCount = new Set(APPS.flatMap(a => (a.sources || []).map(s => s.u))).size;
-  $('#libCount').textContent = APPS.length;
-  $('#lstats').innerHTML = `<div><b>${APPS.length}</b><span>apps</span></div><div><b>${srcCount}</b><span>sources</span></div><div><b>${APPS.filter(a => a.managed === 'yes').length}</b><span>managed by Composio</span></div>`;
+  const srcCount = new Set(LIB().flatMap(a => (a.sources || []).map(s => s.u))).size;
+  $('#libCount').textContent = LIB().length;
+  $('#lstats').innerHTML = `<div><b>${LIB().length}</b><span>apps</span></div><div><b>${srcCount}</b><span>sources</span></div><div><b>${LIB().filter(a => a.managed === 'yes').length}</b><span>managed by Composio</span></div>`;
   const base = libFiltered('diff');
   $('#libDiff').innerHTML = [['all', 'All', null], ...Object.entries(DIFF).map(([k, d]) => [k, d.n, d.col])].map(([k, n, c]) => {
     const cnt = k === 'all' ? base.length : base.filter(a => a.difficulty === k).length;
@@ -355,7 +356,7 @@ function askApp(a, echo) {
 }
 const baseAnswer = answer;
 answer = function (v) {
-  const lv = v.toLowerCase(), named = APPS.find(x => [x.name.split(' (')[0], x.id, x.slug].some(n => new RegExp('\\b' + n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(lv)));
+  const lv = v.toLowerCase(), named = APPS.find(x => [x.name.split(' (')[0], x.id, x.slug].filter(Boolean).some(n => new RegExp('\\b' + n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(lv)));
   if (named && named.id !== 'gmail' && named !== (!$('#v-app').hidden ? curApp : ctxApp)) { ctxApp = named; askApp(named); return; }
   const a = !$('#v-app').hidden ? curApp : ctxApp;
   if (!a) return baseAnswer(v);
@@ -385,7 +386,7 @@ const hasReview = a => a.review && a.review.required;
 const capRe = /\b\d[\d,]*\s*(\w+[\s-])?(installs?|users?|orgs?|organi[sz]ations?|connections?|servers?|guilds?|workspaces?)\b/i;
 const auditRe = /security (assessment|review)|casa|penetration|pen test/i;
 const allText = a => [...(a.limits || []), ...(a.requirements || []), ...(a.gotchas || [])].map(x => x.text).join(' ');
-function namedApps(q) { return APPS.filter(x => [x.name.split(' (')[0], x.id, x.slug].some(n => new RegExp('\\b' + n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(q))); }
+function namedApps(q) { return APPS.filter(x => [x.name.split(' (')[0], x.id, x.slug].filter(Boolean).some(n => new RegExp('\\b' + n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(q))); }
 function compare(list) {
   const rows = [['Difficulty', a => `<span class="tier ${DIFF[a.difficulty].cls}">${DIFF[a.difficulty].n}</span>`], ['Setup', a => a.setupShort || (a.setup ? a.setup.time : '—')], ['Approval', a => esc(shortWait(a))], ['Composio', a => a.managed === 'yes' ? 'Managed' : a.managed === 'no' ? 'Own app' : '—'], ['Key limit', a => a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : '—']];
   const best = list.slice().sort((x, y) => DIFF[x.difficulty].lv - DIFF[y.difficulty].lv || (x.review && x.review.required) - (y.review && y.review.required))[0];
@@ -398,20 +399,20 @@ function crossAnswer(q) {
   if (!/\bapps?\b|which|list|show|compare|\bvs\b|easiest|hardest|fastest|quickest|how many|any(thing)? (that|without)/.test(q) || named.length === 1) return null;
   let list = null, title = '', f = {};
   const catHit = CATS.find(c => q.includes(c.toLowerCase()) || (c === 'CRM & support' && /\bcrm|support\b/.test(q)) || (c === 'Microsoft 365' && /microsoft/.test(q)) || (c === 'Google Workspace' && /\bgoogle\b/.test(q)) || (c === 'Commerce & finance' && /commerce|finance|accounting|payments?/.test(q)) || (c === 'Social & marketing' && /social|marketing/.test(q)) || (c === 'Developer tools' && /developer|dev tools?/.test(q)) || (c === 'Files & docs' && /files|docs|storage/.test(q)));
-  if (/no (review|approval)|without (a )?(review|approval)|don'?t need (a |any )?(review|approval)|skip review/.test(q)) { list = APPS.filter(a => !hasReview(a)); title = 'No mandatory provider review'; }
-  else if (/(need|require)s? (a |an )?(review|approval|verification)|review required|get approved/.test(q)) { list = APPS.filter(hasReview); title = 'Need a provider review before public use'; }
-  else if (/audit|security (review|assessment)|casa|pen ?test/.test(q)) { list = APPS.filter(a => auditRe.test(allText(a) + ' ' + ((a.review || {}).what || ''))); title = 'Mention a security assessment or review'; }
-  else if (/(not|isn'?t|no|without) (composio )?managed|bring your own|own (app|credentials)|\bbyo\b/.test(q)) { list = APPS.filter(a => a.managed !== 'yes'); title = 'Need your own app from day one'; }
-  else if (/\bmanaged\b/.test(q)) { list = APPS.filter(a => a.managed === 'yes'); title = "Composio has a managed app"; f = { managed: true }; }
-  else if (/\bcaps?\b|install limit|user limit|limited to|how many users/.test(q)) { list = APPS.filter(a => capRe.test((a.limits || []).map(x => x.text).join(' '))); title = 'Have a user, install or org cap before approval'; }
-  else if (/gated|partner|apply for (api )?access/.test(q)) { list = APPS.filter(a => a.difficulty === 'gated'); title = 'Gated: apply for access first'; f = { diff: 'gated' }; }
-  else if (/hardest|toughest|most difficult|blockers?/.test(q)) { list = APPS.filter(a => a.difficulty === 'hard' || a.difficulty === 'gated'); title = 'Hard or gated'; }
-  else if (/\bhard\b|difficult/.test(q)) { list = APPS.filter(a => a.difficulty === 'hard'); title = 'Hard'; f = { diff: 'hard' }; }
-  else if (/\bmedium\b/.test(q)) { list = APPS.filter(a => a.difficulty === 'medium'); title = 'Medium'; f = { diff: 'medium' }; }
-  else if (/easiest|easy|simple|fastest|quickest|quick/.test(q)) { list = APPS.filter(a => a.difficulty === 'easy'); title = 'Easy: minutes, no review'; f = { diff: 'easy' }; }
-  else if (catHit) { list = APPS.filter(a => a.category === catHit); title = catHit; f = { cat: catHit }; }
+  if (/no (review|approval)|without (a )?(review|approval)|don'?t need (a |any )?(review|approval)|skip review/.test(q)) { list = LIB().filter(a => !hasReview(a)); title = 'No mandatory provider review'; }
+  else if (/(need|require)s? (a |an )?(review|approval|verification)|review required|get approved/.test(q)) { list = LIB().filter(hasReview); title = 'Need a provider review before public use'; }
+  else if (/audit|security (review|assessment)|casa|pen ?test/.test(q)) { list = LIB().filter(a => auditRe.test(allText(a) + ' ' + ((a.review || {}).what || ''))); title = 'Mention a security assessment or review'; }
+  else if (/(not|isn'?t|no|without) (composio )?managed|bring your own|own (app|credentials)|\bbyo\b/.test(q)) { list = LIB().filter(a => a.managed !== 'yes'); title = 'Need your own app from day one'; }
+  else if (/\bmanaged\b/.test(q)) { list = LIB().filter(a => a.managed === 'yes'); title = "Composio has a managed app"; f = { managed: true }; }
+  else if (/\bcaps?\b|install limit|user limit|limited to|how many users/.test(q)) { list = LIB().filter(a => capRe.test((a.limits || []).map(x => x.text).join(' '))); title = 'Have a user, install or org cap before approval'; }
+  else if (/gated|partner|apply for (api )?access/.test(q)) { list = LIB().filter(a => a.difficulty === 'gated'); title = 'Gated: apply for access first'; f = { diff: 'gated' }; }
+  else if (/hardest|toughest|most difficult|blockers?/.test(q)) { list = LIB().filter(a => a.difficulty === 'hard' || a.difficulty === 'gated'); title = 'Hard or gated'; }
+  else if (/\bhard\b|difficult/.test(q)) { list = LIB().filter(a => a.difficulty === 'hard'); title = 'Hard'; f = { diff: 'hard' }; }
+  else if (/\bmedium\b/.test(q)) { list = LIB().filter(a => a.difficulty === 'medium'); title = 'Medium'; f = { diff: 'medium' }; }
+  else if (/easiest|easy|simple|fastest|quickest|quick/.test(q)) { list = LIB().filter(a => a.difficulty === 'easy'); title = 'Easy: minutes, no review'; f = { diff: 'easy' }; }
+  else if (catHit) { list = LIB().filter(a => a.category === catHit); title = catHit; f = { cat: catHit }; }
   else if (/how many|all apps|list (all|the) apps|what apps/.test(q)) {
-    return { html: `The library has <b>${APPS.length}</b> guides: ${Object.entries(DIFF).map(([k, d]) => `<b>${APPS.filter(a => a.difficulty === k).length}</b> ${d.n.toLowerCase()}`).join(', ')}. Composio has a managed app for <b>${APPS.filter(a => a.managed === 'yes').length}</b> of them.`, next: ['Which apps need a review?', 'Which apps have install caps?', 'Compare HubSpot and Salesforce'] };
+    return { html: `The library has <b>${LIB().length}</b> guides: ${Object.entries(DIFF).map(([k, d]) => `<b>${LIB().filter(a => a.difficulty === k).length}</b> ${d.n.toLowerCase()}`).join(', ')}. Composio has a managed app for <b>${LIB().filter(a => a.managed === 'yes').length}</b> of them.`, next: ['Which apps need a review?', 'Which apps have install caps?', 'Compare HubSpot and Salesforce'] };
   }
   if (!list) return null;
   if (catHit && list.length && !f.cat && title !== catHit) { list = list.filter(a => a.category === catHit); title += ` · ${catHit}`; }
@@ -474,8 +475,28 @@ const unb64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')
 async function packGuide(g) { const cs = new Blob([JSON.stringify(g)]).stream().pipeThrough(new CompressionStream('deflate-raw')); return b64u(await new Response(cs).arrayBuffer()); }
 async function unpackGuide(s) { const ds = new Blob([unb64u(s)]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return JSON.parse(await new Response(ds).text()); }
 function addGenerated(g) { const i = APPS.findIndex(x => x.id === g.id); if (i >= 0) APPS.splice(i, 1); APPS.push(g); }
+/* guides generated in this tab: kept in sessionStorage, so a reload keeps them and closing the tab clears them.
+   Nothing goes to the server. They show as pills in the library's agent bar and the agent can answer from them. */
+const GEN_KEY = 'gl-generated', SESSION_GEN = [];
+function rememberGen(g) {
+  g = sanitizeGuide(g); addGenerated(g);
+  const i = SESSION_GEN.indexOf(g.id); if (i >= 0) SESSION_GEN.splice(i, 1);
+  SESSION_GEN.push(g.id); if (SESSION_GEN.length > 10) SESSION_GEN.shift();
+  try { sessionStorage.setItem(GEN_KEY, JSON.stringify(SESSION_GEN.map(APP).filter(Boolean))); } catch (e) { }
+  renderGenPills(); return g;
+}
+function restoreGen() {
+  let ls = []; try { ls = JSON.parse(sessionStorage.getItem(GEN_KEY) || '[]'); } catch (e) { }
+  (Array.isArray(ls) ? ls : []).slice(-10).forEach(x => { if (!x || typeof x !== 'object' || typeof x.name !== 'string' || !x.name.trim()) return; try { const g = sanitizeGuide(x); addGenerated(g); if (!SESSION_GEN.includes(g.id)) SESSION_GEN.push(g.id); } catch (e) { } });
+  renderGenPills();
+}
+function renderGenPills() {
+  const ls = SESSION_GEN.map(APP).filter(Boolean), el = $('#libGen'); if (!el) return;
+  el.hidden = !ls.length;
+  el.innerHTML = ls.length ? '<span class="lgk">Generated this session</span>' + ls.map(a => `<button type="button" data-app="${esc(a.id)}" title="Open the ${esc(a.name)} guide. Generated live, not reviewed by a person.">${logo(a, 14)}${esc(a.name)}</button>`).join('') : '';
+}
 async function openGenerated(g) {
-  g = sanitizeGuide(g); addGenerated(g); show('app', g.id);
+  g = rememberGen(g); show('app', g.id);
   try { history.replaceState(null, '', '#gen/' + await packGuide(g)); } catch (e) { }
 }
 /* a shared link is untrusted input: keep only known fields, plain text and http(s) URLs */
@@ -516,7 +537,7 @@ $$('.try button').forEach(b => b.onclick = () => { $('#genInput').value = b.text
 function genCheckLib() {
   const v = $('#genInput').value.trim().toLowerCase(), hit = v && namedApps(v)[0];
   $('#genLib').hidden = !hit;
-  if (hit) $('#genLib').innerHTML = `${logo(hit, 18)}<span><b>${hit.name}</b> is already in the library, researched and spot-checked.</span><button type="button" class="btn sm" data-app="${hit.id}">Open guide</button>`;
+  if (hit) $('#genLib').innerHTML = `${logo(hit, 18)}<span>${hit.generated ? `You generated <b>${esc(hit.name)}</b> earlier this session. It isn't reviewed by a person; generate again for a fresh one.` : `<b>${hit.name}</b> is already in the library, researched and spot-checked.`}</span><button type="button" class="btn sm" data-app="${hit.id}">Open guide</button>`;
 }
 $('#genInput').addEventListener('input', genCheckLib);
 $('#genForm').onsubmit = async e => {
@@ -553,7 +574,7 @@ $('#genForm').onsubmit = async e => {
         if (m.step) line(m.step, `<span>${esc(m.label)}</span>${m.detail ? `<small>${esc(m.detail)}</small>` : ''}`, m.state);
         if (m.guide) {
           finished = true; clearTimeout(hardT); lines.slow && lines.slow.remove();
-          const g = m.guide;
+          const g = m.guide; rememberGen(g);
           line('ready', `<span><b style="font-weight:500">${esc(g.name)} guide ready</b> · ${g.gen.quotesFound} of ${g.gen.quotesChecked} quotes confirmed</span><button class="btn sm agent" type="button" id="genOpen" style="margin-left:auto">Open guide</button>`, 'done');
           $('#genOpen').onclick = () => openGenerated(g);
           setTimeout(() => { if (!$('#v-generate').hidden) openGenerated(g); }, 900);
@@ -572,7 +593,7 @@ const baseShow = show;
 show = function (v, arg) {
   baseShow(v, arg);
   const onGmail = !$('#v-guide').hidden, a = !$('#v-app').hidden ? curApp : null;
-  $('#ctxApp').innerHTML = onGmail ? L.gmail(14) + 'Gmail' : a ? logo(a, 14) + a.name : `${APPS.length} apps`;
+  $('#ctxApp').innerHTML = onGmail ? L.gmail(14) + 'Gmail' : a ? logo(a, 14) + a.name : `${LIB().length} apps`;
   $('#quick').innerHTML = onGmail ? GMAIL_QUICK : (a ? ['What are the limits before approval?', 'How long is the review?', 'What does it require?', 'What should I watch out for?'] : LIB_SUGS).map(s => `<button type="button" data-libq="${esc(s)}">${s}</button>`).join('');
 };
 $('#quick').addEventListener('click', e => { const b = e.target.closest('[data-libq]'); if (!b) return; add(esc(b.dataset.libq), 'msg me'); answer(b.dataset.libq); });
@@ -632,7 +653,7 @@ window.agentContext = () => {
   if (!$('#v-app').hidden && curApp) return { page: 'guide', app: slim(curApp), composio: { managedAppTradeoffs: 'Users see "Composio wants to access your account"; default scopes may not cover everything; quota shared across all Composio users; 15-minute minimum polling', src: COMPOSIO_SRC } };
   if (!$('#v-guide').hidden || (ctxApp && ctxApp.id === 'gmail')) { const g = APP('gmail'); return { page: 'gmail guide', app: slim(g), chosenScopes: need(), tier: maxTier() >= 0 ? TIERS[maxTier()].n : 'not chosen yet', tiers: TIERS.map(t => ({ tier: t.n, review: t.review, wait: t.wait, needs: t.needs, yearlyCost: t.cost })), scopeTiers: Object.fromEntries(Object.entries(SC).map(([k, v]) => [k, TIERS[v.t].n])), toolScopes: TOOLS.map(t => ({ tool: t.n, scopes: t.s, tier: TIERS[t.tier].n })), toolScopeNote: 'Tool-to-scope mapping is inferred from Google API docs; gmail.labels only manages labels, applying labels to messages needs gmail.modify', sources: Object.values(SRCS).map(s => s[1]), nextStep: (current() || {}).t }; }
   if (ctxApp) return { page: 'library', app: slim(ctxApp) };
-  return { page: 'library', apps: APPS.filter(a => !a.generated).map(a => ({ name: a.name, difficulty: a.difficulty, managed: a.managed, approvalWait: shortWait(a), keyLimit: a.limits && a.limits[0] && a.limits[0].text, src: a.limits && a.limits[0] && a.limits[0].src })) };
+  return { page: 'library', apps: APPS.filter(a => !a.generated || SESSION_GEN.includes(a.id)).map(a => ({ ...(a.generated ? { generatedThisSession: true } : {}), name: a.name, difficulty: a.difficulty, managed: a.managed, approvalWait: shortWait(a), keyLimit: a.limits && a.limits[0] && a.limits[0].text, src: a.limits && a.limits[0] && a.limits[0].src })) };
 };
 
 /* ================= AGENT ROUTER =================
@@ -663,6 +684,7 @@ function overview(a) {
   let html;
   if (a.id === 'gmail') html = `<b>Gmail</b> depends on what your agent does. Sending only is <b>Sensitive</b>: Google review in 3–10 business days, no audit. Reading or drafting mail is <b>Restricted</b>: about 6 weeks plus a yearly security assessment. You can launch today on Composio's managed app and switch later.`;
   else html = `<b>${esc(a.name)}</b> is <b>${d.n}</b>: ${esc(cap((a.oneLiner || d.blurb).replace(/\.$/, '')))}. ${a.managed === 'yes' ? "You can launch today on Composio's managed app." : a.managed === 'no' ? 'Composio has no managed app here, so you need your own from day one.' : ''} ${a.review && a.review.required ? `Approval: ${esc(first(a.review.what || 'review'))}, ${esc(shortWait(a))}.` : 'No mandatory provider review found.'}${P ? ' The permissions you pick change what approval you need.' : ''}${A && A.private && A.private.works === 'yes' && !/^same as public/i.test(A.private.text || '') ? ' Team-only use needs no review.' : ''}`;
+  if (a.generated) html += ' <small class="aimeta">This guide was generated live this session and isn\'t reviewed by a person.</small>';
   return { html: html + `<div class="cards">${appCard(a)}</div>`, next: [`What are the limits before approval?`, `What does ${a.name} require?`, 'How long is the review?'] };
 }
 const SMALL = [
@@ -674,6 +696,12 @@ const NAV = [[/\b(library|all apps|app list)\b/, 'library', 'Here\'s the library
 /* fix common misspellings of the words we route on, so "genearte a guide" still works */
 const VOCAB = ['generate', 'guide', 'guides', 'library', 'compare', 'review', 'approval', 'limits', 'install', 'managed', 'verification', 'planner', 'permissions', 'scopes', 'requirements', 'difficult', 'easiest', 'hardest', 'which', 'create', 'research', 'connect', 'integrate'];
 const fixTypos = s => s.replace(/[a-z]{5,}/g, w => { if (VOCAB.includes(w) || findApps(w).length) return w; let best = null, bd = 3; for (const k of VOCAB) { const d = lev(w, k); if (d < bd && d <= (k.length >= 8 ? 2 : 1)) { bd = d; best = k; } } return best || w; });
+/* asked to generate an app we already have: a session guide just reopens, a library one shows its card */
+function haveGuide(a) {
+  const next = [`Generate a fresh ${a.name} guide anyway`];
+  if (a.generated) { ctxApp = a; show('app', a.id); return { html: `You generated the ${esc(a.name)} guide earlier this session, so I opened it. It was researched live and isn't reviewed by a person.`, next }; }
+  return { html: `${esc(a.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(a)}</div>`, next };
+}
 let awaitingGen = false;
 function startGeneration(target) { show('generate'); $('#genInput').value = target; genCheckLib(); $('#genForm').requestSubmit(); return reply({ html: `Researching <b>${esc(target)}</b> live: Composio's docs first, then the provider's official pages. Watch the steps on the page; the guide opens when it's ready (usually 10–60 seconds).` }); }
 const prevAnswer = answer;
@@ -681,7 +709,7 @@ answer = function (v) {
   window.__cardNext = null;
   const q = fixTypos(v.toLowerCase().trim().replace(/[?!.]+$/, ''));
   /* the previous message asked "which app?" */
-  if (awaitingGen) { awaitingGen = false; const have = findApps(q)[0]; if (have && have.name.toLowerCase().split(' (')[0] === q.replace(/^(for|the)\s+/, '').trim()) return reply({ html: `${esc(have.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(have)}</div>` }); if (!/^(no|nothing|never ?mind|cancel|stop)\b/.test(q)) return startGeneration(v.trim().replace(/^(for|the)\s+/i, '').replace(/[?!.]+$/, '')); return reply({ html: 'Okay, no guide generated.' }); }
+  if (awaitingGen) { awaitingGen = false; const have = findApps(q)[0]; if (have && have.name.toLowerCase().split(' (')[0] === q.replace(/^(for|the)\s+/, '').trim()) return reply(haveGuide(have)); if (!/^(no|nothing|never ?mind|cancel|stop)\b/.test(q)) return startGeneration(v.trim().replace(/^(for|the)\s+/i, '').replace(/[?!.]+$/, '')); return reply({ html: 'Okay, no guide generated.' }); }
   /* "generate a guide" without saying which app */
   if (/\b(generate|create|make|write|research)\b.*\bguide\b/.test(q) && /(app|one|something|anything)\s+(that\s+)?(is ?n.?t|not|isnt)\s+in\s+(the\s+)?library|^(please\s+)?(generate|create|make|write)\s+(a|me a|new)?\s*(new\s+)?guide$|new app/.test(q)) {
     awaitingGen = true; show('generate'); $('#genInput').focus();
@@ -731,7 +759,7 @@ function routeContext(v) {
   const focus = [...new Set([cur, ctxApp, ...findApps(v).slice(0, 2)].filter(Boolean))].slice(0, 3);
   const ctx = {
     page, currentApp: cur && cur.id, lastDiscussedApp: ctxApp && ctxApp.id,
-    apps: APPS.filter(a => !a.generated || a === cur).map(a => ({ id: a.id, name: a.name, category: a.category, difficulty: a.difficulty, composioManaged: a.managed, approvalWait: shortWait(a), reviewRequired: !!(a.review && a.review.required), keyLimit: a.limits && a.limits[0] ? unprefix(a.limits[0].text).slice(0, 90) : '' })),
+    apps: APPS.filter(a => !a.generated || SESSION_GEN.includes(a.id) || a === cur).map(a => ({ ...(a.generated ? { generatedThisSession: true } : {}), id: a.id, name: a.name, category: a.category, difficulty: a.difficulty, composioManaged: a.managed, approvalWait: shortWait(a), reviewRequired: !!(a.review && a.review.required), keyLimit: a.limits && a.limits[0] ? unprefix(a.limits[0].text).slice(0, 90) : '' })),
     focusApps: focus.map(a => { const s = slim(a); return { ...s, limits: trimList(s.limits), requirements: trimList(s.requirements), gotchas: trimList(s.gotchas), steps: (s.steps || []).slice(0, 7) }; }),
     composioManagedApp: { tradeoffs: 'Users see "Composio wants to access your account"; default scopes may not cover everything; quota shared across all Composio users; 15-minute minimum polling', src: COMPOSIO_SRC },
   };
@@ -747,7 +775,7 @@ function execute(r, v) {
     case 'generate_guide': {
       const t = String(r.target || '').trim(); if (!t) break;
       const have = findApps(t)[0];
-      if (have && have.name.toLowerCase().split(' (')[0] === t.toLowerCase().replace(/\.com$/, '')) { window.__chips.add(`Generate a fresh ${have.name} guide anyway`); return reply({ html: `${esc(have.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(have)}</div>`, next: [`Generate a fresh ${have.name} guide anyway`] }); }
+      if (have && have.name.toLowerCase().split(' (')[0] === t.toLowerCase().replace(/\.com$/, '')) return reply(haveGuide(have));
       return startGeneration(t);
     }
     case 'clarify': { if (/which app|what app|app name|website/i.test(r.answer || '')) awaitingGen = /generat|guide|research/i.test(v + ' ' + (r.answer || '')); return reply({ html: esc(r.answer || 'Which app do you mean?'), next: r.suggestions }); }
@@ -771,7 +799,7 @@ function execute(r, v) {
       if (!r.answer) break;
       const apps = (r.apps || []).map(A).filter(Boolean).slice(0, 2);
       if (apps[0]) ctxApp = apps[0];
-      say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from the guides' data</small>` + (apps.length ? `<div class="cards">${apps.map(appCard).join('')}</div>` : ''));
+      say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from the guides' data${apps.some(a => a.generated) ? `. The ${esc(apps.filter(a => a.generated).map(a => a.name).join(' and '))} guide was generated live this session and isn't reviewed by a person.` : ''}</small>` + (apps.length ? `<div class="cards">${apps.map(appCard).join('')}</div>` : ''));
       if (r.suggestions && r.suggestions.length) { r.suggestions.forEach(s => window.__chips.add(s)); add(r.suggestions.map(x => `<button class="sug" data-say="${esc(x)}">${esc(x)}</button>`).join(''), 'sugs'); }
       dlog.scrollTop = dlog.scrollHeight; return true;
     }
@@ -813,5 +841,6 @@ function route() {
   try { if (h.startsWith('gen/')) openShared(h.slice(4)); else if (h.startsWith('app/')) show('app', h.slice(4)); else show(VIEWS.includes(h) ? h : 'library'); }
   finally { window.__navReplace = false; }
 }
+restoreGen();
 route();
 window.addEventListener('popstate', route);
