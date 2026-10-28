@@ -1,0 +1,248 @@
+{
+ "googlecalendar": {
+  "options": [
+   {
+    "k": "freebusy",
+    "task": "See free/busy times only",
+    "scope": "calendar.freebusy",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.freebusy View your availability in your calendars.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page labels this scope, so treat it as sensitive until the Cloud Console Data Access page shows otherwise."
+   },
+   {
+    "k": "read",
+    "task": "Read events on all calendars",
+    "scope": "calendar.events.readonly",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.events.readonly View events on all your calendars.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); Google's scopes page gives no tier, but it reads personal event data, which Google's consent guide puts in the sensitive group."
+   },
+   {
+    "k": "own_events",
+    "task": "Create or edit events only on calendars the user owns",
+    "scope": "calendar.events.owned",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.events.owned See, create, change, and delete events on Google calendars you own.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page labels this scope's tier."
+   },
+   {
+    "k": "write",
+    "task": "Create or edit events on all calendars",
+    "scope": "calendar.events",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.events View and edit events on all your calendars.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page labels this scope's tier."
+   },
+   {
+    "k": "app_calendar",
+    "task": "Make its own calendars and manage events only on those",
+    "scope": "calendar.app.created",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.app.created Make secondary Google calendars, and see, create, change, and delete events on them.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page says whether this narrow scope is non-sensitive, so sensitive is the safe assumption; check the Cloud Console."
+   },
+   {
+    "k": "manage_calendars",
+    "task": "Create calendars and change calendar settings",
+    "scope": "calendar.calendars",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/calendar.calendars See and change the properties of Google calendars you have access to, and create secondary calendars.",
+    "src": "https://developers.google.com/workspace/calendar/api/auth",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page labels this scope's tier; editing the subscribed list needs calendar.calendarlist too."
+   },
+   {
+    "k": "full",
+    "task": "Full access, including sharing and deleting calendars",
+    "scope": "calendar",
+    "tier": "sensitive",
+    "ev": "docs",
+    "quote": "detailed justification for each requested sensitive scope, as well as an explanation for why a narrower scope isn't sufficient. For example: \"My app will use https://www.googleapis.com/auth/calendar",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+    "note": "The label comes from Google's own example of a sensitive-scope justification, not from a scope table; also not on the restricted list."
+   }
+  ]
+ },
+ "googledrive": {
+  "options": [
+   {
+    "k": "pick",
+    "task": "Open files the user picks or the app created",
+    "scope": "drive.file",
+    "tier": "non-sensitive",
+    "ev": "docs",
+    "quote": "Since drive.file is non-sensitive, it allows for a more streamlined verification process.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": ""
+   },
+   {
+    "k": "appdata",
+    "task": "Store its own hidden settings in the user's Drive",
+    "scope": "drive.appdata",
+    "tier": "non-sensitive",
+    "ev": "docs",
+    "quote": "Non-sensitive scopes The following Drive API scopes are recommended for most use cases:",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "drive.appdata is listed in that non-sensitive table as \"View and manage the app's own configuration data in your Google Drive.\""
+   },
+   {
+    "k": "metadata",
+    "task": "See file names and details only, not contents",
+    "scope": "drive.metadata.readonly",
+    "tier": "restricted",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/drive.metadata.readonly View metadata for files in your Drive.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "Listed under the page's Restricted scopes table; also on Google's restricted list."
+   },
+   {
+    "k": "activity",
+    "task": "See the activity history of files",
+    "scope": "drive.activity.readonly",
+    "tier": "restricted",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/drive.activity.readonly View the activity record of files in your Drive.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "Listed under the page's Restricted scopes table; also on Google's restricted list."
+   },
+   {
+    "k": "read_all",
+    "task": "Read all files",
+    "scope": "drive.readonly",
+    "tier": "restricted",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/drive.readonly View and download all your Drive files.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "Listed under the page's Restricted scopes table; the yearly security assessment applies when the data is stored on or sent through servers."
+   },
+   {
+    "k": "edit_all",
+    "task": "Edit all files",
+    "scope": "drive",
+    "tier": "restricted",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/drive View and manage all your Drive files.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "Listed under the page's Restricted scopes table; Google also limits restricted Drive scopes to certain app types (backup, productivity, reporting)."
+   }
+  ]
+ },
+ "googlesheets": {
+  "options": [
+   {
+    "k": "pick",
+    "task": "Read or edit only spreadsheets the user picks or the app creates",
+    "scope": "drive.file",
+    "tier": "non-sensitive",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/drive.file See, edit, create, and delete only the specific Google Drive files you use with this app. Recommended Non-sensitive",
+    "src": "https://developers.google.com/workspace/sheets/api/scopes",
+    "note": ""
+   },
+   {
+    "k": "read",
+    "task": "Read all spreadsheets",
+    "scope": "spreadsheets.readonly",
+    "tier": "sensitive",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/spreadsheets.readonly See all your Google Sheets spreadsheets. Sensitive",
+    "src": "https://developers.google.com/workspace/sheets/api/scopes",
+    "note": ""
+   },
+   {
+    "k": "edit",
+    "task": "Create, edit and delete all spreadsheets",
+    "scope": "spreadsheets",
+    "tier": "sensitive",
+    "ev": "docs",
+    "quote": "https://www.googleapis.com/auth/spreadsheets See, edit, create, and delete all your Google Sheets spreadsheets. Sensitive",
+    "src": "https://developers.google.com/workspace/sheets/api/scopes",
+    "note": ""
+   },
+   {
+    "k": "find",
+    "task": "Search the user's Drive for any spreadsheet by name",
+    "scope": "drive.metadata.readonly",
+    "tier": "restricted",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/drive.metadata.readonly View metadata for files in your Drive.",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+    "note": "Sheets scopes have no way to list files, so finding one means calling Drive files.list; this is the narrowest Drive scope that lists all files, and Google labels it restricted."
+   }
+  ]
+ },
+ "youtube": {
+  "options": [
+   {
+    "k": "read_channel",
+    "task": "Read channel, video and playlist data",
+    "scope": "youtube.readonly",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/youtube.readonly View your YouTube account",
+    "src": "https://developers.google.com/identity/protocols/oauth2/scopes",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no Google page labels YouTube Data API scope tiers."
+   },
+   {
+    "k": "upload",
+    "task": "Upload videos",
+    "scope": "youtube.upload",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "requires authorization with at least one of the following scopes ( read more about authentication and authorization ). Scope https://www.googleapis.com/auth/youtube.upload",
+    "src": "https://developers.google.com/youtube/v3/docs/videos/insert",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); separately, YouTube says uploads from unverified API projects created after 28 July 2020 stay private until the project passes a YouTube compliance audit (developers.google.com/youtube/v3/revision_history)."
+   },
+   {
+    "k": "playlists",
+    "task": "Create and edit playlists",
+    "scope": "youtube.force-ssl",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "Scope https://www.googleapis.com/auth/youtubepartner https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl",
+    "src": "https://developers.google.com/youtube/v3/docs/playlists/insert",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); playlists.insert accepts youtubepartner, youtube or youtube.force-ssl, and Google doesn't say which is narrower; no page labels the tier."
+   },
+   {
+    "k": "comments",
+    "task": "Post and moderate comments",
+    "scope": "youtube.force-ssl",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "requires authorization with at least one of the following scopes ( read more about authentication and authorization ). Scope https://www.googleapis.com/auth/youtube.force-ssl",
+    "src": "https://developers.google.com/youtube/v3/docs/commentThreads/insert",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); force-ssl is the only scope accepted for comment writes; no page labels the tier."
+   },
+   {
+    "k": "analytics",
+    "task": "Read channel analytics (views, watch time)",
+    "scope": "yt-analytics.readonly + youtube.readonly",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "Important: API requests to this method now require access to the https://www.googleapis.com/auth/youtube.readonly scope.",
+    "src": "https://developers.google.com/youtube/analytics/reference/reports/query",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); reports.query needs both scopes; no page labels their tier."
+   },
+   {
+    "k": "revenue",
+    "task": "Read revenue and ad analytics",
+    "scope": "yt-analytics-monetary.readonly + youtube.readonly",
+    "tier": "sensitive",
+    "ev": "inferred",
+    "quote": "https://www.googleapis.com/auth/yt-analytics-monetary.readonly View YouTube Analytics monetary reports for your YouTube content.",
+    "src": "https://developers.google.com/youtube/analytics/reference/reports/query",
+    "note": "Not on Google's restricted list (support.google.com/cloud/answer/13464325); no page labels the tier."
+   }
+  ]
+ }
+}

@@ -1,0 +1,206 @@
+[
+ {
+  "id": "googlecalendar",
+  "private": {
+   "works": "yes",
+   "who": "Only people in your own Google Workspace or Cloud Identity organization",
+   "review": "No review needed",
+   "text": "An Internal app lets anyone in your Workspace org connect Calendar with no verification, no unverified-app screen and no 100-user cap.",
+   "quote": "Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only.",
+   "src": "https://support.google.com/cloud/answer/13464323"
+  },
+  "public": {
+   "text": "Set the user type to External, publish to production and pass Google's sensitive-scope verification for Calendar scopes so any Google user can connect without the unverified-app warning.",
+   "quote": "Your app might need to complete a verification process if it requests sensitive or restricted Google user data scopes using Google APIs and OAuth 2.0, unless an exception applies.",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "notes": "Internal needs the project to sit under a Google Cloud Organization, so a personal Gmail developer can't use it; the fallback is Testing mode, capped at 100 listed test users whose authorizations expire after 7 days."
+ },
+ {
+  "id": "googledrive",
+  "private": {
+   "works": "yes",
+   "who": "Only people in your own Google Workspace or Cloud Identity organization",
+   "review": "No review needed",
+   "text": "An Internal app lets anyone in your Workspace org connect Drive with no verification, no unverified-app screen and no 100-user cap.",
+   "quote": "Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only.",
+   "src": "https://support.google.com/cloud/answer/13464323"
+  },
+  "public": {
+   "text": "Set the user type to External and pass restricted-scope verification, including an annual third-party security assessment, if you use full Drive scopes; drive.file alone avoids that.",
+   "quote": "Apps accessing restricted data from or through a third-party server must undergo an annual security assessment by a Google-approved third party.",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+  },
+  "notes": "Internal needs the project to sit under a Google Cloud Organization, so a personal Gmail developer can't use it; the fallback is Testing mode, capped at 100 listed test users whose authorizations expire after 7 days. For Internal apps, restricted Drive scopes may still need extra setup by your Workspace admins."
+ },
+ {
+  "id": "googlesheets",
+  "private": {
+   "works": "yes",
+   "who": "Only people in your own Google Workspace or Cloud Identity organization",
+   "review": "No review needed",
+   "text": "An Internal app lets anyone in your Workspace org connect Sheets with no verification, no unverified-app screen and no 100-user cap.",
+   "quote": "Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only.",
+   "src": "https://support.google.com/cloud/answer/13464323"
+  },
+  "public": {
+   "text": "Set the user type to External, publish to production and pass sensitive-scope verification for the spreadsheets scopes so any Google user can connect.",
+   "quote": "Your app might need to complete a verification process if it requests sensitive or restricted Google user data scopes using Google APIs and OAuth 2.0, unless an exception applies.",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "notes": "Internal needs the project to sit under a Google Cloud Organization, so a personal Gmail developer can't use it; the fallback is Testing mode, capped at 100 listed test users whose authorizations expire after 7 days."
+ },
+ {
+  "id": "youtube",
+  "private": {
+   "works": "yes",
+   "who": "Only people in your own Google Workspace or Cloud Identity organization",
+   "review": "No review needed",
+   "text": "An Internal app lets accounts in your Workspace org connect YouTube with no verification, no unverified-app screen and no 100-user cap.",
+   "quote": "Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only.",
+   "src": "https://support.google.com/cloud/answer/13464323"
+  },
+  "public": {
+   "text": "Set the user type to External, publish to production and pass sensitive-scope verification for YouTube scopes so any Google user can connect.",
+   "quote": "Your app might need to complete a verification process if it requests sensitive or restricted Google user data scopes using Google APIs and OAuth 2.0, unless an exception applies.",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "notes": "Internal needs the project to sit under a Google Cloud Organization, so a personal Gmail developer can't use it; the fallback is Testing mode, capped at 100 listed test users whose authorizations expire after 7 days. Unconfirmed: whether Internal covers YouTube channels owned by personal Google accounts or Brand Accounts outside your org; Google's docs only say Internal is limited to members of the organization."
+ },
+ {
+  "id": "outlook",
+  "private": {
+   "works": "yes",
+   "who": "Only users in your own Microsoft Entra tenant",
+   "review": "No review needed",
+   "text": "A single-tenant app registered as 'Accounts in this directory only' lets everyone in your tenant connect Outlook, with no publisher verification.",
+   "quote": "Single-tenant apps are only available in the tenant they were registered in, also known as their home tenant.",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/single-and-multi-tenant-apps"
+  },
+  "public": {
+   "text": "Register the app as multitenant, adding personal Microsoft accounts for Outlook.com users, and get publisher verification so users in other tenants are allowed to consent.",
+   "quote": "users can't consent to most newly registered multitenant apps that aren't publisher verified.",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+  },
+  "notes": "The consent block applies when risk-based step-up consent is on, for apps registered after 8 Nov 2020; customer tenant admins can still turn off user consent entirely, which forces admin consent. Delegated mail permissions like Mail.Read don't need admin consent."
+ },
+ {
+  "id": "microsoftteams",
+  "private": {
+   "works": "yes",
+   "who": "Only users in your own Microsoft Entra tenant",
+   "review": "No review; your own tenant admin must consent to some Teams permissions",
+   "text": "A single-tenant app works for everyone in your tenant with no publisher verification, but permissions like ChannelMessage.Read.All still need your own tenant admin's consent.",
+   "quote": "Single-tenant apps are only available in the tenant they were registered in, also known as their home tenant.",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/single-and-multi-tenant-apps"
+  },
+  "public": {
+   "text": "Register the app as multitenant, get publisher verification, and have each customer's tenant admin consent to admin-only permissions such as ChannelMessage.Read.All.",
+   "quote": "Certain delegated permissions also require a tenant administrator’s consent.",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+  },
+  "notes": "The Graph permissions reference marks delegated ChannelMessage.Read.All as AdminConsentRequired: Yes. Without publisher verification, users in other tenants can be blocked from consenting when risk-based step-up consent is on."
+ },
+ {
+  "id": "github",
+  "private": {
+   "works": "yes",
+   "who": "Any GitHub user, including your own org members",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "You can create and register an OAuth app under your personal account or under any organization you have administrative access to.",
+   "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+  },
+  "public": {
+   "text": "Any GitHub user can authorize the app, but customer organizations with OAuth app access restrictions need an owner to approve it before it can reach their org data.",
+   "quote": "When you create a new organization, OAuth app access restrictions are enabled by default.",
+   "src": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions"
+  },
+  "notes": "GitHub's docs show no review step for OAuth apps but don't say 'no review' in so many words. An OAuth app owned by your own org is automatically given access to that org's resources when restrictions are set up."
+ },
+ {
+  "id": "linear",
+  "private": {
+   "works": "yes",
+   "who": "Only members of the Linear workspace that created the app",
+   "review": "No review needed",
+   "text": "A private app, the default, works only in the workspace where you created it.",
+   "quote": "Whether the app should be available only in the current workspace or installable by other workspaces.",
+   "src": "https://linear.app/developers/oauth-app-manifests"
+  },
+  "public": {
+   "text": "Set the app's distribution to public so other workspaces can install it; workspaces on paid plans may require admin approval before members can install it.",
+   "quote": "When a workspace member tries to install a third-party app, Linear will display a screen which allows the member to request approval",
+   "src": "https://linear.app/docs/third-party-application-approvals"
+  },
+  "notes": "Unconfirmed: whether switching to public needs any Linear review; the docs describe it only as a setting. Listing in Linear's Integration Directory is optional and selective."
+ },
+ {
+  "id": "jira",
+  "private": {
+   "works": "partial",
+   "who": "Only you, the developer who created the app",
+   "review": "No review needed",
+   "text": "A new Jira OAuth app is private, so only its creator can install it; even teammates need sharing switched on.",
+   "quote": "When you create an OAuth 2.0 (3LO) app, it's private by default. This means that only you can install and use it.",
+   "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+  },
+  "public": {
+   "text": "Turn on sharing and send customers the authorization URL; until Atlassian approves the app through a Marketplace integration listing, users see an unreviewed-app warning.",
+   "quote": "Users trying to install an unapproved OAuth 2.0 integration are warned that the app has not yet been reviewed by Atlassian.",
+   "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+  },
+  "notes": "Turning on sharing needs no review, so a team-only app just enables sharing and hands the link to teammates. Atlassian's privacy guide says apps that store personal data must report it through the personal data reporting API. Approval wait time is not stated."
+ },
+ {
+  "id": "confluence",
+  "private": {
+   "works": "partial",
+   "who": "Only you, the developer who created the app",
+   "review": "No review needed",
+   "text": "A new Confluence OAuth app is private, so only its creator can install it; even teammates need sharing switched on.",
+   "quote": "When you create an OAuth 2.0 (3LO) app, it's private by default. This means that only you can install and use it.",
+   "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+  },
+  "public": {
+   "text": "Turn on sharing and send customers the authorization URL; until Atlassian approves the app through a Marketplace integration listing, users see an unreviewed-app warning.",
+   "quote": "Users trying to install an unapproved OAuth 2.0 integration are warned that the app has not yet been reviewed by Atlassian.",
+   "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+  },
+  "notes": "Turning on sharing needs no review, so a team-only app just enables sharing and hands the link to teammates. Atlassian's privacy guide says apps that store personal data must report it through the personal data reporting API. Approval wait time is not stated."
+ },
+ {
+  "id": "figma",
+  "private": {
+   "works": "yes",
+   "who": "Only users in the team or organization you tied the app to",
+   "review": "No review needed",
+   "text": "A private app, the default, is published instantly and works for your team or organization.",
+   "quote": "Unlike public OAuth apps, private OAuth apps don’t require review by Figma when you publish them.",
+   "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+  },
+  "public": {
+   "text": "Publish the app as public and pass Figma's review, with testing instructions and reviewer access, before you can authorize outside users.",
+   "quote": "When you publish a public OAuth app, Figma reviews it. When Figma approves your public OAuth app, you can then start authorizing users.",
+   "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+  },
+  "notes": "Changes to a published public app need re-review. Review time is not stated on this page."
+ },
+ {
+  "id": "notion",
+  "private": {
+   "works": "partial",
+   "who": "Only the one Notion workspace the internal connection belongs to",
+   "review": "No review needed",
+   "text": "An internal connection works in one workspace through a token, not OAuth, and only workspace owners can create it.",
+   "quote": "Internal connections are workspace-specific, so to change the associated workspace, you'll have to create a new connection.",
+   "src": "https://www.notion.com/help/create-integrations-with-the-notion-api"
+  },
+  "public": {
+   "text": "Convert the internal connection to a public one so users in any workspace can connect through OAuth.",
+   "quote": "All newly added connections are internal initially. If you're a developer working on a public connection, first use the above instructions to create an internal connection.",
+   "src": "https://www.notion.com/help/create-integrations-with-the-notion-api"
+  },
+  "notes": "Unconfirmed: whether a public integration needs Notion review, because developers.notion.com couldn't be fetched (DNS failure). Composio's Notion toolkit lists both OAuth2 and API Key auth, so the internal token works there as an API key. Enterprise workspace owners can restrict which connections members install."
+ }
+]

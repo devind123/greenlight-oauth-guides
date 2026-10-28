@@ -290,7 +290,7 @@ const FLOW = [
     { k: 'wait', w: 'wait', t: '', d: 'Keep shipping on Composio\'s app meanwhile.', wait: true }] },
   { g: 'Go live', steps: [
     { k: 'authcfg', w: 'agent', t: 'Create the Composio auth config', d: 'Needs your approval.', time: '1 min' },
-    { k: 'switch', w: 'you', t: 'Switch new users to your app', d: 'Existing users stay on Composio\'s app until they reconnect.', time: '5 min' }] },
+    { k: 'switch', w: 'you', t: 'Switch new users to your app', d: 'Composio\'s docs don\'t say how existing connections move. Plan for users to reconnect.', time: '5 min' }] },
 ];
 const WHO = { you: ['w-you', 'You'], agent: ['w-agent', 'Agent'], wait: ['w-wait', 'Google'], cmp: ['w-cmp', 'Composio'] };
 const ALL = () => FLOW.flatMap(g => g.steps);
@@ -492,7 +492,7 @@ const TASKS = {
       submit: 'In Verification Center, press <b>Prepare for verification</b>, paste the justifications and the video link, then submit.',
       wait: "Google's reviewers reply by email. Paste any email here and I'll explain what they want and draft your reply.",
       authcfg: "Once Google approves you, I'll create the Gmail auth config in Composio with your client ID. I'll ask before I do.",
-      switch: 'Pass the new auth config ID when users connect. Existing users stay on Composio\'s app until they reconnect.',
+      switch: 'Pass the new auth config ID when users connect. Composio\'s docs don\'t say how existing connections move to it, so plan for users to reconnect.',
     };
     say(`<b>${s.wait ? 'Google review' : s.t}</b><br>${H[k] || ''}`);
     add(['I can\'t find this screen', 'Google rejected this', 'Why is this needed?'].map(x => `<button class="sug" data-say="${esc(x)}">${x}</button>`).join(''), 'sugs');
@@ -604,7 +604,7 @@ const KB = [
         src: t >= 2 ? ['restr', 'faq'] : ['sens', 'faq'], next: ['Can I launch before approval?'] };
     } },
   { k: /launch (before|without|now|today)|before approv|ship (now|today)|managed|composio('s)? app|don'?t (want to )?wait/, a: () => ({
-      html: 'Yes. Composio\'s managed app works today: users connect through Composio\'s Google app, and Google\'s screen says "Composio". When your own app is approved, you create an auth config with your client ID and new users connect to it. Existing connections stay on the old config until they reconnect.',
+      html: 'Yes. Composio\'s managed app works today: users connect through Composio\'s Google app, and Google\'s screen says "Composio". When your own app is approved, you create an auth config with your client ID and new users connect to it. Composio says managed apps are "fine for internal tools, prototypes, and development", but they share quota across all Composio users. Its docs don\'t say how existing connections move, so plan for users to reconnect.',
       src: ['composio'] }) },
   { k: /test(ing)? (mode|users?)|test users|100 users|7 days|expire/, a: () => ({
       html: 'In <b>Testing</b>, only people you add as test users (up to 100) can connect, and their access expires 7 days after they consent. Good for building and demos, not for real users.', src: ['caps'] }) },

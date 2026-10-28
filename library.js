@@ -79,13 +79,89 @@ $('#libView').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) r
 document.addEventListener('keydown', e => { if (e.key === '/' && !$('#v-library').hidden && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') { e.preventDefault(); $('#libSearch').focus(); } });
 document.addEventListener('click', e => { const a = e.target.closest('[data-app]'); if (!a) return; show('app', a.dataset.app); });
 
+/* ---------- choices: route, audience, permissions ----------
+   Data comes from data/choices.js (researched with sources). Everything degrades
+   gracefully: no data for an app means that choice is simply not shown. */
+const CH = window.CHOICES || { aud: {}, perms: {} };
+const COMPOSIO_SRC = 'https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app';
+const PERM_TIERS = {
+  google: { order: ['non-sensitive', 'sensitive', 'restricted'], t: {
+    'non-sensitive': { n: 'Non-sensitive', diff: 'easy', wait: '2–3 days', review: 'Brand verification only', ev: 'docs', src: 'https://support.google.com/cloud/answer/13463817' },
+    sensitive: { n: 'Sensitive', diff: 'medium', wait: '3–10 days', review: 'Google review and demo video, no audit', ev: 'docs', src: 'https://support.google.com/cloud/answer/13463817' },
+    restricted: { n: 'Restricted', diff: 'hard', wait: '~6 weeks', review: 'Google review plus a yearly CASA security assessment', ev: 'docs', src: 'https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification' } } },
+  microsoft: { order: ['user', 'admin'], t: { user: { n: 'User consent', diff: 'medium', review: 'Users approve it themselves' }, admin: { n: 'Admin consent', diff: 'medium', review: 'A tenant admin must approve it first' } } },
+  linkedin: { order: ['open', 'partner'], t: { open: { n: 'Self-serve', diff: 'easy', review: 'Self-serve, no application' }, partner: { n: 'Partner program', diff: 'gated', review: 'Apply to a LinkedIn partner program first', wait: 'Not stated' } } },
+  shopify: { order: ['standard', 'protected-1', 'protected-2'], t: { standard: { n: 'Standard data', diff: 'hard', review: 'App Store review if listed' }, 'protected-1': { n: 'Protected data, Level 1', diff: 'hard', review: 'Protected customer data request and review' }, 'protected-2': { n: 'Protected data, Level 2', diff: 'hard', review: 'Level 2 protected data: stricter requirements and review' } } },
+};
+const familyOf = id => /^google|^youtube/.test(id) ? 'google' : /outlook|teams/.test(id) ? 'microsoft' : id === 'linkedin' ? 'linkedin' : id === 'shopify' ? 'shopify' : null;
+const AS = {};
+function stateOf(a) { return AS[a.id] || (AS[a.id] = { route: 'own', aud: 'public', perms: new Set() }); }
+function viewOf(a, st) {
+  const rv = a.review || {}, vw = { diff: a.difficulty, time: a.setup ? a.setup.time : '—', wait: shortWait(a), waitFull: reviewTxt(a), waitTag: rv.required && rv.ev ? evl(rv.ev, rv.src) : '', notes: [] };
+  if (st.route === 'managed') return Object.assign(vw, { diff: 'easy', time: '0 min', wait: 'None', waitFull: "Uses Composio's approved app", waitTag: evl('docs', COMPOSIO_SRC) });
+  const P = CH.perms[a.id], fam = familyOf(a.id);
+  if (P && fam && st.perms.size) {
+    const F = PERM_TIERS[fam], picked = P.options.filter(o => st.perms.has(o.k));
+    const top = picked.map(o => o.tier).sort((x, y) => F.order.indexOf(y) - F.order.indexOf(x))[0];
+    const T = Object.assign({}, F.t[top] || {}, (P.tiers || {})[top] || {});
+    vw.tier = { key: top, n: T.n || top, review: T.effect || T.review, src: T.src, ev: T.ev || 'docs' };
+    if (T.diff) vw.diff = T.diff;
+    if (T.wait) { vw.wait = T.wait; vw.waitFull = T.wait; vw.waitTag = T.src ? evl(T.ev || 'docs', T.src) : ''; }
+  }
+  const A = (CH.aud || {})[a.id];
+  if (A && st.aud === 'private' && A.private && A.private.works !== 'no') {
+    vw.private = A.private;
+    if (A.private.works === 'yes') { vw.wait = 'None'; vw.waitFull = A.private.review || 'No review for your own team'; vw.waitTag = A.private.src ? evl('docs', A.private.src) : ''; if (vw.diff !== 'gated') vw.diff = 'easy'; }
+  }
+  return vw;
+}
+function setupPanel(a, st, vw) {
+  const man = a.managed === 'yes', A = (CH.aud || {})[a.id], P = CH.perms[a.id], fam = familyOf(a.id);
+  const seg = (name, opts, cur) => `<div class="seg" role="radiogroup">${opts.map(([v, l]) => `<button type="button" data-set="${name}" data-val="${v}" class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
+  const rows = [];
+  if (man) rows.push(`<div class="srow"><span class="sk">How users connect</span>${seg('route', [['managed', "Composio's app"], ['own', 'Your own app']], st.route)}<span class="shint">${st.route === 'managed' ? 'Ready today. Nothing to set up.' : 'Your name on the consent screen.'}</span></div>`);
+  if (st.route === 'own' && A && A.private && A.private.works !== 'no' && !/^same as public/i.test(A.private.text || '')) rows.push(`<div class="srow"><span class="sk">Who connects</span>${seg('aud', [['private', 'Only my team'], ['public', 'Any customer']], st.aud)}<span class="shint">${st.aud === 'private' ? esc(A.private.who || '') : 'Customers outside your organization'}</span></div>`);
+  if (st.route === 'own' && A && A.private && A.private.works === 'no') rows.push(`<div class="srow"><span class="sk">Who connects</span><span class="tier t-hard">No private option</span><span class="shint">${esc(A.private.text || '')} ${A.private.src ? evl('docs', A.private.src) : ''}</span></div>`);
+  if (st.route === 'own' && P && fam) {
+    const F = PERM_TIERS[fam];
+    rows.push(`<div class="srow top"><span class="sk">What your agent does</span><div class="pchips">${P.options.map(o => { const T = F.t[o.tier] || {}, on = st.perms.has(o.k); return `<button type="button" class="pchip${on ? ' on' : ''}" data-perm="${o.k}" aria-pressed="${on}" title="${esc(o.scope || '')}"><span class="tc t-${F.order.indexOf(o.tier)}"></span>${esc(o.task)}<small>${esc(T.n || o.tier)}${o.ev === 'inferred' ? ' · inferred' : ''}</small></button>`; }).join('')}</div></div>`);
+  }
+  if (!rows.length) return '';
+  let res = '';
+  if (st.route === 'managed') res = `<b>Composio's app:</b> live today, no review. Composio calls it "fine for internal tools, prototypes, and development". ${evl('docs', COMPOSIO_SRC)}`;
+  else if (vw.private) res = `<b>Only your team:</b> ${esc(vw.private.text || '')} ${vw.private.src ? evl('docs', vw.private.src) : ''}`;
+  else if (vw.tier) { const ps = P.options.filter(o => st.perms.has(o.k)); res = `<b>${esc(vw.tier.n)}:</b> ${esc(vw.tier.review || '')}${vw.tier.src ? ' ' + evl(vw.tier.ev || 'docs', vw.tier.src) : ''}${ps.some(o => o.ev === 'inferred' && o.tier === vw.tier.key) ? ' <span class="ev est" title="Google does not publish a tier for this scope; inferred from its restricted list">tier inferred</span>' : ''}${[...new Set(ps.flatMap(o => String(o.note || '').split(/;\s*|\.\s+/)).map(s => s.trim().replace(/\.$/, '')).filter(s => s.length > 20 && !/listed|table|this page|inferred|label|quote|reference|cell|source/i.test(s)))].slice(0, 2).map(s => `<span class="snote">${esc(cap(s))}.</span>`).join('')} <span class="scopes">${[...new Set(ps.map(o => String(o.scope || '').split(' (')[0]))].map(s => `<code>${esc(s)}</code>`).join('')}</span>`; }
+  else if (P && fam && st.route === 'own') res = 'Pick what your agent does to see the permissions it needs and the review that follows.';
+  return `<div class="pad"><div class="wrap"><div class="setup">${rows.join('')}${res ? `<div class="sres">${res}</div>` : ''}</div></div></div>`;
+}
+function managedBody(a) {
+  const pro = ['Live today: no OAuth app of your own, no provider review, no waiting.', 'It is the default auth whenever Composio offers a managed app.'];
+  const con = [['Users see "Composio wants to access your account", not your name.', COMPOSIO_SRC], ["Composio's default scopes may not include everything you need.", COMPOSIO_SRC], ['Quota is shared across all Composio users.', COMPOSIO_SRC], ['Polling has a 15-minute minimum interval.', COMPOSIO_SRC]];
+  return `<div class="pad"><div class="wrap body"><div class="mainc">
+    <section><div class="h"><h2>What you get, and what you give up</h2></div>
+      <ul class="checks req">${pro.map(t => `<li>${I.check}<span>${t}</span></li>`).join('')}</ul>
+      <ul class="checks" style="margin-top:8px">${con.map(([t, s]) => `<li>${I.warn}<span>${esc(t)} ${evl('docs', s)}</span></li>`).join('')}</ul></section>
+    <section><div class="h"><h2>Steps</h2><small>1 of 1 by the agent</small></div><div class="gsteps"><div class="gstep"><span class="gn">1</span><span class="who w-agent">Agent</span><span class="gtt">Create ${/^[aeiou]/i.test(a.name) ? 'an' : 'a'} ${esc(a.name)} auth config that uses Composio managed auth, and connect your first user</span><span class="time">2 min</span></div></div>
+      <p class="hint" style="margin-top:10px">Switch to your own app when users should see your name, you need custom scopes, or you hit the shared quota. ${evl('docs', COMPOSIO_SRC)}</p>
+      <div class="acts" style="margin-top:10px"><button class="btn sm" data-set="route" data-val="own">See the own-app guide</button><button class="btn sm askag" data-askapp>${AGENT_ICON}Ask agent</button></div></section>
+  </div><aside class="rail-c"><div class="box"><div class="bh">Composio values</div><div class="bb"><div class="kvs"><div><span>Auth</span><span>${esc(a.auth || 'OAuth 2.0')}</span></div><div><span>Managed app</span><span>Available ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span><code>${a.slug}</code></span></div></div></div></div></aside></div></div>`;
+}
+$('#v-app').addEventListener('click', e => {
+  const b = e.target.closest('[data-set],[data-perm]'); if (!b || !curApp) return;
+  const st = stateOf(curApp);
+  if (b.dataset.set) st[b.dataset.set] = b.dataset.val;
+  if (b.dataset.perm) st.perms.has(b.dataset.perm) ? st.perms.delete(b.dataset.perm) : st.perms.add(b.dataset.perm);
+  const y = window.scrollY; renderAppGuide(curApp.id); window.scrollTo(0, y);
+});
+
 /* ---------- generic guide page ---------- */
 let curApp = null;
 function renderAppGuide(id) {
   const a = APP(id); const V = $('#v-app');
   if (!a) { V.innerHTML = '<div class="pad"><div class="wrap"><p>Guide not found.</p></div></div>'; return; }
   curApp = a;
-  const d = DIFF[a.difficulty], rv = a.review || {}, man = a.managed === 'yes';
+  const st = stateOf(a), vw = viewOf(a, st);
+  const d = DIFF[vw.diff], rv = a.review || {}, man = a.managed === 'yes';
   const item = x => `<li>${I.warn}<span>${linkify(esc(unprefix(x.text)))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const req = x => `<li>${I.check}<span>${linkify(esc(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const stages = [
@@ -93,7 +169,9 @@ function renderAppGuide(id) {
         : a.managed === 'no' ? { cls: 'now', badge: ['Start here', 'here'], title: 'No managed app', time: '—', line: `Composio needs your own credentials for ${a.name}. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
         : { cls: 'now', badge: ['Start here', 'here'], title: a.slug ? 'Managed app unclear' : 'No Composio toolkit found', time: '—', line: a.slug ? `Composio's docs don't say. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` : `Check Composio for a ${esc(a.name)} toolkit, or build a custom integration.` },
     { cls: '', title: 'Create your own app', time: `${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>`, line: a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : 'Works for your own account right away.' },
-    rv.required ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(shortWait(a))} ${rv.ev ? evl(rv.ev, rv.src) : ''}`, line: `${esc(first(rv.what || 'Provider review'))}. Then any user can connect.` }
+    vw.private ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Use it in your team', time: esc(vw.wait), line: `${esc(vw.private.text || '')}` }
+    : vw.tier ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(vw.wait)} ${vw.waitTag}`, line: `${esc(String(vw.tier.review || '').replace(/\.$/, ''))}. Then any user can connect.` }
+    : rv.required ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(shortWait(a))} ${rv.ev ? evl(rv.ev, rv.src) : ''}`, line: `${esc(first(rv.what || 'Provider review'))}. Then any user can connect.` }
                 : { cls: 'goal', badge: ['Goal', 'goal'], title: 'Ship to everyone', time: 'No review', line: 'No provider review found in the docs.' },
   ];
   const steps = (a.steps || []).map((s, i) => `<div class="gstep"><span class="gn">${i + 1}</span><span class="who ${s.who === 'agent' ? 'w-agent' : 'w-you'}">${s.who === 'agent' ? 'Agent' : 'You'}</span><span class="gtt">${linkify(esc(s.t))}</span><span class="time">${s.time || ''}</span></div>`).join('');
@@ -109,12 +187,14 @@ function renderAppGuide(id) {
       <span class="pill">Checked ${a.checked ? new Date(a.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '—'}</span>
     </div>
     <div class="stats">
-      <div><span class="k">Difficulty</span><span class="v">${d.n}${dbars(a.difficulty)}</span></div>
-      <div><span class="k">Your time <span class="ev est">est.</span></span><span class="v">${a.setup ? a.setup.time : '—'}</span></div>
-      <div><span class="k">Approval wait ${rv.required && rv.ev ? evl(rv.ev, rv.src) : ''}</span><span class="v" title="${esc(reviewTxt(a))}">${esc(shortWait(a))}</span></div>
-      <div><span class="k">Cost ${a.cost ? evl(a.cost.ev || 'est', a.cost.src) : ''}</span><span class="v" title="${a.cost ? esc(a.cost.text) : ''}">${a.cost ? esc(first(a.cost.text)) : '—'}</span></div>
+      <div><span class="k">Difficulty</span><span class="v">${d.n}${dbars(vw.diff)}</span></div>
+      <div><span class="k">Your time <span class="ev est">est.</span></span><span class="v">${esc(vw.time)}</span></div>
+      <div><span class="k">Approval wait ${vw.waitTag}</span><span class="v" title="${esc(vw.waitFull)}">${esc(vw.wait)}</span></div>
+      <div><span class="k">Cost ${a.cost ? evl(a.cost.ev || 'est', a.cost.src) : ''}</span><span class="v vcl" title="${a.cost ? esc(a.cost.text) : ''}">${st.route === 'managed' ? '$0' : a.cost ? esc(first(a.cost.text)) : '—'}</span></div>
     </div>
   </div></div>
+  ${setupPanel(a, st, vw)}
+  ${st.route === 'managed' ? managedBody(a) : `
   <div class="pad"><div class="wrap access">
     <div class="sec-h"><h2>${man ? 'Launch today, switch to your own app later' : 'Bring your own app from day one'}</h2></div>
     <div class="journey">${stages.map((s, i) => `${i ? '<span class="jarrow" aria-hidden="true"><svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' : ''}<div class="stage ${s.cls}"><span class="stop"><span class="snum">${i + 1}</span><b class="stitle">${s.title}</b>${s.badge ? `<span class="sbadge ${s.badge[1]}">${s.badge[0]}</span>` : ''}</span><span class="stime">${s.time}</span><span class="sline">${s.line}</span></div>`).join('')}</div>
@@ -135,7 +215,7 @@ function renderAppGuide(id) {
       ${a.unverified && a.unverified.length ? `<div class="box"><div class="bh">Not confirmed<span class="ev est" style="margin-left:auto">${a.unverified.length}</span></div><div class="bb"><ul class="unv">${a.unverified.map(u => `<li>${esc(u)}</li>`).join('')}</ul></div></div>` : ''}
       <div class="box"><div class="bh">Sources<span style="margin-left:auto;font-weight:400;font-size:12.5px;color:var(--fg3)">${(a.sources || []).length}</span></div><div class="bb"><div class="src">${(a.sources || []).map(s => `<a href="${s.u}" target="_blank" rel="noopener"><span>${esc(s.t)}</span><span class="ev docs">docs</span></a>`).join('')}</div></div></div>
     </aside>
-  </div></div>`;
+  </div></div>`}`;
 }
 document.addEventListener('click', e => { if (!e.target.closest('[data-askapp]') || !curApp) return; openAgent(); askApp(curApp, true); });
 $('#v-app').addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (!b) return; b.parentElement.querySelectorAll('.hid').forEach(x => x.hidden = false); b.remove(); });

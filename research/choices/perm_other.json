@@ -1,0 +1,367 @@
+{
+ "outlook": {
+  "options": [
+   {
+    "k": "readmail",
+    "task": "Read the user's mail",
+    "scope": "Mail.Read (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to read the signed-in user's mailbox.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#mailread",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "sendmail",
+    "task": "Send mail as the user",
+    "scope": "Mail.Send (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to send mail as users in the organization.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#mailsend",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "readcal",
+    "task": "Read the user's calendar",
+    "scope": "Calendars.Read (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to read events in user calendars.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#calendarsread",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "writecal",
+    "task": "Create and edit calendar events",
+    "scope": "Calendars.ReadWrite (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to create, read, update, and delete events in user calendars.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#calendarsreadwrite",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "readcontacts",
+    "task": "Read the user's contacts",
+    "scope": "Contacts.Read (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to read user contacts.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#contactsread",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "appreadmail",
+    "task": "Read mail in every mailbox with no signed-in user",
+    "scope": "Mail.Read (application)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Allows the app to read mail in all mailboxes without a signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#mailread",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "appsendmail",
+    "task": "Send mail as any user with no signed-in user",
+    "scope": "Mail.Send (application)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Allows the app to send mail as any user without a signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#mailsend",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   },
+   {
+    "k": "appcal",
+    "task": "Read and write every calendar with no signed-in user",
+    "scope": "Calendars.ReadWrite (application)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Allows the app to create, read, update, and delete events of all calendars without a signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#calendarsreadwrite",
+    "cell": "AdminConsentRequired: Application Yes, Delegated No"
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "User consent",
+    "effect": "Each user can approve the app for their own data when they sign in, unless their organization's policy blocks user consent.",
+    "quote": "Users can consent for their data Admins can consent for all users User consent availability also depends on your tenant's app consent policies .",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-overview"
+   },
+   "admin": {
+    "n": "Admin consent",
+    "effect": "A tenant administrator must approve the app before it works, so each customer org's admin has to sign off.",
+    "quote": "Only Privileged Role Administrator and Global Administrator can consent to application permissions.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-overview"
+   }
+  }
+ },
+ "microsoftteams": {
+  "options": [
+   {
+    "k": "sendchat",
+    "task": "Send 1:1 and group chat messages",
+    "scope": "ChatMessage.Send (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows an app to send one-to-one and group chat messages in Microsoft Teams, on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#chatmessagesend",
+    "cell": "AdminConsentRequired: Application -, Delegated No"
+   },
+   {
+    "k": "readchat",
+    "task": "Read the user's chats",
+    "scope": "Chat.Read (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows an app to read 1 on 1 or group chats threads, on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#chatread",
+    "cell": "AdminConsentRequired: Application -, Delegated No"
+   },
+   {
+    "k": "readchannel",
+    "task": "Read channel messages",
+    "scope": "ChannelMessage.Read.All (delegated)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Allows an app to read a channel's messages in Microsoft Teams, on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#channelmessagereadall",
+    "cell": "AdminConsentRequired: Application Yes, Delegated Yes"
+   },
+   {
+    "k": "postchannel",
+    "task": "Post messages to a channel",
+    "scope": "ChannelMessage.Send (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#channelmessagesend",
+    "cell": "AdminConsentRequired: Application -, Delegated No"
+   },
+   {
+    "k": "members",
+    "task": "List team members",
+    "scope": "TeamMember.Read.All (delegated)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Read the members of teams, on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#teammemberreadall",
+    "cell": "AdminConsentRequired: Application Yes, Delegated Yes"
+   },
+   {
+    "k": "meeting",
+    "task": "Create online meetings",
+    "scope": "OnlineMeetings.ReadWrite (delegated)",
+    "tier": "user",
+    "ev": "docs",
+    "quote": "Allows the app to read and create online meetings on behalf of the signed-in user.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#onlinemeetingsreadwrite",
+    "cell": "AdminConsentRequired: Application -, Delegated No"
+   },
+   {
+    "k": "appreadchat",
+    "task": "Read every chat in the org with no signed-in user",
+    "scope": "Chat.Read.All (application)",
+    "tier": "admin",
+    "ev": "docs",
+    "quote": "Allows the app to read all 1-to-1 or group chat messages in Microsoft Teams.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference#chatreadall",
+    "cell": "AdminConsentRequired: Application Yes, Delegated -"
+   }
+  ],
+  "tiers": {
+   "user": {
+    "n": "User consent",
+    "effect": "Each user can approve the app for their own chats and meetings when they sign in, unless their organization's policy blocks user consent.",
+    "quote": "Users can consent for their data Admins can consent for all users User consent availability also depends on your tenant's app consent policies .",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-overview"
+   },
+   "admin": {
+    "n": "Admin consent",
+    "effect": "A tenant administrator must approve the app before it can read channel messages or member lists in that org.",
+    "quote": "When a user signs in to an app, they, or, in some cases, an administrator, get a chance to consent to the delegated permissions.",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-overview"
+   }
+  }
+ },
+ "linkedin": {
+  "options": [
+   {
+    "k": "signin",
+    "task": "Sign in with LinkedIn (name, photo)",
+    "scope": "openid, profile (Sign in with LinkedIn using OpenID Connect)",
+    "tier": "open",
+    "ev": "docs",
+    "quote": "Member Auth : Retrieve authenticated member's name, headline, and photo.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access#open-permissions-consumer"
+   },
+   {
+    "k": "email",
+    "task": "Read the member's email address",
+    "scope": "email (Sign in with LinkedIn using OpenID Connect)",
+    "tier": "open",
+    "ev": "docs",
+    "quote": "Member Auth : Retrieve authenticated member's primary email address.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access#open-permissions-consumer"
+   },
+   {
+    "k": "postmember",
+    "task": "Post on the member's behalf",
+    "scope": "w_member_social (Share on LinkedIn)",
+    "tier": "open",
+    "ev": "docs",
+    "quote": "Member Auth : Post, comment and like posts on behalf of an authenticated member.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access#open-permissions-consumer"
+   },
+   {
+    "k": "readorgposts",
+    "task": "Read company page posts and engagement",
+    "scope": "r_organization_social (Community Management API or Advertising API)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "Retrieve your organization posts, including any comments, likes, and other engagement data with AUTHOR injection.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access#what-permissions-are-available"
+   },
+   {
+    "k": "readorgstats",
+    "task": "Read company page analytics",
+    "scope": "r_organization_admin (Advertising API or Lead Sync API)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "Retrieve your organization pages and reporting data, including follower, visitor, and content analytics.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access#what-permissions-are-available"
+   },
+   {
+    "k": "postorg",
+    "task": "Post as a company page",
+    "scope": "w_organization_social (Community Management API or Advertising API)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "Post, comment, and like posts on your organization's behalf.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access#what-permissions-are-available"
+   },
+   {
+    "k": "readads",
+    "task": "Read ad accounts and ad reporting",
+    "scope": "r_ads, r_ads_reporting (Advertising API)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "Retrieve reporting for your advertising accounts.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access#what-permissions-are-available"
+   },
+   {
+    "k": "manageads",
+    "task": "Create and edit ad campaigns",
+    "scope": "rw_ads (Advertising API)",
+    "tier": "partner",
+    "ev": "docs",
+    "quote": "Manage and read an authenticated member's ad accounts.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access#what-permissions-are-available",
+    "note": "Advertising API Development tier allows edits on up to 5 ad accounts; Standard tier is needed for unlimited."
+   }
+  ],
+  "tiers": {
+   "open": {
+    "n": "Self-serve product",
+    "effect": "Add the product in the Developer Portal and the scope is available right away with no LinkedIn review.",
+    "quote": "Open Permissions are the only permissions that are available to all developers without special approval.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+   },
+   "partner": {
+    "n": "Partner approval",
+    "effect": "You must apply to LinkedIn for the API product and wait for approval, and then apply again to move from Development to Standard tier for production use.",
+    "quote": "Most permissions and partner programs require explicit approval from LinkedIn.",
+    "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+   }
+  }
+ },
+ "shopify": {
+  "options": [
+   {
+    "k": "readproducts",
+    "task": "Read products",
+    "scope": "read_products",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "Types and resources that don't refer to a single customer, such as the product query, aren't included.",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data#request-access-to-protected-customer-data"
+   },
+   {
+    "k": "editproducts",
+    "task": "Create and edit products",
+    "scope": "write_products",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "read_products write_products Product , ProductVariant , Collection",
+    "src": "https://shopify.dev/docs/api/usage/access-scopes"
+   },
+   {
+    "k": "editinventory",
+    "task": "Read and change inventory levels",
+    "scope": "read_inventory, write_inventory",
+    "tier": "standard",
+    "ev": "docs",
+    "quote": "read_inventory write_inventory InventoryItem InventoryLevel",
+    "src": "https://shopify.dev/docs/api/usage/access-scopes"
+   },
+   {
+    "k": "readorders",
+    "task": "Read orders (last 60 days) without customer contact fields",
+    "scope": "read_orders",
+    "tier": "protected-1",
+    "ev": "docs",
+    "quote": "Orders, draft orders, abandoned checkouts, refunds, transactions, and other data that relate to a single customer.",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data#protected-customer-data-api-types-and-resources"
+   },
+   {
+    "k": "readallorders",
+    "task": "Read orders older than 60 days",
+    "scope": "read_orders + read_all_orders",
+    "tier": "protected-1",
+    "ev": "docs",
+    "quote": "read_orders provides read access and write_orders provides read and write access. Both cover orders created within the last 60 days. For older orders, add read_all_orders",
+    "src": "https://shopify.dev/docs/api/usage/access-scopes#orders-permissions",
+    "note": "read_all_orders also needs its own Shopify approval on top of protected customer data review."
+   },
+   {
+    "k": "readcustomerbasic",
+    "task": "Read customer records without name, email, phone or address",
+    "scope": "read_customers",
+    "tier": "protected-1",
+    "ev": "docs",
+    "quote": "1 Customer data excluding name, address, phone, and email fields Request access to protected customer data in the Partner Dashboard",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+   },
+   {
+    "k": "readcustomerpii",
+    "task": "Read customer names, emails, phones and addresses",
+    "scope": "read_customers + protected fields (Name, Email, Phone, Address)",
+    "tier": "protected-2",
+    "ev": "docs",
+    "quote": "2 Customer data including name, address, phone, or email fields Request access to protected customer data and fields in the Partner Dashboard",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+   }
+  ],
+  "tiers": {
+   "standard": {
+    "n": "Standard scope",
+    "effect": "The merchant approves the scope at install and no extra Shopify data review is needed.",
+    "quote": "0 No customer data No action required",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+   },
+   "protected-1": {
+    "n": "Protected customer data, Level 1",
+    "effect": "A public app must request protected customer data access in the Partner Dashboard and meet the Level 1 data-handling requirements before real stores return the data.",
+    "quote": "Implement level 1 protected customer data requirements",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+   },
+   "protected-2": {
+    "n": "Protected customer data, Level 2",
+    "effect": "A public app must also request each identifying field, meet the stricter Level 2 security requirements, and may be selected for a data protection review.",
+    "quote": "Implement level 1 and level 2 protected customer data requirements Participate in data protection reviews",
+    "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+   }
+  }
+ }
+}

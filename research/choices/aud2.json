@@ -1,0 +1,206 @@
+[
+ {
+  "id": "hubspot",
+  "private": {
+   "works": "yes",
+   "who": "Up to 10 allowlisted HubSpot accounts you pick (your own account included)",
+   "review": "No review needed",
+   "text": "A private-distribution OAuth app installs in up to 10 allowlisted accounts you choose, with no Marketplace listing.",
+   "quote": "For apps with a private distribution, you can install your app in a maximum of 10 HubSpot accounts.",
+   "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot"
+  },
+  "public": {
+   "text": "A marketplace-distribution app is capped at 25 installs until HubSpot reviews and lists it, then installs are unlimited.",
+   "quote": "Until your app is reviewed by the HubSpot Ecosystem Quality team and listed on the Marketplace, you’ll be limited to 25 installs.",
+   "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot"
+  },
+  "notes": "Solutions Partner developer accounts can install private OAuth apps in up to 100 portals, and static-token apps are limited to 1 standard account (changelog). The docs do not say in words that private apps skip review; this is inferred because review is tied to Marketplace listing. The 25 cap applies to apps created or migrated on the new Developer Platform from September 22, 2025."
+ },
+ {
+  "id": "salesforce",
+  "private": {
+   "works": "yes",
+   "who": "Only users in the Salesforce org where the app was created",
+   "review": "No review needed",
+   "text": "An External Client App left in the Local distribution state works only inside the org that created it.",
+   "quote": "Local: Can be used only in the context of its org.",
+   "src": "https://trailhead.salesforce.com/content/learn/modules/external-client-app-basics/use-external-client-apps-when-connected-apps-wont-do"
+  },
+  "public": {
+   "text": "Set the app to Packaged and ship it in a second-generation managed package; listing on AgentExchange also needs Salesforce's security review.",
+   "quote": "Packaged: Can be added to a second-generation (2GP) managed package and distributed.",
+   "src": "https://trailhead.salesforce.com/content/learn/modules/external-client-app-basics/use-external-client-apps-when-connected-apps-wont-do"
+  },
+  "notes": "Security review is stated for distribution on AgentExchange (https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-guidelines.html); whether a packaged app installed outside AgentExchange needs review was not confirmed. Creating new connected apps is restricted as of Spring '26. Salesforce Help pages would not render, so this comes from Trailhead."
+ },
+ {
+  "id": "pipedrive",
+  "private": {
+   "works": "yes",
+   "who": "Any Pipedrive company you send the unlisted install link to",
+   "review": "No review needed",
+   "text": "A private app is shared through a direct, unlisted install link and needs no Marketplace approval.",
+   "quote": "Submitting the app is unnecessary if it’s only used internally. You can instead create a Private app and share it with any Pipedrive company using a direct installation link",
+   "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+  },
+  "public": {
+   "text": "Approval is only needed to list a public app in the Pipedrive Marketplace, and reviews may currently take up to 21 business days.",
+   "quote": "Each new public app submitted to the Pipedrive Marketplace has to pass our approval process to ensure the standards of quality and reliability that our customers (the salespeople) expect.",
+   "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+  },
+  "notes": "Private apps are not limited to your own company: any Pipedrive company with the link can install. The 21-business-day figure is a banner on the approval page."
+ },
+ {
+  "id": "zendesk",
+  "private": {
+   "works": "yes",
+   "who": "Only users of your own Zendesk account (subdomain)",
+   "review": "No review needed",
+   "text": "A regular OAuth client made in your own Admin Center works for users of that one Zendesk account.",
+   "quote": "This section describes how to set up an OAuth client for users of one Zendesk account.",
+   "src": "https://support.zendesk.com/hc/en-us/articles/4408845965210-Using-OAuth-authentication-with-your-application"
+  },
+  "public": {
+   "text": "To serve other Zendesk customers you must request a global OAuth client through the Zendesk Marketplace portal.",
+   "quote": "If you distribute a public app or an integration app to multiple Zendesk customers, you must use global OAuth tokens to authenticate requests.",
+   "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/"
+  },
+  "notes": "The global-client page says the rule does not apply to internal-use integrations. Global clients are approved by Zendesk, but no approval time was stated. Converting a local client to global removes your access to its admin page."
+ },
+ {
+  "id": "intercom",
+  "private": {
+   "works": "yes",
+   "who": "Only your own paid Intercom workspace",
+   "review": "No review needed",
+   "text": "A private app for your own paid workspace uses an Access Token instead of OAuth and needs no review.",
+   "quote": "Private apps that only access your own paid workspace data do not require a review.",
+   "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app"
+  },
+  "public": {
+   "text": "An app for other workspaces must use OAuth, be built in a development workspace, and pass Intercom review even if unlisted.",
+   "quote": "Both unlisted and listed apps must be submitted for review.",
+   "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app"
+  },
+  "notes": "The private path uses an Access Token, not OAuth (authentication page). The hint that an unpublished OAuth app works in your own workspace was not confirmed on the pages fetched."
+ },
+ {
+  "id": "slack",
+  "private": {
+   "works": "yes",
+   "who": "Only the one workspace the app was created in",
+   "review": "No review needed",
+   "text": "An undistributed app lives in one workspace and can use every app feature there.",
+   "quote": "Undistributed apps exist on a single workspace and can use the full range of app capabilities, but they can't be distributed to other workspaces.",
+   "src": "https://docs.slack.dev/app-management/distribution"
+  },
+  "public": {
+   "text": "Set up an OAuth flow to distribute unlisted with no review, or submit to the Slack Marketplace for review to avoid unlisted-app limits.",
+   "quote": "Installing your app on other workspaces means that you'll need to set up an OAuth 2.0 flow.",
+   "src": "https://docs.slack.dev/app-management/distribution"
+  },
+  "notes": "New unlisted commercial apps get 1 request per minute and at most 15 objects per request on conversations.history and conversations.replies (https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps). Marketplace apps are not affected."
+ },
+ {
+  "id": "discord",
+  "private": {
+   "works": "yes",
+   "who": "Only the app owner can add the bot to servers",
+   "review": "No review needed",
+   "text": "With the Public Bot option unchecked, only you can add the bot to servers.",
+   "quote": "If unchecked, only you can add the bot to guilds.",
+   "src": "https://docs.discord.com/developers/topics/oauth2"
+  },
+  "public": {
+   "text": "Check Public Bot so anyone with the link can add it, but the app must pass App Verification to grow past 100 servers.",
+   "quote": "Verification is required for your app to scale past 100 servers.",
+   "src": "https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified"
+  },
+  "notes": "Since June 10, 2026, Privileged Intents need an application once more than 10,000 unique users can see the app (https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review). Some OAuth2 scopes need Discord approval. The Public Bot toggle covers bot installs; no private mode for user-login OAuth was found."
+ },
+ {
+  "id": "zoom",
+  "private": {
+   "works": "yes",
+   "who": "Only users on your own Zoom account",
+   "review": "No review needed",
+   "text": "A private app is shared by authorization URL, works only for users on your Zoom account, and is not published to the Marketplace.",
+   "quote": "Private apps are the most restrictive in distribution and access. They are not published to the Zoom App Marketplace. Access is restricted to only users on your Zoom account.",
+   "src": "https://developers.zoom.us/docs/build-flow/before-you-build"
+  },
+  "public": {
+   "text": "Publish the app, listed or unlisted, which requires passing Zoom's app review.",
+   "quote": "Published (Listed) apps are available to all Zoom users on the Zoom App Marketplace, and are required to go through a rigorous quality and security review",
+   "src": "https://developers.zoom.us/docs/build-flow/before-you-build"
+  },
+  "notes": "Unlisted published apps also go through app review. Beta apps can reach a limited number of outside users once Zoom approves a share request, answered within 3-4 business days (https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps). Internal apps are another option for your own account only."
+ },
+ {
+  "id": "linkedin",
+  "private": {
+   "works": "yes",
+   "who": "Any LinkedIn member, for open permissions only",
+   "review": "No review needed for open permissions",
+   "text": "Same as public: no review either way",
+   "quote": "Open Permissions are the only permissions that are available to all developers without special approval.",
+   "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+  },
+  "public": {
+   "text": "Any member can connect with open permissions like Sign In and Share, while partner products like Community Management need LinkedIn approval no matter who uses them.",
+   "quote": "Most permissions and partner programs require explicit approval from LinkedIn.",
+   "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+  },
+  "notes": "Marketing API Development tier can POST for up to 5 ad accounts, and Standard tier upgrades are at LinkedIn's discretion (https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers)."
+ },
+ {
+  "id": "twitter",
+  "private": {
+   "works": "yes",
+   "who": "Any X user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "The console will generate your API keys and tokens.",
+   "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+  },
+  "public": {
+   "text": "Use OAuth 2.0 user-context credentials to act for any user; the getting-access steps list no app review.",
+   "quote": "Use OAuth 2.0 (recommended) or OAuth 1.0a to act on behalf of users.",
+   "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+  },
+  "notes": "Signup asks you to accept the Developer Agreement and describe your use case; no approval step is described. API usage is billed, which was not checked here."
+ },
+ {
+  "id": "reddit",
+  "private": {
+   "works": "partial",
+   "who": "Only your own Reddit account (script app)",
+   "review": "Reddit API access approval still required",
+   "text": "A script app reaches only the developer's own account, but Reddit now requires approval before any Data API access.",
+   "quote": "Script app: Runs on hardware you control, such as your own laptop or server. Can keep a secret. Only has access to your account.",
+   "src": "https://github.com/reddit-archive/reddit/wiki/OAuth2"
+  },
+  "public": {
+   "text": "Use a web app to act for other users, and only after Reddit explicitly approves your access request.",
+   "quote": "Approval is required: You must request access and get explicit approval before accessing any Reddit data through our API, and you must agree to comply with all applicable terms.",
+   "src": "https://support.reddithelp.com/hc/en-us/articles/42728983564564-Responsible-Builder-Policy"
+  },
+  "notes": "The OAuth2 wiki is an archived 2016 page. Commercial use needs a separate agreement with Reddit (https://redditinc.com/policies/data-api-terms). No approval time is stated."
+ },
+ {
+  "id": "shopify",
+  "private": {
+   "works": "yes",
+   "who": "One store, stores in one Plus organization, or development stores",
+   "review": "No review needed",
+   "text": "A custom-distribution app installs on one store, or on the stores of one Plus organization, with no approval.",
+   "quote": "Installed on a single Shopify store, on multiple stores that belong to the same Plus organization, or on development stores",
+   "src": "https://shopify.dev/docs/apps/launch/distribution"
+  },
+  "public": {
+   "text": "Public distribution lets many stores install, but it needs Shopify approval and App Store registration with a one-time fee.",
+   "quote": "Public distribution also requires registering for the Shopify App Store, which has a one-time fee.",
+   "src": "https://shopify.dev/docs/apps/launch/distribution"
+  },
+  "notes": "The distribution table marks approval as required for public and not for custom. Custom-distribution apps can't charge through Shopify's app billing. You can't change the distribution method after picking it."
+ }
+]

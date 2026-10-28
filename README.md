@@ -14,6 +14,7 @@ A developer building an AI agent wants their users to connect Gmail, Slack or Hu
 | Page | What it shows |
 |---|---|
 | **Library** | 37 researched guides with filters for difficulty, category and Composio-managed. Each guide covers effort, approval wait, limits before approval, requirements, gotchas, steps and sources. An agent bar answers questions across apps, such as "which apps need a review?" or "compare HubSpot and Salesforce". |
+| **Choices on every guide** | Use Composio's managed app or your own (with what you give up, from Composio's docs). Only your team or any customer (36 apps, researched). For 8 apps where permissions change the review (Google Calendar, Drive, Sheets, YouTube, Outlook, Teams, LinkedIn, Shopify), pick what your agent does and see the tier. Stats and the launch path update with every choice. |
 | **Gmail guide** | The deep example. You pick what your agent does, and it works out the minimum scopes, the Google review tier, wait, cost and audit, and a cheaper alternative. Steps have statuses, checks, "Ask agent" and "Fix with agent". |
 | **Generate a guide** | **Live.** Type any app name or website. An agent researches the provider's official docs and writes a guide in the same format, with every quote checked against its page. The result can be shared as a link. |
 | **Verification log** | How the guides were checked: a random 45-claim sample re-checked against sources, what was corrected, and what we couldn't confirm. |
@@ -80,6 +81,7 @@ Details are in the in-app Verification log, `research/verify.json` and `research
   - They use Gemini's free tier, which is sometimes overloaded. A fallback chain across four models covers most of that. If all four are busy, the page shows what it found and offers a retry.
   - Free Gemini 3 models can't use Google Search grounding. So we search with DuckDuckGo, which works locally but is blocked from Vercel's servers. In production the agent falls back to official doc URLs it knows, and each one is fetched and checked.
 - **Library coverage.** Only 45 of 506 sourced claims were independently re-checked; the rest are sourced but not individually re-verified. A few official sites couldn't be read during research: Notion's and Box's developer sites, and some Reddit and Discord help pages. Those guides lean on Composio's docs and official doc repos, and say so.
+- **Some permission tiers are inferred.** Google labels Drive and Sheets scope tiers, but not Calendar or YouTube. Those show "inferred" (not on Google's restricted list). Microsoft admin consent comes from the Graph permissions reference table.
 - **Gmail tool-to-scope mapping is inferred** from Google's API docs, because Composio doesn't publish a per-tool scope map. It's tagged `inferred`.
 - **The side-panel agent has no model behind it.** It answers from the guides' data and your current state: chosen tools, tier and step status. Only guide generation calls a model.
 - **The rate limit is basic.** It allows 6 generations per 10 minutes per visitor and is held in memory per server instance.
@@ -96,5 +98,6 @@ api/generate.js             Vercel function: streams progress, then the guide
 lib/generate.js             the research pipeline and quote verification
 dev-server.mjs              local server (static + /api/generate)
 research/                   agent brief, raw research per batch, sample + verification results
-scripts/build_data.py       raw research -> data/*.js
+scripts/build_data.py       raw research -> data/apps.js, data/verify.js
+scripts/build_choices.py    research/choices -> data/choices.js (audience + permission catalogues)
 ```

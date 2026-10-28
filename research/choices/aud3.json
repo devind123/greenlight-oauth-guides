@@ -1,0 +1,206 @@
+[
+ {
+  "id": "xero",
+  "private": {
+   "works": "partial",
+   "who": "Up to 5 connected Xero organisations on the free Starter tier",
+   "review": "No certification needed",
+   "text": "A new uncertified app works for up to 5 connected organisations on the Starter tier.",
+   "quote": "New apps default to the starter tier with 5 connections. Moving up to Core will give you up to 50 connections.",
+   "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+  },
+  "public": {
+   "text": "Serving many customers means a paid tier: Core allows 50 uncertified connections, and Plus and above (and the App Store) need app certification.",
+   "quote": "To be listed on the App Store, you will need to be in the Plus tier or above.",
+   "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+  },
+  "notes": "Xero has no separate private app type in these pages; the limit is a connection count, and each customer organisation can connect at most five uncertified apps. Certification as a prerequisite for Plus and above is shown on https://developer.xero.com/pricing."
+ },
+ {
+  "id": "quickbooks",
+  "private": {
+   "works": "no",
+   "who": "Only sandbox test companies, using development keys",
+   "review": "App Assessment Questionnaire approval needed even for your own real company",
+   "text": "Development keys only reach sandbox companies, so even your own live QuickBooks company needs approved production keys.",
+   "quote": "Those for Development are only for your sandbox companies.",
+   "src": "https://developer.intuit.com/app/developer/qbo/docs/get-started/get-client-id-and-client-secret"
+  },
+  "public": {
+   "text": "Get the App Assessment Questionnaire approved to unlock production keys, then share the app URL; a QuickBooks App Store listing is optional.",
+   "quote": "The Show Credentials switch appears only after the App Assessment Questionnaire is approved.",
+   "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+  },
+  "notes": "Intuit says an approved production app can be shared by URL \"keeping it semi-private\"; the same approval is required whether the app serves only you or everyone."
+ },
+ {
+  "id": "stripe",
+  "private": {
+   "works": "yes",
+   "who": "Only team members of your own Stripe account",
+   "review": "No review needed",
+   "text": "A Stripe App with private distribution (the default) works for your own account team with no review.",
+   "quote": "Unlike apps on the App Marketplace, apps shared with team members don’t go through a review process.",
+   "src": "https://docs.stripe.com/stripe-apps/distribution-options"
+  },
+  "public": {
+   "text": "Set the app to public distribution and pass Stripe App Marketplace review; public OAuth install links only work once the app is published.",
+   "quote": "The public OAuth install links don’t work until the app is published.",
+   "src": "https://docs.stripe.com/stripe-apps/api-authentication/oauth"
+  },
+  "notes": "This covers Stripe Apps OAuth. Legacy Connect OAuth (not recommended for new platforms) has no review step in the docs fetched. Before publishing, external testing allows up to 25 testers (https://docs.stripe.com/stripe-apps/test-app)."
+ },
+ {
+  "id": "dropbox",
+  "private": {
+   "works": "partial",
+   "who": "Only your own account, or up to 500 users after you click Enable additional users",
+   "review": "No review needed until 50 linked users",
+   "text": "A development-status app links only your account by default, and up to 500 users once you enable additional users.",
+   "quote": "When you first create a Dropbox API app, it’s given development status and can only be connected to your own account.",
+   "src": "https://www.dropbox.com/developers/reference/developer-guide"
+  },
+  "public": {
+   "text": "Apply for and receive production status; once 50 users link, you have two weeks before new links freeze.",
+   "quote": "once your app links 50 Dropbox users, you will have two weeks to apply for and receive production status approval",
+   "src": "https://www.dropbox.com/developers/reference/developer-guide"
+  },
+  "notes": "Dropbox says internal tools can stay in development status, but the 50-user trigger still applies to them."
+ },
+ {
+  "id": "box",
+  "private": {
+   "works": "yes",
+   "who": "Any Box user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "| Requires admin approval?          | No        | Yes | Yes                | Yes        |",
+   "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/select.md"
+  },
+  "public": {
+   "text": "Any Box user can authorize an OAuth 2.0 app; listing in Box Integrations is optional, and an enterprise admin may first need to enable unpublished apps.",
+   "quote": "work with users who have existing Box accounts",
+   "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/select.md"
+  },
+  "notes": "The quote is the OAuth 2.0 column of the comparison table on the select page. Enterprises with \"Disable unpublished apps by default\" must enable the app first (guides/authorization/index.md)."
+ },
+ {
+  "id": "asana",
+  "private": {
+   "works": "yes",
+   "who": "Only members of workspaces you belong to and share the app with",
+   "review": "No review needed",
+   "text": "An unsubmitted OAuth app works for internal tools and testing in your own organization.",
+   "quote": "If you're building an internal tool or testing your integration, you can create and use an OAuth app without submitting it for review.",
+   "src": "https://developers.asana.com/docs/submit-your-app"
+  },
+  "public": {
+   "text": "Submit the app for Asana review to make it available in any workspace beyond your own organization.",
+   "quote": "Make your app available to users in any Asana workspace, beyond your own organization or development environment",
+   "src": "https://developers.asana.com/docs/submit-your-app"
+  },
+  "notes": "Asana's docs conflict: the Manage distribution page says choosing 'Any workspace' lets users from any workspace authorize via the URL, with no review mentioned; the submit page says submission is needed for that. Enterprise admins can also block apps."
+ },
+ {
+  "id": "trello",
+  "private": {
+   "works": "yes",
+   "who": "Any Trello user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "Once you have an API key, you will use it to ask a Trello user to grant access to your application.",
+   "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+  },
+  "public": {
+   "text": "Any Trello user can authorize your app with its API key; no review step is documented.",
+   "quote": "Once you have an API key, you will use it to ask a Trello user to grant access to your application.",
+   "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+  },
+  "notes": "The docs do not explicitly say \"no review\"; they just document none. Power-Up OAuth 2.0 clients are workspace-restricted, non-Power-Up apps are not (oauth-2-for-existing-apps)."
+ },
+ {
+  "id": "airtable",
+  "private": {
+   "works": "yes",
+   "who": "Anyone, once privacy policy and terms URLs are added; before that only you",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "the Privacy policy URL and Terms of service URL must be provided before sharing your OAuth integration with other users",
+   "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+  },
+  "public": {
+   "text": "Add a support email, privacy policy and terms of service, and other users can authorize; no review is documented.",
+   "quote": "This will enable other users to authorize your integration.",
+   "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+  },
+  "notes": "Even teammates count as other users, so the policy URLs are needed for team use too. No review step is documented."
+ },
+ {
+  "id": "clickup",
+  "private": {
+   "works": "yes",
+   "who": "Any ClickUp user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "For apps or integrations that other people use, use the OAuth flow , allowing users to authorize Workspaces for your app.",
+   "src": "https://developer.clickup.com/docs/authentication"
+  },
+  "public": {
+   "text": "Any ClickUp user can authorize their Workspaces; only a Workspace owner or admin can create the app.",
+   "quote": "Only Workspace owners or admins can create OAuth apps.",
+   "src": "https://developer.clickup.com/docs/authentication"
+  },
+  "notes": "No review step is documented; the docs do not explicitly say none is needed."
+ },
+ {
+  "id": "monday",
+  "private": {
+   "works": "yes",
+   "who": "Only members of your own monday account",
+   "review": "No review needed",
+   "text": "A private app installs on your own account so other account members can use it.",
+   "quote": "Private apps are those developed for use inside the same monday account. Users outside of the account can't access or use the app",
+   "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+  },
+  "public": {
+   "text": "Make it a public app and share its install link (no review, but users see an unvetted banner), or pass Marketplace review to list it.",
+   "quote": "applications without monday approval will show a banner to indicate that the monday.com team hasn't vetted them",
+   "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+  },
+  "notes": "A shared public app can be restricted to specific monday accounts."
+ },
+ {
+  "id": "calendly",
+  "private": {
+   "works": "yes",
+   "who": "Any Calendly user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "We recommend starting with Sandbox for development and creating a second application for Production when ready to go live with customer data.",
+   "src": "https://developer.calendly.com/creating-an-oauth-app"
+  },
+  "public": {
+   "text": "Create a Production app with an HTTPS redirect URI; no review step is documented.",
+   "quote": "For the Production environment, this must be HTTPS",
+   "src": "https://developer.calendly.com/creating-an-oauth-app"
+  },
+  "notes": "The docs describe no review or approval step but do not explicitly say none is needed; who can use a Sandbox app is not stated."
+ },
+ {
+  "id": "mailchimp",
+  "private": {
+   "works": "yes",
+   "who": "Any Mailchimp user",
+   "review": "No review needed",
+   "text": "Same as public: no review either way",
+   "quote": "This page walks through implementing OAuth 2 so your application can access the Marketing API on behalf of other Mailchimp users.",
+   "src": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app"
+  },
+  "public": {
+   "text": "Register the app to get a client ID and secret; any Mailchimp user can then authorize it.",
+   "quote": "Registering gives you the client_id and client_secret your server needs.",
+   "src": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app"
+  },
+  "notes": "No review step is documented; the docs do not explicitly say none is needed."
+ }
+]
