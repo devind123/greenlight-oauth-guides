@@ -17,6 +17,8 @@ const evl = (ev, src) => { const lab = ev === 'est' ? 'est.' : 'docs'; return sr
 const reviewTxt = a => a.review && a.review.required ? (a.review.wait || 'Not stated') : 'None';
 const shortWait = a => { if (a.waitShort) return a.waitShort; const w = reviewTxt(a); return cap(w.split(/[(;,]/)[0].replace(/business /, '').trim()); };
 const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '';
+/* turn URLs and bare domains in already-escaped text into links */
+const linkify = h => h.replace(/\b((?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:com|io|dev|net|org|co|ai|app)(?:\/[^\s,;)<]*)?)/gi, m => { const u = m.replace(/[.]+$/, ''), tail = m.slice(u.length); return `<a class="tlink" href="${/^https?:/.test(u) ? u : 'https://' + u}" target="_blank" rel="noopener">${u}</a>${tail}`; });
 const first = s => cap(String(s || '').split(/;|\(| — /)[0].trim());
 const unprefix = s => cap(String(s).replace(/^before (approval|review|listing)[:,]\s*/i, ''));
 const clip = (arr, fn, n = 5) => arr.length <= n ? arr.map(fn).join('') : arr.slice(0, n).map(fn).join('') + `<li class="hid" hidden></li>${arr.slice(n).map(x => fn(x).replace('<li>', '<li class="hid" hidden>')).join('')}<button class="morebtn" data-more>Show ${arr.length - n} more</button>`;
@@ -84,8 +86,8 @@ function renderAppGuide(id) {
   if (!a) { V.innerHTML = '<div class="pad"><div class="wrap"><p>Guide not found.</p></div></div>'; return; }
   curApp = a;
   const d = DIFF[a.difficulty], rv = a.review || {}, man = a.managed === 'yes';
-  const item = x => `<li>${I.warn}<span>${esc(unprefix(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
-  const req = x => `<li>${I.check}<span>${esc(x.text)} ${evl(x.ev || 'docs', x.src)}</span></li>`;
+  const item = x => `<li>${I.warn}<span>${linkify(esc(unprefix(x.text)))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
+  const req = x => `<li>${I.check}<span>${linkify(esc(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const stages = [
     man ? { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's app", time: 'Today', line: `Works now. ${a.name}'s screen shows Composio. ${evl('docs', a.managedSrc)}` }
         : a.managed === 'no' ? { cls: 'now', badge: ['Start here', 'here'], title: 'No managed app', time: '—', line: `Composio needs your own credentials for ${a.name}. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
@@ -94,7 +96,7 @@ function renderAppGuide(id) {
     rv.required ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(shortWait(a))} ${rv.ev ? evl(rv.ev, rv.src) : ''}`, line: `${esc(first(rv.what || 'Provider review'))}. Then any user can connect.` }
                 : { cls: 'goal', badge: ['Goal', 'goal'], title: 'Ship to everyone', time: 'No review', line: 'No provider review found in the docs.' },
   ];
-  const steps = (a.steps || []).map((s, i) => `<div class="gstep"><span class="gn">${i + 1}</span><span class="who ${s.who === 'agent' ? 'w-agent' : 'w-you'}">${s.who === 'agent' ? 'Agent' : 'You'}</span><span class="gtt">${esc(s.t)}</span><span class="time">${s.time || ''}</span></div>`).join('');
+  const steps = (a.steps || []).map((s, i) => `<div class="gstep"><span class="gn">${i + 1}</span><span class="who ${s.who === 'agent' ? 'w-agent' : 'w-you'}">${s.who === 'agent' ? 'Agent' : 'You'}</span><span class="gtt">${linkify(esc(s.t))}</span><span class="time">${s.time || ''}</span></div>`).join('');
   V.innerHTML = `
   <div class="band pad"><div class="wrap">
     <button class="back" data-view="library"><svg class="i sm" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Library</button>
