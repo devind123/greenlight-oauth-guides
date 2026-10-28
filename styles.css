@@ -859,3 +859,25 @@ a.ev{text-decoration:none}
 .acard.mini .am{padding-top:8px}
 .acard.mini .ago{position:static;display:inline-flex;gap:5px;align-items:center;font-size:12.5px;color:var(--blufg)}
 .acard.mini:hover .ago{text-decoration:underline}
+
+/* permission picker on every guide: same pattern as Gmail */
+.gask{height:auto;align-items:stretch}
+.gask .uc{grid-auto-rows:minmax(58px,1fr)}
+.ucrow.multi .cbox{width:16px;height:16px;border:1.5px solid var(--fg3);display:grid;place-items:center}
+.ucrow.multi.on .cbox{background:var(--fg);border-color:var(--fg)}
+.ucrow.multi.on .cbox:after{content:"";width:8px;height:4px;border-left:1.6px solid var(--bg);border-bottom:1.6px solid var(--bg);transform:rotate(-45deg) translate(1px,-1px)}
+.ucrow small{font-family:var(--mono);font-size:11px}
+.ucm .inf{font-family:var(--mono);font-size:10px;color:var(--warn)}
+.gask .ucalt{justify-content:space-between}
+.gask .result{min-height:100%}
+.rwhat p{font-size:13.5px;line-height:1.45}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:58px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rwhat .snote{margin-top:4px;font-size:12px;flex-basis:auto}
+.rtier .ev{font-size:10px;vertical-align:3px}
+/* agent guide card: real button */
+.acard.mini .ago{justify-self:start;display:inline-flex;gap:6px;align-items:center;background:var(--primary);color:var(--primary-fg);padding:6px 12px;font-size:13px;font-weight:500}
+.acard.mini:hover .ago{text-decoration:none;opacity:.88}
+.acard.mini:hover{border-color:var(--fg)}
+.gask .result{min-height:0;height:100%}
+@container main (max-width:860px){.gask{height:auto !important}}

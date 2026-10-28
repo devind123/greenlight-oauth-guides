@@ -128,19 +128,44 @@ function setupPanel(a, st, vw) {
   if (routes.length > 1) rows.push(`<div class="srow"><span class="sk">How users connect</span>${seg('route', routes, st.route)}<span class="shint">${st.route === 'managed' ? 'Ready today. Nothing to set up.' : st.route === 'apikey' ? 'Each user pastes their own key. No OAuth app.' : 'Your name on the consent screen.'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works !== 'no' && !/^same as public/i.test(A.private.text || '')) rows.push(`<div class="srow"><span class="sk">Who connects</span>${seg('aud', [['private', 'Only my team'], ['public', 'Any customer']], st.aud)}<span class="shint">${st.aud === 'private' ? esc(A.private.who || '') : 'Customers outside your organization'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works === 'no') rows.push(`<div class="srow"><span class="sk">Who connects</span><span class="tier t-hard">No private option</span><span class="shint">${esc(A.private.text || '')} ${A.private.src ? evl('docs', A.private.src) : ''}</span></div>`);
-  if (st.route === 'own' && P && fam) {
-    const F = famTiers(fam, P);
-    rows.push(`<div class="srow top"><span class="sk">What your agent does</span><div class="pchips">${P.options.map(o => { const T = F.t[o.tier] || {}, on = st.perms.has(o.k); return `<button type="button" class="pchip${on ? ' on' : ''}" data-perm="${o.k}" aria-pressed="${on}" title="${esc(o.scope || '')}"><span class="tc t-${F.order.indexOf(o.tier)}"></span>${esc(o.task)}<small>${esc(T.n || o.tier)}${o.ev === 'inferred' ? ' · inferred' : ''}</small></button>`; }).join('')}</div></div>`);
-  }
   if (!rows.length) return '';
   let res = '';
   if (st.route === 'apikey') res = `<b>API key:</b> Composio also connects to ${esc(a.name)} with an API key, so you need no OAuth app and no provider review. ${evl('docs', (CO[a.id] || {}).src)}`;
   else if (st.route === 'managed') res = `<b>Composio's app:</b> live today, no review. Composio calls it "fine for internal tools, prototypes, and development". ${evl('docs', COMPOSIO_SRC)}`;
   else if (vw.private) res = `<b>Only your team:</b> ${esc(vw.private.text || '')} ${vw.private.src ? evl('docs', vw.private.src) : ''}`;
-  else if (vw.tier) { const ps = P.options.filter(o => st.perms.has(o.k)); res = `<b>${esc(vw.tier.n)}:</b> ${esc(vw.tier.review || '')}${vw.tier.src ? ' ' + evl(vw.tier.ev || 'docs', vw.tier.src) : ''}${ps.some(o => o.ev === 'inferred' && o.tier === vw.tier.key) ? ' <span class="ev est" title="Google does not publish a tier for this scope; inferred from its restricted list">tier inferred</span>' : ''}${[...new Set(ps.flatMap(o => String(o.note || '').split(/;\s*|\.\s+/)).map(s => s.trim().replace(/\.$/, '')).filter(s => s.length > 20 && !/listed|table|this page|inferred|label|quote|reference|cell|source/i.test(s)))].slice(0, 2).map(s => `<span class="snote">${esc(cap(s))}.</span>`).join('')} <span class="scopes">${[...new Set(ps.map(o => String(o.scope || '').split(' (')[0]))].map(s => `<code>${esc(s)}</code>`).join('')}</span>`; }
-  else if (P && fam && st.route === 'own') res = 'Pick what your agent does to see the permissions it needs and the review that follows.';
   return `<div class="pad"><div class="wrap"><div class="setup">${rows.join('')}${res ? `<div class="sres">${res}</div>` : ''}</div></div></div>`;
 }
+/* What your agent does: same layout as the Gmail guide. Rows on the left (tick all that
+   apply), fixed slots on the right. Rows never change count, slots never change size. */
+const TCLS = n => n <= 2 ? ['t-easy', 't-hard'] : n === 3 ? ['t-easy', 't-med', 't-hard'] : ['t-easy', 't-med', 't-hard', 't-gate'];
+function permSection(a, st, vw) {
+  const P = CH.perms[a.id], fam = familyOf(a.id);
+  if (st.route !== 'own' || !P || !fam) return '';
+  const F = famTiers(fam, P), cls = TCLS(F.order.length), short = s => String(s || '').split(' (')[0];
+  const picked = P.options.filter(o => st.perms.has(o.k)), empty = !picked.length;
+  const idx = vw.tier ? F.order.indexOf(vw.tier.key) : -1, col = idx < 0 ? 'var(--line2)' : ['var(--ok)', 'var(--warn)', 'var(--bad)', 'var(--fg)'][F.order.length <= 2 ? (idx ? 2 : 0) : idx];
+  const scopes = [...new Set(picked.map(o => short(o.scope)))];
+  const MAXP = 4, shownT = picked.length > MAXP ? picked.slice(0, MAXP - 1) : picked;
+  const rows = P.options.map(o => { const T = F.t[o.tier] || {}, on = st.perms.has(o.k), ti = F.order.indexOf(o.tier); return `<button type="button" class="ucrow multi${on ? ' on' : ''}" data-perm="${o.k}" aria-pressed="${on}"><span class="cbox"></span><span><b>${esc(o.task)}</b><small>${esc(short(o.scope))}</small></span><span class="ucm"><span class="tier ${cls[ti] || 't-gate'}">${esc(T.n || o.tier)}</span>${o.ev === 'inferred' ? '<small class="inf">inferred</small>' : ''}</span></button>`; }).join('');
+  const notes = [...new Set(picked.flatMap(o => String(o.note || '').split(/;\s*|\.\s+/)).map(s => s.trim().replace(/\.$/, '')).filter(s => s.length > 20 && !/listed|table|this page|inferred|label|quote|reference|cell|source|restricted list|not on google|support\.google|https?:/i.test(s)))];
+  return `<div class="pad"><div class="wrap access">
+    <div class="sec-h"><h2>What should your agent do in ${esc(a.name)}?</h2><p>Tick everything it does. The highest tier decides what you need.</p></div>
+    <div class="ask gask" style="height:${Math.max(P.options.length * 58 + 56, 486)}px">
+      <div class="askl"><div class="uc" role="group" aria-label="What your agent does">${rows}</div>
+        <div class="ucalt"><span>${picked.length ? `${picked.length} selected` : 'Select all that apply'}</span>${picked.length ? '<button type="button" class="btn sm" data-permclear>Clear</button>' : ''}</div></div>
+      <div class="result${empty ? ' none' : ''}">
+        <div class="rs"><span class="k">Your tier</span><div class="rtier">${empty ? 'Not chosen yet' : esc(vw.tier.n)}${!empty && picked.some(o => o.ev === 'inferred' && o.tier === vw.tier.key) ? ' <span class="ev est" title="The provider does not publish this tier; inferred">inferred</span>' : ''}</div>
+          <div class="tmeter" style="grid-template-columns:repeat(${F.order.length},1fr)">${F.order.map((k, i) => `<i style="${i <= idx ? 'background:' + col : ''}"></i>`).join('')}</div>
+          <div class="mlab" style="grid-template-columns:repeat(${F.order.length},1fr)">${F.order.map((k, i) => `<span class="${i === idx ? 'on' : ''}">${esc(F.t[k].n || k)}</span>`).join('')}</div></div>
+        <div class="rs rwhat"><span class="k">What it takes</span><p class="clamp3">${empty ? '<span class="nil">Pick what your agent does on the left.</span>' : `${esc(vw.tier.review || '')}${fam === 'google' && vw.wait ? `. Google review: <b>${esc(vw.wait)}</b>` : ''}${vw.tier.src ? ' ' + evl(vw.tier.ev || 'docs', vw.tier.src) : ''}`}</p>${!empty && notes[0] ? `<small class="clamp2 snote">${esc(cap(notes[0]))}.</small>` : ''}</div>
+        <div class="rs"><div class="rsh"><span class="k">Ask for</span></div><div class="rline">${empty ? '<span class="ghost w1"></span>' : `<code>${esc(scopes[0])}</code>${scopes.length > 1 ? `<span class="xp" tabindex="0">+${scopes.length - 1} more<div class="pop up"><b>Scopes</b>${scopes.map(s => `<code>${esc(s)}</code>`).join('')}</div></span>` : ''}`}</div></div>
+        <div class="rs rtools"><div class="rsh"><span class="k">Your agent can${empty ? '' : ` · ${picked.length}`}</span></div>
+          <div class="tgrid">${empty ? '<span class="ghost"></span><span class="ghost"></span>' : shownT.map(o => `<span class="tpill" title="${esc(o.task)}"><i style="background:${['var(--ok)', 'var(--warn)', 'var(--bad)', 'var(--fg)'][F.order.length <= 2 ? (F.order.indexOf(o.tier) ? 2 : 0) : F.order.indexOf(o.tier)]}"></i><span>${esc(o.task)}</span></span>`).join('') + (picked.length > MAXP ? `<span class="xp tp" tabindex="0">+${picked.length - shownT.length} more<div class="pop up"><b>${picked.length} tasks</b>${picked.map(o => `<span class="tpill"><span>${esc(o.task)}</span></span>`).join('')}</div></span>` : '')}</div></div>
+      </div>
+    </div></div></div>`;
+}
+$('#v-app').addEventListener('click', e => { if (!e.target.closest('[data-permclear]') || !curApp) return; stateOf(curApp).perms.clear(); const y = window.scrollY; renderAppGuide(curApp.id); window.scrollTo(0, y); });
+
 function apiKeyBody(a) {
   const src = (CO[a.id] || {}).src;
   return `<div class="pad"><div class="wrap body"><div class="mainc">
@@ -232,6 +257,7 @@ function renderAppGuide(id) {
     </div>
   </div></div>
   ${setupPanel(a, st, vw)}
+  ${permSection(a, st, vw)}
   ${st.route === 'managed' ? managedBody(a) : st.route === 'apikey' ? apiKeyBody(a) : `
   <div class="pad"><div class="wrap access">
     <div class="sec-h"><h2>${man ? 'Launch today, switch to your own app later' : 'Bring your own app from day one'}</h2></div>
