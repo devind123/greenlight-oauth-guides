@@ -1,3 +1,5 @@
+<img src="logo.svg" width="56" alt="Greenlight logo: a traffic light with the bottom light lit">
+
 # Greenlight: OAuth app guides for agent builders
 
 **Live:** https://greenlight-oauth-guides.vercel.app
