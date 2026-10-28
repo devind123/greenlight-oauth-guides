@@ -1,0 +1,992 @@
+[
+  {
+    "id": "shopify",
+    "name": "Shopify",
+    "slug": "shopify",
+    "category": "Commerce & finance",
+    "auth": "OAuth 2.0",
+    "managed": "no",
+    "managedSrc": "https://docs.composio.dev/toolkits/shopify",
+    "difficulty": "hard",
+    "oneLiner": "Multi-store apps need Shopify App Store review",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Shopify App Store review (public distribution), plus protected customer data review if you read customer data",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://shopify.dev/docs/apps/launch/distribution"
+    },
+    "cost": {
+      "text": "One-time $19 USD App Store registration fee per Partner account",
+      "ev": "docs",
+      "src": "https://shopify.dev/docs/apps/launch/distribution/revenue-share"
+    },
+    "limits": [
+      {
+        "text": "Before approval: a custom-distribution app installs only on one store, stores in one Plus organization, or development stores.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/distribution"
+      },
+      {
+        "text": "Before approval: protected customer data needs no review only while the app is installed solely on development stores.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Public apps must request protected customer data access, and level 1 and 2 access requires review.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+      },
+      {
+        "text": "App Store apps must subscribe to the customers/data_request, customers/redact and shop/redact compliance webhooks.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance"
+      },
+      {
+        "text": "New public apps must be built only with the GraphQL Admin API.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements"
+      },
+      {
+        "text": "Review submissions need a screencast, working test credentials and an emergency developer contact.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements"
+      },
+      {
+        "text": "The app must authenticate with OAuth immediately after install, before any other step.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements"
+      },
+      {
+        "text": "App charges must go through Shopify App Pricing or the Billing API.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Composio has no managed Shopify app, so you must bring your own credentials.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/shopify"
+      },
+      {
+        "text": "New public apps must use expiring offline tokens that last 1 hour, with refresh tokens valid 90 days.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/build/authentication-authorization/access-token-types/offline-access-tokens"
+      },
+      {
+        "text": "You cannot change the distribution method after you select it.",
+        "ev": "docs",
+        "src": "https://shopify.dev/docs/apps/launch/distribution"
+      },
+      {
+        "text": "Composio asks for the store subdomain (e.g. je0xpi-12) when connecting an account.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/shopify"
+      },
+      {
+        "text": "Order updates can 403 without the read_all_orders scope.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/shopify"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an app in the Shopify Dev Dashboard, set the app URL and scopes",
+        "time": "10 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URI, release the version, copy Client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your own Shopify credentials",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Choose public distribution and pay the $19 App Store registration fee",
+        "time": "10 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft data-use justifications for protected customer data access",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Add compliance webhooks, screencast and test credentials, then submit for review",
+        "time": "2 h"
+      }
+    ],
+    "portal": "https://partners.shopify.com",
+    "docs": "https://shopify.dev/docs/apps/launch/distribution",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "Composio Shopify toolkit",
+        "u": "https://docs.composio.dev/toolkits/shopify"
+      },
+      {
+        "t": "Composio: Shopify OAuth credentials",
+        "u": "https://composio.dev/auth/shopify"
+      },
+      {
+        "t": "Shopify app distribution",
+        "u": "https://shopify.dev/docs/apps/launch/distribution"
+      },
+      {
+        "t": "Shopify protected customer data",
+        "u": "https://shopify.dev/docs/apps/launch/protected-customer-data"
+      },
+      {
+        "t": "Shopify app review process",
+        "u": "https://shopify.dev/docs/apps/launch/app-store-review/review-process"
+      },
+      {
+        "t": "Shopify App Store requirements",
+        "u": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements"
+      },
+      {
+        "t": "Shopify revenue share",
+        "u": "https://shopify.dev/docs/apps/launch/distribution/revenue-share"
+      },
+      {
+        "t": "Shopify privacy law compliance",
+        "u": "https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance"
+      },
+      {
+        "t": "Shopify offline access tokens",
+        "u": "https://shopify.dev/docs/apps/build/authentication-authorization/access-token-types/offline-access-tokens"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Shopify does not publish an App Store review duration.",
+      "Portal URL partners.shopify.com not fetched; Composio's guide starts from the Dev Dashboard in Shopify Admin."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "xero",
+    "name": "Xero",
+    "slug": "xero",
+    "category": "Commerce & finance",
+    "auth": "OAuth 2.0",
+    "managed": "no",
+    "managedSrc": "https://docs.composio.dev/toolkits/xero",
+    "difficulty": "hard",
+    "oneLiner": "Uncertified apps cap at 50 orgs; free tier caps at 5",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Xero app certification (required for the Plus tier and above, over 50 connections)",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.xero.com/pricing"
+    },
+    "cost": {
+      "text": "Starter free (5 connections); Core $35 AUD/mo (50); Plus $245 AUD/mo (1,000), tax exclusive",
+      "ev": "docs",
+      "src": "https://developer.xero.com/pricing"
+    },
+    "limits": [
+      {
+        "text": "Before certification: new apps start on Starter with 5 connections, and Core allows up to 50.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+      },
+      {
+        "text": "Each Xero organisation can connect at most five uncertified apps.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+      },
+      {
+        "text": "Starter allows 1,000 API calls per day per organisation; higher tiers allow 5,000.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+      },
+      {
+        "text": "All tiers: 60 calls per minute and 5 concurrent calls per organisation.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Plus, Advanced and Enterprise tiers require app certification.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/pricing"
+      },
+      {
+        "text": "Core and above require a payment method on file.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/pricing"
+      },
+      {
+        "text": "Certification requires the offline_access scope.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "text": "Certification needs a connect/disconnect settings page showing the connected tenant name and status.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "text": "The app name cannot include the word Xero.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "text": "Listing on the Xero App Store requires the Plus tier or higher.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Composio has no managed Xero app, so you must bring your own credentials.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/xero"
+      },
+      {
+        "text": "Data from Xero's APIs may not be used to train AI/ML models.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/pricing"
+      },
+      {
+        "text": "Access tokens last 30 minutes; refresh tokens last 60 days and rotate on each use.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "text": "Apps created on or after 2 March 2026 use Xero's new granular scopes.",
+        "ev": "docs",
+        "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "text": "Redirect URI must use https with no trailing slash.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/xero"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create a Web app at developer.xero.com with the Composio redirect URI",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Copy the Client ID and generate a client secret",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your own Xero credentials and scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add a payment method to move to Core if you need more than 5 connections",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Check your integration against Xero's certification checkpoints",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Submit for certification before you pass 50 connections",
+        "time": "1 h"
+      }
+    ],
+    "portal": "https://developer.xero.com",
+    "docs": "https://developer.xero.com/documentation/guides/oauth2/limits/",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback (https, no trailing slash).",
+    "sources": [
+      {
+        "t": "Composio Xero toolkit",
+        "u": "https://docs.composio.dev/toolkits/xero"
+      },
+      {
+        "t": "Composio: Xero OAuth credentials",
+        "u": "https://composio.dev/auth/xero"
+      },
+      {
+        "t": "Xero OAuth 2.0 API limits",
+        "u": "https://developer.xero.com/documentation/guides/oauth2/limits/"
+      },
+      {
+        "t": "Xero developer pricing",
+        "u": "https://developer.xero.com/pricing"
+      },
+      {
+        "t": "Xero certification checkpoints",
+        "u": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Xero does not publish how long certification takes.",
+      "Granular scope names were not checked against Composio's default Xero scopes."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "quickbooks",
+    "name": "QuickBooks Online",
+    "slug": "quickbooks",
+    "category": "Commerce & finance",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/quickbooks",
+    "difficulty": "medium",
+    "oneLiner": "Production keys need an approved app assessment",
+    "setup": {
+      "time": "~1.5 h",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Intuit App Assessment Questionnaire, approved before production keys are shown",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+    },
+    "cost": {
+      "text": "$0 on the Builder tier; Silver is $300 USD/month",
+      "ev": "docs",
+      "src": "https://developer.intuit.com/app/developer/qbo/docs/get-started/partner-faq"
+    },
+    "limits": [
+      {
+        "text": "Before approval: you only have development keys; the production Show Credentials switch stays hidden.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+      },
+      {
+        "text": "Builder tier: 500,000 CorePlus API calls per month, and calls above that are blocked.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/get-started/partner-faq"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Production app details need EULA and privacy policy URLs, host domain, launch, disconnect and connect/reconnect URLs.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+      },
+      {
+        "text": "Production redirect URIs must use https, and IP addresses are not allowed.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/set-redirect-uri"
+      },
+      {
+        "text": "You must get the App Assessment Questionnaire approved to see production credentials.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+      },
+      {
+        "text": "Listed apps must be on the Silver tier or above to avoid delisting.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/get-started/partner-faq"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens last 1 hour; refresh tokens expire after 100 days unused.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq"
+      },
+      {
+        "text": "The refresh token value rotates every 24 hours, so always store the latest one.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq"
+      },
+      {
+        "text": "Refresh tokens have a hard limit of 5 years, after which users must reconnect.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq"
+      },
+      {
+        "text": "Development and production keys are separate, and sandbox redirect URIs can use localhost.",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/set-redirect-uri"
+      },
+      {
+        "text": "The com.intuit.quickbooks.payment scope can cause Cloudflare Error 1016 if Payments is not enabled.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/quickbooks"
+      },
+      {
+        "text": "Sandbox connections need https://sandbox-quickbooks.api.intuit.com as the base URL in Composio.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/quickbooks"
+      },
+      {
+        "text": "The Intuit App Partner Program is available only to partners in the US, UK, Australia and Canada (excluding Quebec).",
+        "ev": "docs",
+        "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an app in the Intuit Developer Portal and add the Composio redirect URI",
+        "time": "10 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft the EULA and privacy policy pages",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Fill in production App Details (URLs, categories, hosting regions)",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Test connect, disconnect and reconnect with a sandbox company",
+        "time": "15 min"
+      },
+      {
+        "who": "you",
+        "t": "Complete the App Assessment Questionnaire under Production > Compliance",
+        "time": "40 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with the production Client ID and secret",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://developer.intuit.com/app/developer/dashboard",
+    "docs": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback to the Production redirect URIs tab (https only).",
+    "sources": [
+      {
+        "t": "Composio QuickBooks toolkit",
+        "u": "https://docs.composio.dev/toolkits/quickbooks"
+      },
+      {
+        "t": "Intuit: Publish your app",
+        "u": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app"
+      },
+      {
+        "t": "Intuit OAuth FAQ",
+        "u": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq"
+      },
+      {
+        "t": "Intuit: Set redirect URIs",
+        "u": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/set-redirect-uri"
+      },
+      {
+        "t": "Intuit App Partner Program FAQ",
+        "u": "https://developer.intuit.com/app/developer/qbo/docs/get-started/partner-faq"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Intuit does not state how long questionnaire review takes.",
+      "The 40-minute questionnaire estimate is ours, not Intuit's.",
+      "Portal URL path not confirmed; docs say My Hub > App dashboard."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "slug": "stripe",
+    "category": "Commerce & finance",
+    "auth": "OAuth 2.0 (Connect) or API key",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/stripe",
+    "difficulty": "medium",
+    "oneLiner": "Connect OAuth is legacy; Stripe Apps review takes 4 days",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review in Stripe's Connect OAuth setup docs; Stripe Apps need App Marketplace review",
+      "wait": "4 business days (Stripe Apps)",
+      "ev": "docs",
+      "src": "https://docs.stripe.com/stripe-apps/publish-app"
+    },
+    "cost": {
+      "text": "No fee stated for Connect OAuth or Stripe Apps setup",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Connect OAuth with read_write cannot connect to Standard accounts controlled by another platform.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-changes-for-standard-platforms"
+      },
+      {
+        "text": "Stripe Apps before publishing: external testing is capped at 25 testers per app.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/stripe-apps/test-app"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Each redirect URI must be listed in Connect OAuth settings, and live mode redirect URIs must use HTTPS.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-reference"
+      },
+      {
+        "text": "Stripe Apps review needs test credentials, testing guidance and the live-mode public install URL.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/stripe-apps/publish-app"
+      },
+      {
+        "text": "Your business cannot be on Stripe's prohibited and restricted businesses list to publish an app.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/stripe-apps/publish-app"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Stripe says OAuth is not recommended for new Connect platforms.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-standard-accounts"
+      },
+      {
+        "text": "New Connect extensions can no longer be built; Stripe Apps replaced them.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/building-extensions"
+      },
+      {
+        "text": "Only extensions can use the read_only scope, so new platforms get read_write.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-changes-for-standard-platforms"
+      },
+      {
+        "text": "The Connect token call uses your platform's secret API key as client_secret.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-reference"
+      },
+      {
+        "text": "Each client_id is either live or test, so use the matching one per environment.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/connect/oauth-standard-accounts"
+      },
+      {
+        "text": "Stripe Apps OAuth access tokens expire in 1 hour; refresh tokens last 1 year and roll on use.",
+        "ev": "docs",
+        "src": "https://docs.stripe.com/stripe-apps/api-authentication/oauth"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "In the Stripe Dashboard, enable OAuth under Connect onboarding options",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URI and copy the ca_ client_id",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with the client_id and your secret key",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Test with a test-mode client_id before switching to live",
+        "time": "15 min"
+      },
+      {
+        "who": "agent",
+        "t": "Check whether you need Stripe Apps OAuth instead, given Connect OAuth is not recommended",
+        "time": "10 min"
+      }
+    ],
+    "portal": "https://dashboard.stripe.com/settings/connect/onboarding-options/oauth",
+    "docs": "https://docs.stripe.com/connect/oauth-standard-accounts",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback to your Connect OAuth redirect URIs (HTTPS in live mode).",
+    "sources": [
+      {
+        "t": "Composio Stripe toolkit",
+        "u": "https://docs.composio.dev/toolkits/stripe"
+      },
+      {
+        "t": "Composio: Stripe OAuth credentials",
+        "u": "https://composio.dev/auth/stripe"
+      },
+      {
+        "t": "Stripe OAuth with Standard accounts",
+        "u": "https://docs.stripe.com/connect/oauth-standard-accounts"
+      },
+      {
+        "t": "Stripe Connect OAuth reference",
+        "u": "https://docs.stripe.com/connect/oauth-reference"
+      },
+      {
+        "t": "Stripe OAuth changes for Standard platforms",
+        "u": "https://docs.stripe.com/connect/oauth-changes-for-standard-platforms"
+      },
+      {
+        "t": "Stripe legacy Connect extensions",
+        "u": "https://docs.stripe.com/building-extensions"
+      },
+      {
+        "t": "Stripe Apps OAuth 2.0",
+        "u": "https://docs.stripe.com/stripe-apps/api-authentication/oauth"
+      },
+      {
+        "t": "Stripe Apps publish",
+        "u": "https://docs.stripe.com/stripe-apps/publish-app"
+      },
+      {
+        "t": "Stripe Apps external testing",
+        "u": "https://docs.stripe.com/stripe-apps/test-app"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Composio's own-credentials guide uses Connect OAuth; whether Composio accepts Stripe Apps OAuth credentials is not documented.",
+      "Whether a Connect platform needs Stripe review before live-mode OAuth was not confirmed.",
+      "Composio's guide suggests read_only,read_write scopes, which conflicts with Stripe limiting read_only to extensions."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "slug": "dropbox",
+    "category": "Files & docs",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/dropbox",
+    "difficulty": "medium",
+    "oneLiner": "Apply for production within 2 weeks of 50 users",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Dropbox production status approval",
+      "wait": "not stated; review starts after 50 linked users",
+      "ev": "docs",
+      "src": "https://www.dropbox.com/developers/reference/developer-guide"
+    },
+    "cost": {
+      "text": "No fee stated",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before approval: a development app links only your own account until you click Enable additional users.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "Before approval: a development app can link at most 500 Dropbox users.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "After 50 linked users you have two weeks to get production approval, or new links are frozen.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "The app must follow Dropbox's branding guidelines and terms, or production is rejected.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "Request the least privileged permissions; Dropbox reviews scope breadth at production.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "The production application asks how the app uses the API and for an app icon.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "The app name cannot include Dropbox, start with drop, or use DBX or DB.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/branding-guide"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Production review does not start until 50 linked users unless you request early review.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "A frozen app can only be unfrozen by getting production approval, not by unlinking users.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "You cannot change the app name after production approval.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "text": "Access tokens are short-lived; add token_access_type=offline to get a refresh token.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/oauth-guide"
+      },
+      {
+        "text": "Redirect URIs must exactly match a registered value in the App Console.",
+        "ev": "docs",
+        "src": "https://www.dropbox.com/developers/reference/oauth-guide"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create a Scoped access app in the Dropbox App Console",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URI and enable only needed permissions",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with the app key and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Click Enable additional users so others can connect",
+        "time": "1 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft the production application describing API use",
+        "time": "20 min"
+      },
+      {
+        "who": "you",
+        "t": "Apply for production status before or soon after 50 users",
+        "time": "15 min"
+      }
+    ],
+    "portal": "https://www.dropbox.com/developers/apps",
+    "docs": "https://www.dropbox.com/developers/reference/developer-guide",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback under OAuth 2 Redirect URIs.",
+    "sources": [
+      {
+        "t": "Composio Dropbox toolkit",
+        "u": "https://docs.composio.dev/toolkits/dropbox"
+      },
+      {
+        "t": "Composio: Dropbox OAuth credentials",
+        "u": "https://composio.dev/auth/dropbox"
+      },
+      {
+        "t": "Dropbox developer guide",
+        "u": "https://www.dropbox.com/developers/reference/developer-guide"
+      },
+      {
+        "t": "Dropbox OAuth guide",
+        "u": "https://www.dropbox.com/developers/reference/oauth-guide"
+      },
+      {
+        "t": "Dropbox branding guide",
+        "u": "https://www.dropbox.com/developers/reference/branding-guide"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Dropbox does not publish how long production review takes."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "box",
+    "name": "Box",
+    "slug": "box",
+    "category": "Files & docs",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/box",
+    "difficulty": "easy",
+    "oneLiner": "No review needed, but some enterprises must enable it",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Optional Box Partner team review to list in Box Integrations",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://github.com/box/developer.box.com/blob/main/content/guides/applications/integrations/index.md"
+    },
+    "cost": {
+      "text": "No fee stated",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "If an enterprise turns on Disable unpublished apps by default, its admin must enable your OAuth 2.0 app first.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authorization/index.md"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Redirect URIs must be HTTPS, or HTTP only for localhost or loopback addresses.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/oauth2/oauth2-setup.md"
+      },
+      {
+        "text": "Box Integrations listing accepts only OAuth 2.0 apps that are finished and production-ready.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/applications/integrations/index.md"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "You cannot change the authentication method after creating the app.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/oauth2/oauth2-setup.md"
+      },
+      {
+        "text": "Refresh tokens are single-use and expire after 60 days, after which users must re-authorize.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/tokens/refresh.md"
+      },
+      {
+        "text": "Admins enable an OAuth 2.0 app by entering its client ID under Platform > Platform Apps.",
+        "ev": "docs",
+        "src": "https://support.box.com/hc/en-us/articles/360044196653-Managing-custom-apps"
+      },
+      {
+        "text": "Box disables all unpublished platform apps when that enterprise setting is on.",
+        "ev": "docs",
+        "src": "https://support.box.com/hc/en-us/articles/49348283011731-Enterprise-Settings-Platform-Apps"
+      },
+      {
+        "text": "Redirect URIs are checked by exact match.",
+        "ev": "docs",
+        "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/oauth2/oauth2-setup.md"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "In the Box Developer Console, create a Platform App with User Authentication (OAuth 2.0)",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URI and select scopes on the Configuration tab",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your Box client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Write admin instructions for enabling your client ID in enterprise accounts",
+        "time": "10 min"
+      },
+      {
+        "who": "you",
+        "t": "Optionally submit the app for Box Integrations from the Publishing tab",
+        "time": "30 min"
+      }
+    ],
+    "portal": "https://app.box.com/developers/console",
+    "docs": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/oauth2/oauth2-setup.md",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback (HTTPS, exact match).",
+    "sources": [
+      {
+        "t": "Composio Box toolkit",
+        "u": "https://docs.composio.dev/toolkits/box"
+      },
+      {
+        "t": "Box: Setup with OAuth 2.0 (docs source)",
+        "u": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/oauth2/oauth2-setup.md"
+      },
+      {
+        "t": "Box: Authorization (docs source)",
+        "u": "https://github.com/box/developer.box.com/blob/main/content/guides/authorization/index.md"
+      },
+      {
+        "t": "Box: Publish your app (docs source)",
+        "u": "https://github.com/box/developer.box.com/blob/main/content/guides/getting-started/publish-app.md"
+      },
+      {
+        "t": "Box: Integrations (docs source)",
+        "u": "https://github.com/box/developer.box.com/blob/main/content/guides/applications/integrations/index.md"
+      },
+      {
+        "t": "Box: Refresh tokens (docs source)",
+        "u": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/tokens/refresh.md"
+      },
+      {
+        "t": "Box support: Managing custom apps",
+        "u": "https://support.box.com/hc/en-us/articles/360044196653-Managing-custom-apps"
+      },
+      {
+        "t": "Box support: Enterprise settings, platform apps",
+        "u": "https://support.box.com/hc/en-us/articles/49348283011731-Enterprise-Settings-Platform-Apps"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "developer.box.com did not resolve from this environment; Box facts come from Box's official docs repo on GitHub, which may lag the live site.",
+      "Box does not state how long Box Integrations review takes.",
+      "Composio has no Box own-credentials guide; portal URL app.box.com/developers/console not fetched."
+    ],
+    "checked": "2026-10-28"
+  }
+]

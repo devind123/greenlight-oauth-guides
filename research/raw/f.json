@@ -1,0 +1,1069 @@
+[
+  {
+    "id": "asana",
+    "name": "Asana",
+    "slug": "asana",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/asana",
+    "difficulty": "medium",
+    "oneLiner": "Submission needed to serve workspaces beyond your own.",
+    "setup": {
+      "time": "~20 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Asana app submission review (needed to serve any workspace or list in the App Directory)",
+      "wait": "Initial response within one week",
+      "ev": "docs",
+      "src": "https://developers.asana.com/docs/submit-your-app"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before submission, Asana says the app is for your own organization, development, or internal tools.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/submit-your-app"
+      },
+      {
+        "text": "Rate limit is per token: 150 requests/min on free domains, 1,500/min on paid domains.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/rate-limits"
+      },
+      {
+        "text": "Search API is limited to 60 requests per minute.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/rate-limits"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Non-native apps must use an https redirect URL.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "text": "Submission requires a privacy policy URL and a support page URL.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/submit-your-app"
+      },
+      {
+        "text": "Submission requires an app icon, images, a short description and a 250+ character long description.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/submit-your-app"
+      },
+      {
+        "text": "Apps submitted to the App Directory must be shared to Any workspace.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/manage-distribution"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens last one hour; refresh tokens are long-lived until the user revokes access.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "text": "Turning on Full permissions means you cannot request specific scopes.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "text": "Scope requests are not additive; always send the full set you need.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "text": "The app must be available in the user's workspace before they can authorize.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "text": "Enterprise admins can control which apps are allowed from the admin console.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/manage-distribution"
+      },
+      {
+        "text": "Switching from Any workspace to Specific workspace blocks new authorizations from other workspaces.",
+        "ev": "docs",
+        "src": "https://developers.asana.com/docs/manage-distribution"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an app at app.asana.com/0/my-apps",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URL and choose permission scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Set distribution to Any workspace in Manage distribution",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft the privacy policy, support page and listing text",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Submit for review in the developer console",
+        "time": "15 min"
+      }
+    ],
+    "portal": "https://app.asana.com/0/my-apps",
+    "docs": "https://developers.asana.com/docs/oauth",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "Asana OAuth",
+        "u": "https://developers.asana.com/docs/oauth"
+      },
+      {
+        "t": "Asana manage distribution",
+        "u": "https://developers.asana.com/docs/manage-distribution"
+      },
+      {
+        "t": "Asana submit your app",
+        "u": "https://developers.asana.com/docs/submit-your-app"
+      },
+      {
+        "t": "Asana rate limits",
+        "u": "https://developers.asana.com/docs/rate-limits"
+      },
+      {
+        "t": "Composio Asana toolkit",
+        "u": "https://docs.composio.dev/toolkits/asana"
+      },
+      {
+        "t": "Composio Asana OAuth guide",
+        "u": "https://composio.dev/auth/asana"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "Asana's distribution page says Any workspace lets any workspace authorize with the URL, while the submit page says submission is needed beyond your own organization; which one is enforced was not confirmed.",
+      "No fee for submission is mentioned in the docs."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "trello",
+    "name": "Trello",
+    "slug": "trello",
+    "category": "Productivity",
+    "auth": "OAuth 1.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/trello",
+    "difficulty": "easy",
+    "oneLiner": "Your API key comes from a Power-Up you create.",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review documented for API keys",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "300 requests per 10 seconds per API key and 100 per 10 seconds per token.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/rate-limits/"
+      },
+      {
+        "text": "Requests to /1/members/ are limited to 100 per 900 seconds.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/rate-limits/"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "An API key is tied to a Power-Up created in the admin portal at trello.com/apps/admin.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "text": "The Power-Up must be owned by a Trello Workspace.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/power-ups/managing-apps/"
+      },
+      {
+        "text": "The app form asks for an email, a support email and an author name.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/power-ups/managing-apps/"
+      },
+      {
+        "text": "OAuth 1.0 signing needs the application secret from the Trello Auth tab.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "If the API key has no allowed origins set, no redirect URL works.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "text": "Redirects to a return_url not in allowed origins are blocked.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "text": "Token expiration can be 1hour, 1day, 30days or never.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "text": "Scopes are only read, write and account.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "text": "By default only admins of the owning Workspace can manage the app.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/trello/guides/power-ups/managing-apps/"
+      },
+      {
+        "text": "Composio's Trello toolkit uses OAuth 1, not OAuth 2.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/trello"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create a new app (Power-Up) in trello.com/power-ups/admin",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Generate an API key and copy the secret on the Trello Auth tab",
+        "time": "2 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Composio's callback origin to the key's allowed origins",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio OAuth 1 auth config with the key and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test account and confirm a board read works",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://trello.com/power-ups/admin",
+    "docs": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/",
+    "callbackNote": "Add the redirect URI shown in the Composio dashboard to the API key's Allowed origins; Trello blocks any origin not listed.",
+    "sources": [
+      {
+        "t": "Trello authorization",
+        "u": "https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/"
+      },
+      {
+        "t": "Trello rate limits",
+        "u": "https://developer.atlassian.com/cloud/trello/guides/rest-api/rate-limits/"
+      },
+      {
+        "t": "Trello managing apps",
+        "u": "https://developer.atlassian.com/cloud/trello/guides/power-ups/managing-apps/"
+      },
+      {
+        "t": "Composio Trello toolkit",
+        "u": "https://docs.composio.dev/toolkits/trello"
+      },
+      {
+        "t": "Composio Trello API key guide",
+        "u": "https://composio.dev/auth/trello"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "Trello OAuth 2.0 client rules and workspace restrictions; the OAuth 2.0 client configuration page returned 404.",
+      "Exact origin Composio needs in Allowed origins is not documented by Composio for Trello.",
+      "Public Power-Up directory review is not described in the fetched pages."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "airtable",
+    "name": "Airtable",
+    "slug": "airtable",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/airtable",
+    "difficulty": "easy",
+    "oneLiner": "Add privacy and terms URLs or others can't authorize.",
+    "setup": {
+      "time": "~20 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review documented; privacy policy and terms URLs required before sharing",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Without privacy policy and terms of service URLs, other users cannot authorize the integration.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+      },
+      {
+        "text": "API limit is 5 requests per second per base; a 429 means waiting 30 seconds.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/rate-limits"
+      },
+      {
+        "text": "Keep token requests below 10 per second per token.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Register at airtable.com/create/oauth with a unique name and a valid redirect URL.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+      },
+      {
+        "text": "Redirect URIs must use HTTPS, except localhost.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "text": "Privacy policy URL and terms of service URL are required before sharing.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+      },
+      {
+        "text": "Generate a client secret if token requests come from a server.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens expire after 60 minutes.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "text": "Refresh tokens are valid for 60 days; unused ones force re-authorization.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "text": "Refreshing invalidates the previous access and refresh tokens.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "text": "The code exchange must happen within 10 minutes of the authorization request.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "text": "Users choose which bases to grant and can change that at any time.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/guides/oauth-integrations"
+      },
+      {
+        "text": "Frequent invalid refresh requests may get the token revoked.",
+        "ev": "docs",
+        "src": "https://airtable.com/developers/web/api/oauth-reference"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Register a new OAuth integration at airtable.com/create/oauth",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URL, pick scopes and generate a client secret",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft a privacy policy and terms of service",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Add support email, privacy policy and terms URLs to the integration",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://airtable.com/create/oauth",
+    "docs": "https://airtable.com/developers/web/guides/oauth-integrations",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "Airtable OAuth integrations guide",
+        "u": "https://airtable.com/developers/web/guides/oauth-integrations"
+      },
+      {
+        "t": "Airtable OAuth reference",
+        "u": "https://airtable.com/developers/web/api/oauth-reference"
+      },
+      {
+        "t": "Airtable rate limits",
+        "u": "https://airtable.com/developers/web/api/rate-limits"
+      },
+      {
+        "t": "Composio Airtable toolkit",
+        "u": "https://docs.composio.dev/toolkits/airtable"
+      },
+      {
+        "t": "Composio Airtable OAuth guide",
+        "u": "https://composio.dev/auth/airtable"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "No user cap or plan requirement for unshared integrations is stated in the docs."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "clickup",
+    "name": "ClickUp",
+    "slug": "clickup",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/clickup",
+    "difficulty": "easy",
+    "oneLiner": "Only Workspace owners or admins can create OAuth apps.",
+    "setup": {
+      "time": "~10 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review mentioned in ClickUp auth docs",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.clickup.com/docs/authentication"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Rate limit is per token: 100 requests/min on Free, Unlimited and Business plans.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/rate-limits"
+      },
+      {
+        "text": "Business Plus gets 1,000 and Enterprise 10,000 requests per minute per token.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/rate-limits"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Only Workspace owners or admins can create OAuth apps.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/authentication"
+      },
+      {
+        "text": "Create the app under Settings > Apps with a name and redirect URL.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/authentication"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens currently do not expire, but ClickUp says this may change.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/authentication"
+      },
+      {
+        "text": "Non-SSL redirect URIs may not be supported in the future.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/authentication"
+      },
+      {
+        "text": "Users pick one or more Workspaces at authorization; re-authorize to change them.",
+        "ev": "docs",
+        "src": "https://developer.clickup.com/docs/authentication"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "In ClickUp, open Settings > Apps and click Create new app",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Name the app and add the Composio redirect URL",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test account and select the Workspaces to authorize",
+        "time": "3 min"
+      }
+    ],
+    "portal": "https://app.clickup.com",
+    "docs": "https://developer.clickup.com/docs/authentication",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "ClickUp authentication",
+        "u": "https://developer.clickup.com/docs/authentication"
+      },
+      {
+        "t": "ClickUp rate limits",
+        "u": "https://developer.clickup.com/docs/rate-limits"
+      },
+      {
+        "t": "Composio ClickUp toolkit",
+        "u": "https://docs.composio.dev/toolkits/clickup"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "ClickUp docs do not mention scopes or a review process.",
+      "Composio's redirect URI for ClickUp is taken from its other OAuth guides; no ClickUp-specific Composio guide exists (404)."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "monday",
+    "name": "Monday.com",
+    "slug": "monday",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/monday",
+    "difficulty": "medium",
+    "oneLiner": "A workspace admin must install the app before users connect.",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Marketplace review only if you want a listing; sharing a public app by link works without it",
+      "wait": "Initial response within 72 business hours",
+      "ev": "docs",
+      "src": "https://developer.monday.com/apps/docs/submit-your-app"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Private apps can only be used inside the account that built them.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+      },
+      {
+        "text": "Shared apps without monday approval show a banner saying monday hasn't vetted them.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+      },
+      {
+        "text": "You can restrict a shared app to specific monday accounts.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Create the app in the Developer Center; viewers cannot access it.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/the-developer-center"
+      },
+      {
+        "text": "Accept the developer terms on the Share tab to get a shareable install link.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+      },
+      {
+        "text": "Requested scopes must match the scopes configured on the app.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "text": "Redirect URI must match one of the redirect URLs added to the app.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "text": "Marketplace apps are reviewed on product, engineering, security, privacy, support, docs and legal.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/submit-your-app"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "If the app is not installed in the workspace, users see 'App is not installed'.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/monday"
+      },
+      {
+        "text": "A workspace admin installs the app once; then users can connect.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/monday"
+      },
+      {
+        "text": "Legacy OAuth tokens do not expire and there are no refresh tokens.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "text": "A newer OAuth 2.1 flow adds expiring access tokens and refresh tokens.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "text": "The authorization code is valid for only 10 minutes.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "text": "New apps built mainly with no-code tools or AI 'vibe code' are not eligible for the marketplace.",
+        "ev": "docs",
+        "src": "https://developer.monday.com/apps/docs/submit-your-app"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Open Developers from your monday profile menu and click Create app",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "On the OAuth tab, set scopes and add the Composio redirect URL",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "On the Share tab, accept developer terms and copy the install link",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Have each customer's admin install the app via the link",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft marketplace listing and review checklist answers if listing",
+        "time": "1 hr"
+      }
+    ],
+    "portal": "https://developer.monday.com/apps/docs/the-developer-center",
+    "docs": "https://developer.monday.com/apps/docs/oauth",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "monday OAuth",
+        "u": "https://developer.monday.com/apps/docs/oauth"
+      },
+      {
+        "t": "monday install and share apps",
+        "u": "https://developer.monday.com/apps/docs/install-and-share-your-apps"
+      },
+      {
+        "t": "monday submit to marketplace",
+        "u": "https://developer.monday.com/apps/docs/submit-your-app"
+      },
+      {
+        "t": "monday Developer Center",
+        "u": "https://developer.monday.com/apps/docs/the-developer-center"
+      },
+      {
+        "t": "Composio Monday toolkit",
+        "u": "https://docs.composio.dev/toolkits/monday"
+      },
+      {
+        "t": "Composio Monday OAuth guide",
+        "u": "https://composio.dev/auth/monday"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "Developer Center has no standalone URL; it opens from the profile menu > Developers.",
+      "Full marketplace review duration beyond the first response is not stated.",
+      "Which OAuth flow (legacy or 2.1) Composio uses was not confirmed."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "calendly",
+    "name": "Calendly",
+    "slug": "calendly",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/calendly",
+    "difficulty": "easy",
+    "oneLiner": "Self-serve; use a Production app, HTTPS redirect.",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review or application step in the OAuth app docs",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.calendly.com/creating-an-oauth-app"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Rate limit is per user: 50 requests/min on Free plans, 500/min on paid plans.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/api-docs/overview/rate-limits"
+      },
+      {
+        "text": "Only 8 OAuth tokens per user can be requested within one minute.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/api-docs/overview/rate-limits"
+      },
+      {
+        "text": "Webhook subscriptions need the user on a paid Standard, Teams or Enterprise plan.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/docs/getting-started/frequently-asked-questions"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Sign up for a developer account with GitHub or Google; it is separate from your Calendly user account.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/creating-an-oauth-app"
+      },
+      {
+        "text": "Production apps must use an HTTPS redirect URI; Sandbox allows http localhost.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/creating-an-oauth-app"
+      },
+      {
+        "text": "Calendly recommends a Sandbox app for development and a second app for Production.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/creating-an-oauth-app"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "The client secret and webhook signing key are shown only once at creation.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/creating-an-oauth-app"
+      },
+      {
+        "text": "Access tokens expire after 2 hours.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/api-docs/calendly-o-auth/o-auth/post-oauth-refresh-token"
+      },
+      {
+        "text": "Refresh tokens are single-use and rotate on every refresh.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/docs/authentication/refresh-token-rotation-guide"
+      },
+      {
+        "text": "Tokens are revoked if the user changes login email, password or login method.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/docs/getting-started/frequently-asked-questions"
+      },
+      {
+        "text": "Users cannot approve individual scopes; the app's configured scopes are requested.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/calendly"
+      },
+      {
+        "text": "A few endpoints require the Enterprise plan.",
+        "ev": "docs",
+        "src": "https://developer.calendly.com/docs/getting-started/frequently-asked-questions"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Sign up at developer.calendly.com and open My Apps",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Create a Web app in the Production environment with the Composio redirect URI",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Select scopes and copy the client ID and secret immediately",
+        "time": "3 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://developer.calendly.com",
+    "docs": "https://developer.calendly.com/creating-an-oauth-app",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "Calendly creating an OAuth app",
+        "u": "https://developer.calendly.com/creating-an-oauth-app"
+      },
+      {
+        "t": "Calendly rate limits",
+        "u": "https://developer.calendly.com/api-docs/overview/rate-limits"
+      },
+      {
+        "t": "Calendly FAQ",
+        "u": "https://developer.calendly.com/docs/getting-started/frequently-asked-questions"
+      },
+      {
+        "t": "Calendly refresh token rotation",
+        "u": "https://developer.calendly.com/docs/authentication/refresh-token-rotation-guide"
+      },
+      {
+        "t": "Calendly get access token",
+        "u": "https://developer.calendly.com/api-docs/calendly-o-auth/o-auth/post-oauth-refresh-token"
+      },
+      {
+        "t": "Composio Calendly toolkit",
+        "u": "https://docs.composio.dev/toolkits/calendly"
+      },
+      {
+        "t": "Composio Calendly OAuth guide",
+        "u": "https://composio.dev/auth/calendly"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "Docs do not say whether Sandbox apps can authorize real customer accounts.",
+      "No application or approval step was found in the current docs, contrary to the brief's note."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "mailchimp",
+    "name": "Mailchimp",
+    "slug": "mailchimp",
+    "category": "Social & marketing",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/mailchimp",
+    "difficulty": "easy",
+    "oneLiner": "Tokens never expire; only 10 simultaneous connections.",
+    "setup": {
+      "time": "~10 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No review to register an app; OAuth is required to list in the Mailchimp Marketplace",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Limit of 10 simultaneous connections per user; there is no way to raise it.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/rate-limits-and-timeouts"
+      },
+      {
+        "text": "API calls time out after 120 seconds.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/rate-limits-and-timeouts"
+      },
+      {
+        "text": "Some Composio Mailchimp tools need at least the Essentials plan.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/mailchimp"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Register the app on the Registered Apps page in your Mailchimp account.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app"
+      },
+      {
+        "text": "HTTPS for the redirect URI is strongly recommended but not enforced.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2"
+      },
+      {
+        "text": "Delete stored tokens when a user disconnects or uninstalls your app.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "The client secret is shown only once at registration.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app"
+      },
+      {
+        "text": "Access tokens never expire and there is no refresh token.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2"
+      },
+      {
+        "text": "A token is revoked if the authorizing user is removed from the account.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication"
+      },
+      {
+        "text": "API access is bounded by the authorizing user's role; use an admin where possible.",
+        "ev": "docs",
+        "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Open Registered Apps in Mailchimp and click Register An App",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Enter the Composio redirect URI and copy the client ID and secret",
+        "time": "3 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Composio auth config with the client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test account with an admin user",
+        "time": "3 min"
+      }
+    ],
+    "portal": "https://us1.admin.mailchimp.com/account/oauth2/",
+    "docs": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "sources": [
+      {
+        "t": "Mailchimp set up an OAuth app",
+        "u": "https://mailchimp.com/developer/marketing/build/start-developing/set-up-an-oauth-app"
+      },
+      {
+        "t": "Mailchimp OAuth 2",
+        "u": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2"
+      },
+      {
+        "t": "Mailchimp authentication",
+        "u": "https://mailchimp.com/developer/marketing/api-concepts/authentication"
+      },
+      {
+        "t": "Mailchimp rate limits",
+        "u": "https://mailchimp.com/developer/marketing/api-concepts/rate-limits-and-timeouts"
+      },
+      {
+        "t": "Composio Mailchimp toolkit",
+        "u": "https://docs.composio.dev/toolkits/mailchimp"
+      },
+      {
+        "t": "Composio managed vs custom auth",
+        "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app"
+      }
+    ],
+    "unverified": [
+      "Mailchimp Marketplace listing review steps and timing were not checked.",
+      "Composio's redirect URI for Mailchimp is taken from its other OAuth guides; no Mailchimp-specific Composio guide exists (404)."
+    ],
+    "checked": "2026-10-28"
+  }
+]

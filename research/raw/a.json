@@ -1,0 +1,1373 @@
+[
+ {
+  "category": "Google Workspace",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "difficulty": "medium",
+  "setup": {
+   "time": "~30 min",
+   "ev": "est"
+  },
+  "portal": "https://console.developers.google.com/auth/clients",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
+  "checked": "2026-10-28",
+  "id": "googlecalendar",
+  "name": "Google Calendar",
+  "slug": "googlecalendar",
+  "managedSrc": "https://docs.composio.dev/toolkits/googlecalendar",
+  "oneLiner": "Calendar event scopes are sensitive; verify past 100 users",
+  "review": {
+   "required": true,
+   "what": "Google OAuth sensitive scope verification (includes brand verification)",
+   "wait": "3-5 business days (Google's FAQ estimates 10)",
+   "ev": "docs",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "cost": {
+   "text": "No Google fee stated for verification",
+   "ev": "est",
+   "src": null
+  },
+  "limits": [
+   {
+    "text": "Before approval: Testing mode is limited to 100 test users listed on the consent screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: test-user authorizations and refresh tokens expire 7 days after consent.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: an In-production app requesting unapproved sensitive or restricted scopes shows the unverified app screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Verify ownership of your authorized domains in Google Search Console.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "The privacy policy must disclose how the app accesses, uses, stores, or shares Google user data.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Give a written justification for each sensitive scope, including why a narrower scope is not enough.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Submit an unlisted YouTube video showing the consent flow, the client ID in the address bar, and each scope in use.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "You must publish your branding before you can request verification for data access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Internal-only apps (Workspace-owned project, Internal audience) skip verification and the 100-user cap but only work in that org.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "Google lists reading Google Calendar events as an example of a sensitive scope.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "No Calendar API scope appears on Google's restricted scope list, so no CASA assessment is needed.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "text": "Narrower scopes such as calendar.events.owned and calendar.freebusy exist if you don't need full calendar access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/calendar/api/auth"
+   },
+   {
+    "text": "Google requires you to request the narrowest scope that provides the feature.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Google's FAQ estimates sensitive scope verification at 10 business days, which is longer than the 3-5 days on the developer page.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "text": "Limits apply to refresh tokens: 100 per Google Account per client ID, and creating a new one silently invalidates the oldest.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Refresh tokens stop working after 6 months unused or if the user revokes access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Your OAuth redirect URI must exactly match oauth_redirect_uri in the Composio auth config; some defaults still use /api/v1/auth-apps/add.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "text": "Use separate Google Cloud projects for testing and production, and submit only the production project for verification.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "text": "Workspace admins can restrict sensitive scopes to OAuth clients they explicitly mark as trusted.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Create a Google Cloud project and enable the Google Calendar API",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Set up Google Auth Platform branding and an External audience, and add test users",
+    "time": "10 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a Web application OAuth client with redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and matching redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Draft the privacy policy text and a justification for each sensitive scope",
+    "time": "30 min"
+   },
+   {
+    "who": "you",
+    "t": "Verify your domain, record the demo video, publish branding and submit for verification",
+    "time": "1-2 h"
+   }
+  ],
+  "docs": "https://developers.google.com/workspace/calendar/api/auth",
+  "sources": [
+   {
+    "t": "Google Calendar API: Choose scopes",
+    "u": "https://developers.google.com/workspace/calendar/api/auth"
+   },
+   {
+    "t": "Composio: Google Calendar toolkit",
+    "u": "https://docs.composio.dev/toolkits/googlecalendar"
+   },
+   {
+    "t": "Google: Sensitive scope verification",
+    "u": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "t": "Google Cloud Help: Verification FAQ",
+    "u": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "t": "Google Cloud Help: Manage app audience",
+    "u": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "t": "Google Cloud Help: When is verification not needed",
+    "u": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "t": "Google Cloud Help: OAuth App Verification",
+    "u": "https://support.google.com/cloud/answer/13463073"
+   },
+   {
+    "t": "Google Cloud Help: Restricted scopes",
+    "u": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "t": "Google: Using OAuth 2.0 to access Google APIs",
+    "u": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth2 credentials for Google Apps",
+    "u": "https://composio.dev/auth/googleapps"
+   }
+  ],
+  "unverified": [
+   "Google's docs do not state any fee for brand or sensitive scope verification.",
+   "The Calendar scopes page does not label each scope's tier; only Google's example confirms that reading events is sensitive."
+  ]
+ },
+ {
+  "category": "Google Workspace",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "difficulty": "hard",
+  "setup": {
+   "time": "~30 min",
+   "ev": "est"
+  },
+  "portal": "https://console.developers.google.com/auth/clients",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
+  "checked": "2026-10-28",
+  "id": "googledrive",
+  "name": "Google Drive",
+  "slug": "googledrive",
+  "managedSrc": "https://docs.composio.dev/toolkits/googledrive",
+  "oneLiner": "Full drive scope is restricted: CASA audit every year",
+  "review": {
+   "required": true,
+   "what": "Google restricted scope verification plus a CASA security assessment (drive.file alone needs no scope review)",
+   "wait": "Several weeks (Google's FAQ estimates 6 weeks)",
+   "ev": "docs",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+  },
+  "cost": {
+   "text": "Google charges no fee; the CASA assessor's fee is agreed directly with them",
+   "ev": "docs",
+   "src": "https://support.google.com/cloud/answer/13463817"
+  },
+  "limits": [
+   {
+    "text": "Before approval: Testing mode is limited to 100 test users listed on the consent screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: test-user authorizations and refresh tokens expire 7 days after consent.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: an In-production app requesting unapproved sensitive or restricted scopes shows the unverified app screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Verify ownership of your authorized domains in Google Search Console.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "The privacy policy must disclose how the app accesses, uses, stores, or shares Google user data.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Give a written justification for each sensitive scope, including why a narrower scope is not enough.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Submit an unlisted YouTube video showing the consent flow, the client ID in the address bar, and each scope in use.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "You must publish your branding before you can request verification for data access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Restricted Drive scopes are allowed only for backup and sync, productivity and education, or reporting and security apps.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "text": "Apps that store or transmit restricted scope data on servers must pass a security assessment.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "text": "The assessment uses the App Defense Alliance CASA framework and must be renewed every 12 months.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13465431"
+   },
+   {
+    "text": "Internal-only apps (Workspace-owned project, Internal audience) skip verification and the 100-user cap but only work in that org.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "drive, drive.readonly, drive.metadata, drive.metadata.readonly, drive.activity and drive.scripts are restricted.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "text": "drive.file, drive.appdata and drive.install are non-sensitive; drive.apps.readonly is sensitive.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "text": "drive.file only covers files the user opens with your app or picks in the Google Picker, not the whole Drive.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "text": "Google's Trust and Safety team tells you when to start the CASA assessment; it is the last step of the review.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13465431"
+   },
+   {
+    "text": "Adding a new restricted scope later may require a new assessment covering it.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+   },
+   {
+    "text": "Google's FAQ estimates sensitive scope verification at 10 business days, which is longer than the 3-5 days on the developer page.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "text": "Limits apply to refresh tokens: 100 per Google Account per client ID, and creating a new one silently invalidates the oldest.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Refresh tokens stop working after 6 months unused or if the user revokes access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Your OAuth redirect URI must exactly match oauth_redirect_uri in the Composio auth config; some defaults still use /api/v1/auth-apps/add.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "text": "Use separate Google Cloud projects for testing and production, and submit only the production project for verification.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "text": "Workspace admins can restrict sensitive scopes to OAuth clients they explicitly mark as trusted.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Create a Google Cloud project and enable the Google Drive API",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Set up Google Auth Platform branding and an External audience, and add test users",
+    "time": "10 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a Web application OAuth client with redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and matching redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Draft the privacy policy text and a justification for each sensitive scope",
+    "time": "30 min"
+   },
+   {
+    "who": "you",
+    "t": "Verify your domain, record the demo video, publish branding and submit for verification",
+    "time": "1-2 h"
+   },
+   {
+    "who": "you",
+    "t": "Complete the CASA security assessment with an authorized assessor when Google asks",
+    "time": "weeks"
+   }
+  ],
+  "docs": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+  "sources": [
+   {
+    "t": "Google Drive API: Choose scopes",
+    "u": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth"
+   },
+   {
+    "t": "Google: Restricted scope verification",
+    "u": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+   },
+   {
+    "t": "Google Cloud Help: Security assessment",
+    "u": "https://support.google.com/cloud/answer/13465431"
+   },
+   {
+    "t": "Composio: Google Drive toolkit",
+    "u": "https://docs.composio.dev/toolkits/googledrive"
+   },
+   {
+    "t": "Google: Sensitive scope verification",
+    "u": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "t": "Google Cloud Help: Verification FAQ",
+    "u": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "t": "Google Cloud Help: Manage app audience",
+    "u": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "t": "Google Cloud Help: When is verification not needed",
+    "u": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "t": "Google Cloud Help: OAuth App Verification",
+    "u": "https://support.google.com/cloud/answer/13463073"
+   },
+   {
+    "t": "Google Cloud Help: Restricted scopes",
+    "u": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "t": "Google: Using OAuth 2.0 to access Google APIs",
+    "u": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth2 credentials for Google Apps",
+    "u": "https://composio.dev/auth/googleapps"
+   }
+  ],
+  "unverified": [
+   "Google does not publish CASA assessor prices.",
+   "Which Drive scopes Composio's default Drive auth config requests is not listed on the toolkit page."
+  ]
+ },
+ {
+  "category": "Google Workspace",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "difficulty": "medium",
+  "setup": {
+   "time": "~30 min",
+   "ev": "est"
+  },
+  "portal": "https://console.developers.google.com/auth/clients",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
+  "checked": "2026-10-28",
+  "id": "googlesheets",
+  "name": "Google Sheets",
+  "slug": "googlesheets",
+  "managedSrc": "https://docs.composio.dev/toolkits/googlesheets",
+  "oneLiner": "spreadsheets scope is sensitive; drive.file is not",
+  "review": {
+   "required": true,
+   "what": "Google OAuth sensitive scope verification for spreadsheets or spreadsheets.readonly",
+   "wait": "3-5 business days (Google's FAQ estimates 10)",
+   "ev": "docs",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "cost": {
+   "text": "No Google fee stated for verification",
+   "ev": "est",
+   "src": null
+  },
+  "limits": [
+   {
+    "text": "Before approval: Testing mode is limited to 100 test users listed on the consent screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: test-user authorizations and refresh tokens expire 7 days after consent.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: an In-production app requesting unapproved sensitive or restricted scopes shows the unverified app screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Verify ownership of your authorized domains in Google Search Console.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "The privacy policy must disclose how the app accesses, uses, stores, or shares Google user data.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Give a written justification for each sensitive scope, including why a narrower scope is not enough.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Submit an unlisted YouTube video showing the consent flow, the client ID in the address bar, and each scope in use.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "You must publish your branding before you can request verification for data access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Internal-only apps (Workspace-owned project, Internal audience) skip verification and the 100-user cap but only work in that org.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "spreadsheets and spreadsheets.readonly are sensitive; drive.file is the recommended non-sensitive scope.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/sheets/api/scopes"
+   },
+   {
+    "text": "drive and drive.readonly also work with Sheets but are restricted, which adds a security assessment if you store or transmit the data on servers.",
+    "ev": "docs",
+    "src": "https://developers.google.com/workspace/sheets/api/scopes"
+   },
+   {
+    "text": "Composio says its default OAuth app shares Sheets quota across users; your own app gets a dedicated quota.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/toolkits/googlesheets"
+   },
+   {
+    "text": "Google's FAQ estimates sensitive scope verification at 10 business days, which is longer than the 3-5 days on the developer page.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "text": "Limits apply to refresh tokens: 100 per Google Account per client ID, and creating a new one silently invalidates the oldest.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Refresh tokens stop working after 6 months unused or if the user revokes access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Your OAuth redirect URI must exactly match oauth_redirect_uri in the Composio auth config; some defaults still use /api/v1/auth-apps/add.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "text": "Use separate Google Cloud projects for testing and production, and submit only the production project for verification.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "text": "Workspace admins can restrict sensitive scopes to OAuth clients they explicitly mark as trusted.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Create a Google Cloud project and enable the Google Sheets API",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Set up Google Auth Platform branding and an External audience, and add test users",
+    "time": "10 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a Web application OAuth client with redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and matching redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Draft the privacy policy text and a justification for each sensitive scope",
+    "time": "30 min"
+   },
+   {
+    "who": "you",
+    "t": "Verify your domain, record the demo video, publish branding and submit for verification",
+    "time": "1-2 h"
+   }
+  ],
+  "docs": "https://developers.google.com/workspace/sheets/api/scopes",
+  "sources": [
+   {
+    "t": "Google Sheets API: Choose scopes",
+    "u": "https://developers.google.com/workspace/sheets/api/scopes"
+   },
+   {
+    "t": "Composio: Google Sheets toolkit",
+    "u": "https://docs.composio.dev/toolkits/googlesheets"
+   },
+   {
+    "t": "Google: Sensitive scope verification",
+    "u": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "t": "Google Cloud Help: Verification FAQ",
+    "u": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "t": "Google Cloud Help: Manage app audience",
+    "u": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "t": "Google Cloud Help: When is verification not needed",
+    "u": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "t": "Google Cloud Help: OAuth App Verification",
+    "u": "https://support.google.com/cloud/answer/13463073"
+   },
+   {
+    "t": "Google Cloud Help: Restricted scopes",
+    "u": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "t": "Google: Using OAuth 2.0 to access Google APIs",
+    "u": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth2 credentials for Google Apps",
+    "u": "https://composio.dev/auth/googleapps"
+   }
+  ],
+  "unverified": [
+   "Google's docs do not state any fee for brand or sensitive scope verification."
+  ]
+ },
+ {
+  "category": "Social & marketing",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "difficulty": "medium",
+  "setup": {
+   "time": "~30 min",
+   "ev": "est"
+  },
+  "portal": "https://console.developers.google.com/auth/clients",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as an authorized redirect URI on the Web OAuth client and set the same value in the Composio auth config.",
+  "checked": "2026-10-28",
+  "id": "youtube",
+  "name": "YouTube",
+  "slug": "youtube",
+  "managedSrc": "https://docs.composio.dev/toolkits/youtube",
+  "oneLiner": "Sensitive scopes plus a 10,000 units/day default quota",
+  "review": {
+   "required": true,
+   "what": "Google OAuth sensitive scope verification; a YouTube compliance audit only to raise quota",
+   "wait": "3-5 business days for OAuth (audit wait not stated)",
+   "ev": "docs",
+   "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+  },
+  "cost": {
+   "text": "No Google fee stated for verification or the quota audit",
+   "ev": "est",
+   "src": null
+  },
+  "limits": [
+   {
+    "text": "Before approval: Testing mode is limited to 100 test users listed on the consent screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: test-user authorizations and refresh tokens expire 7 days after consent.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: an In-production app requesting unapproved sensitive or restricted scopes shows the unverified app screen.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "text": "Before a quota audit: default quota is 100 search.list calls, 100 videos.insert calls and 10,000 units a day for all other endpoints.",
+    "ev": "docs",
+    "src": "https://developers.google.com/youtube/data/guides/quota_and_compliance_audits"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Verify ownership of your authorized domains in Google Search Console.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "The privacy policy must disclose how the app accesses, uses, stores, or shares Google user data.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Give a written justification for each sensitive scope, including why a narrower scope is not enough.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "Submit an unlisted YouTube video showing the consent flow, the client ID in the address bar, and each scope in use.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "You must publish your branding before you can request verification for data access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "More quota than the default requires passing a YouTube API Services compliance audit.",
+    "ev": "docs",
+    "src": "https://developers.google.com/youtube/data/guides/quota_and_compliance_audits"
+   },
+   {
+    "text": "Internal-only apps (Workspace-owned project, Internal audience) skip verification and the 100-user cap but only work in that org.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "Google lists deleting a YouTube video as an example of a sensitive scope.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "text": "No YouTube Data API scope appears on Google's restricted scope list.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "text": "Composio says its managed YouTube app's quota is shared across users and recommends your own app for production.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/toolkits/youtube"
+   },
+   {
+    "text": "YouTube runs periodic audits and requires a form if your company changes control.",
+    "ev": "docs",
+    "src": "https://developers.google.com/youtube/data/guides/quota_and_compliance_audits"
+   },
+   {
+    "text": "Google's FAQ estimates sensitive scope verification at 10 business days, which is longer than the 3-5 days on the developer page.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "text": "Limits apply to refresh tokens: 100 per Google Account per client ID, and creating a new one silently invalidates the oldest.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Refresh tokens stop working after 6 months unused or if the user revokes access.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "text": "Your OAuth redirect URI must exactly match oauth_redirect_uri in the Composio auth config; some defaults still use /api/v1/auth-apps/add.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "text": "Use separate Google Cloud projects for testing and production, and submit only the production project for verification.",
+    "ev": "docs",
+    "src": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "text": "Workspace admins can restrict sensitive scopes to OAuth clients they explicitly mark as trusted.",
+    "ev": "docs",
+    "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Create a Google Cloud project and enable the YouTube Data API v3",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Set up Google Auth Platform branding and an External audience, and add test users",
+    "time": "10 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a Web application OAuth client with redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and matching redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Draft the privacy policy text and a justification for each sensitive scope",
+    "time": "30 min"
+   },
+   {
+    "who": "you",
+    "t": "Verify your domain, record the demo video, publish branding and submit for verification",
+    "time": "1-2 h"
+   },
+   {
+    "who": "you",
+    "t": "If you need more quota, submit the YouTube Audit and Quota Extension Form",
+    "time": "30 min"
+   }
+  ],
+  "docs": "https://developers.google.com/youtube/data/guides/auth/server-side-web-apps",
+  "sources": [
+   {
+    "t": "YouTube Data API: OAuth for web server apps",
+    "u": "https://developers.google.com/youtube/data/guides/auth/server-side-web-apps"
+   },
+   {
+    "t": "YouTube Data API: Quota and compliance audits",
+    "u": "https://developers.google.com/youtube/data/guides/quota_and_compliance_audits"
+   },
+   {
+    "t": "Composio: YouTube toolkit",
+    "u": "https://docs.composio.dev/toolkits/youtube"
+   },
+   {
+    "t": "Google: Sensitive scope verification",
+    "u": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+   },
+   {
+    "t": "Google Cloud Help: Verification FAQ",
+    "u": "https://support.google.com/cloud/answer/13463817"
+   },
+   {
+    "t": "Google Cloud Help: Manage app audience",
+    "u": "https://support.google.com/cloud/answer/15549945"
+   },
+   {
+    "t": "Google Cloud Help: When is verification not needed",
+    "u": "https://support.google.com/cloud/answer/13464323"
+   },
+   {
+    "t": "Google Cloud Help: OAuth App Verification",
+    "u": "https://support.google.com/cloud/answer/13463073"
+   },
+   {
+    "t": "Google Cloud Help: Restricted scopes",
+    "u": "https://support.google.com/cloud/answer/13464325"
+   },
+   {
+    "t": "Google: Using OAuth 2.0 to access Google APIs",
+    "u": "https://developers.google.com/identity/protocols/oauth2"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth2 credentials for Google Apps",
+    "u": "https://composio.dev/auth/googleapps"
+   }
+  ],
+  "unverified": [
+   "Google's docs do not state any fee for brand or sensitive scope verification.",
+   "The YouTube scopes page does not label each scope's tier.",
+   "No wait time is published for the YouTube quota audit."
+  ]
+ },
+ {
+  "id": "outlook",
+  "name": "Microsoft Outlook",
+  "slug": "outlook",
+  "category": "Microsoft 365",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "managedSrc": "https://docs.composio.dev/toolkits/outlook",
+  "difficulty": "medium",
+  "oneLiner": "Unverified multitenant apps can be blocked from consent",
+  "setup": {
+   "time": "~20 min",
+   "ev": "est"
+  },
+  "review": {
+   "required": false,
+   "what": "Publisher verification via Partner Center (optional, but affects whether users can consent)",
+   "wait": "A few minutes once your Partner Center account is verified",
+   "ev": "docs",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+  },
+  "cost": {
+   "text": "$0: Microsoft doesn't charge for publisher verification and no license is needed",
+   "ev": "docs",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+  },
+  "limits": [
+   {
+    "text": "Before verification: the consent prompt shows 'Unverified' instead of a publisher name.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience"
+   },
+   {
+    "text": "Before verification: with risk-based step-up consent on, users in other tenants can't consent to multitenant apps registered after 8 Nov 2020 that ask for more than sign-in and profile.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Register the app in Microsoft Entra ID as at least an Application Developer.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "text": "For other organizations, set supported account types to multiple Entra ID tenants, with or without personal Microsoft accounts.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "text": "Publisher verification needs a verified Microsoft AI Cloud Partner Program (formerly MPN) partner global account ID.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The app must be registered with a work or school account, not a personal Microsoft account, to be publisher verified.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The publisher domain can't be *.onmicrosoft.com and must match the Partner Center email domain or a DNS-verified custom domain.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The person verifying needs Application Administrator or Cloud Application Administrator in Entra, and Partner Admin or Account Admin in Partner Center, and must sign in with MFA.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "Delegated Mail.Read, Mail.ReadWrite, Mail.Send and Calendars.ReadWrite don't need admin consent, but their application versions do.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "text": "Delegated Mail.Read is available for consent in personal Microsoft accounts.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "text": "Composio says 'Needs admin approval' errors are a tenant consent setting; a verified publisher helps but doesn't remove admin consent everywhere.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/toolkits/outlook"
+   },
+   {
+    "text": "Composio says an admin approving inside the user's OAuth flow may connect the admin's mailbox instead of the user's.",
+    "ev": "docs",
+    "src": "https://docs.composio.dev/toolkits/outlook"
+   },
+   {
+    "text": "Application (app-only) permissions always need tenant admin consent.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Tenant admins can turn off user consent, which makes admin consent mandatory for every app in that tenant.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Microsoft recommends tenants allow user consent only for apps from verified publishers.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+   },
+   {
+    "text": "If an admin consents without prompt=consent, the consent only covers the admin's own account.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Client secrets last 24 months at most, and Microsoft recommends under 12 months.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials"
+   },
+   {
+    "text": "Refresh tokens last 90 days by default, or 24 hours for single-page app redirect URIs.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
+   },
+   {
+    "text": "Multitenant apps must call the /common or /organizations endpoint, not a tenant-specific one.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Register an app in the Entra admin center as multitenant",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Add a Web redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "2 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a client secret and add delegated Microsoft Graph permissions",
+    "time": "10 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Link a verified Partner Center ID under Branding & properties to become a verified publisher",
+    "time": "15 min"
+   }
+  ],
+  "portal": "https://entra.microsoft.com",
+  "docs": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as a Web redirect URI under Authentication and use the same value in the Composio auth config.",
+  "sources": [
+   {
+    "t": "Composio: Outlook toolkit",
+    "u": "https://docs.composio.dev/toolkits/outlook"
+   },
+   {
+    "t": "Microsoft: Register an application",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "t": "Microsoft: Publisher verification",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "t": "Microsoft: Mark an app as publisher verified",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+   },
+   {
+    "t": "Microsoft: Convert app to multitenant",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "t": "Microsoft: Configure user consent",
+    "u": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+   },
+   {
+    "t": "Microsoft: Application consent experience",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience"
+   },
+   {
+    "t": "Microsoft Graph permissions reference",
+    "u": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "t": "Microsoft: Refresh tokens",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
+   },
+   {
+    "t": "Microsoft: Add app credentials",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth credentials for Outlook",
+    "u": "https://composio.dev/auth/outlook"
+   }
+  ],
+  "unverified": [
+   "Partner Center account verification time is not stated on the pages checked.",
+   "Which tenants have risk-based step-up consent turned on is not stated."
+  ],
+  "checked": "2026-10-28"
+ },
+ {
+  "id": "microsoftteams",
+  "name": "Microsoft Teams",
+  "slug": "microsoft_teams",
+  "category": "Microsoft 365",
+  "auth": "OAuth 2.0",
+  "managed": "yes",
+  "managedSrc": "https://docs.composio.dev/toolkits/microsoft_teams",
+  "difficulty": "medium",
+  "oneLiner": "Reading channel messages needs tenant admin consent",
+  "setup": {
+   "time": "~20 min",
+   "ev": "est"
+  },
+  "review": {
+   "required": false,
+   "what": "Publisher verification via Partner Center (optional, but affects whether users can consent)",
+   "wait": "A few minutes once your Partner Center account is verified",
+   "ev": "docs",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+  },
+  "cost": {
+   "text": "$0: Microsoft doesn't charge for publisher verification and no license is needed",
+   "ev": "docs",
+   "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+  },
+  "limits": [
+   {
+    "text": "Before verification: the consent prompt shows 'Unverified' instead of a publisher name.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience"
+   },
+   {
+    "text": "Before verification: with risk-based step-up consent on, users in other tenants can't consent to multitenant apps registered after 8 Nov 2020 that ask for more than sign-in and profile.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   }
+  ],
+  "requirements": [
+   {
+    "text": "Register the app in Microsoft Entra ID as at least an Application Developer.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "text": "For other organizations, set supported account types to multiple Entra ID tenants, with or without personal Microsoft accounts.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "text": "Publisher verification needs a verified Microsoft AI Cloud Partner Program (formerly MPN) partner global account ID.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The app must be registered with a work or school account, not a personal Microsoft account, to be publisher verified.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The publisher domain can't be *.onmicrosoft.com and must match the Partner Center email domain or a DNS-verified custom domain.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "text": "The person verifying needs Application Administrator or Cloud Application Administrator in Entra, and Partner Admin or Account Admin in Partner Center, and must sign in with MFA.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+   }
+  ],
+  "gotchas": [
+   {
+    "text": "Delegated ChannelMessage.Read.All and TeamMember.Read.All require admin consent.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "text": "Delegated Chat.Read, Chat.ReadWrite, ChatMessage.Send, ChannelMessage.Send and Team.ReadBasic.All don't need admin consent.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "text": "For apps that need admin consent, add an admin sign-up link that sends prompt=consent so one admin approves for the whole tenant.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Application (app-only) permissions always need tenant admin consent.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Tenant admins can turn off user consent, which makes admin consent mandatory for every app in that tenant.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Microsoft recommends tenants allow user consent only for apps from verified publishers.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+   },
+   {
+    "text": "If an admin consents without prompt=consent, the consent only covers the admin's own account.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "text": "Client secrets last 24 months at most, and Microsoft recommends under 12 months.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials"
+   },
+   {
+    "text": "Refresh tokens last 90 days by default, or 24 hours for single-page app redirect URIs.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
+   },
+   {
+    "text": "Multitenant apps must call the /common or /organizations endpoint, not a tenant-specific one.",
+    "ev": "docs",
+    "src": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   }
+  ],
+  "steps": [
+   {
+    "who": "you",
+    "t": "Register an app in the Entra admin center as multitenant",
+    "time": "5 min"
+   },
+   {
+    "who": "you",
+    "t": "Add a Web redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback",
+    "time": "2 min"
+   },
+   {
+    "who": "you",
+    "t": "Create a client secret and add delegated Microsoft Graph permissions",
+    "time": "10 min"
+   },
+   {
+    "who": "agent",
+    "t": "Create the Composio auth config with your client ID, secret and redirect URI",
+    "time": "5 min"
+   },
+   {
+    "who": "agent",
+    "t": "Draft the admin-consent request and explain to tenant admins which permissions need it",
+    "time": "15 min"
+   },
+   {
+    "who": "you",
+    "t": "Link a verified Partner Center ID under Branding & properties to become a verified publisher",
+    "time": "15 min"
+   }
+  ],
+  "portal": "https://entra.microsoft.com",
+  "docs": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
+  "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as a Web redirect URI under Authentication and use the same value in the Composio auth config.",
+  "sources": [
+   {
+    "t": "Composio: Microsoft Teams toolkit",
+    "u": "https://docs.composio.dev/toolkits/microsoft_teams"
+   },
+   {
+    "t": "Microsoft: Register an application",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+   },
+   {
+    "t": "Microsoft: Publisher verification",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview"
+   },
+   {
+    "t": "Microsoft: Mark an app as publisher verified",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified"
+   },
+   {
+    "t": "Microsoft: Convert app to multitenant",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/howto-convert-app-to-be-multi-tenant"
+   },
+   {
+    "t": "Microsoft: Configure user consent",
+    "u": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+   },
+   {
+    "t": "Microsoft: Application consent experience",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/application-consent-experience"
+   },
+   {
+    "t": "Microsoft Graph permissions reference",
+    "u": "https://learn.microsoft.com/en-us/graph/permissions-reference"
+   },
+   {
+    "t": "Microsoft: Refresh tokens",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens"
+   },
+   {
+    "t": "Microsoft: Add app credentials",
+    "u": "https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials"
+   },
+   {
+    "t": "Composio: Custom auth configs",
+    "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+   },
+   {
+    "t": "Composio: OAuth credentials for Outlook",
+    "u": "https://composio.dev/auth/outlook"
+   }
+  ],
+  "unverified": [
+   "Partner Center account verification time is not stated on the pages checked.",
+   "Which tenants have risk-based step-up consent turned on is not stated.",
+   "Whether Teams Graph APIs work for personal Microsoft accounts was not confirmed.",
+   "Composio's Teams toolkit page has no setup FAQ, so the Outlook guide's Entra steps are assumed to apply."
+  ],
+  "checked": "2026-10-28"
+ }
+]

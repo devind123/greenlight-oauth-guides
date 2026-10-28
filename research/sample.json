@@ -1,0 +1,317 @@
+[
+ {
+  "app": "gmail",
+  "field": "limits",
+  "text": "In Testing, up to 100 test users, and access expires after 7 days.",
+  "src": "https://support.google.com/cloud/answer/15549945",
+  "n": 1
+ },
+ {
+  "app": "googlecalendar",
+  "field": "gotchas",
+  "text": "No Calendar API scope appears on Google's restricted scope list, so no CASA assessment is needed.",
+  "src": "https://support.google.com/cloud/answer/13464325",
+  "n": 2
+ },
+ {
+  "app": "googledrive",
+  "field": "limits",
+  "text": "Before approval: unverified apps are capped at 100 new users for the lifetime of the project, and the cap cannot be reset.",
+  "src": "https://support.google.com/cloud/answer/13463817",
+  "n": 3
+ },
+ {
+  "app": "googlesheets",
+  "field": "requirements",
+  "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+  "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+  "n": 4
+ },
+ {
+  "app": "youtube",
+  "field": "requirements",
+  "text": "You must publish your branding before you can request verification for data access.",
+  "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+  "n": 5
+ },
+ {
+  "app": "outlook",
+  "field": "gotchas",
+  "text": "Delegated Mail.Read is available for consent in personal Microsoft accounts.",
+  "src": "https://learn.microsoft.com/en-us/graph/permissions-reference",
+  "n": 6
+ },
+ {
+  "app": "microsoftteams",
+  "field": "limits",
+  "text": "Before verification: with risk-based step-up consent on, users in other tenants can't consent to multitenant apps registered after 8 Nov 2020 that ask for more than sign-in and profile.",
+  "src": "https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview",
+  "n": 7
+ },
+ {
+  "app": "github",
+  "field": "gotchas",
+  "text": "With a GitHub App, users must install it on their account or org separately; Composio doesn't supply the install link.",
+  "src": "https://docs.composio.dev/toolkits/github",
+  "n": 8
+ },
+ {
+  "app": "linear",
+  "field": "gotchas",
+  "text": "All OAuth apps were moved to the refresh token system on April 1, 2026.",
+  "src": "https://linear.app/developers/oauth-2-0-authentication",
+  "n": 9
+ },
+ {
+  "app": "jira",
+  "field": "requirements",
+  "text": "Report each stored account at least every 7 days by default, or per the Cycle-Period header.",
+  "src": "https://developer.atlassian.com/cloud/jira/platform/user-privacy-developer-guide/",
+  "n": 10
+ },
+ {
+  "app": "confluence",
+  "field": "requirements",
+  "text": "Turn on 'Enable sharing' under Distribution before anyone else can authorize the app.",
+  "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/",
+  "n": 11
+ },
+ {
+  "app": "figma",
+  "field": "gotchas",
+  "text": "Authorization codes expire after 30 seconds.",
+  "src": "https://developers.figma.com/docs/rest-api/oauth-apps/",
+  "n": 12
+ },
+ {
+  "app": "notion",
+  "field": "gotchas",
+  "text": "Keep one connection per real user per Notion app to avoid broken refresh tokens.",
+  "src": "https://docs.composio.dev/toolkits/notion",
+  "n": 13
+ },
+ {
+  "app": "hubspot",
+  "field": "limits",
+  "text": "The 25-install cap applies to apps created or migrated on the Developer Platform from September 22, 2025.",
+  "src": "https://developers.hubspot.com/changelog/new-marketplace-distribution-app-install-limits",
+  "n": 14
+ },
+ {
+  "app": "salesforce",
+  "field": "requirements",
+  "text": "API-only submissions need a Developer Edition org, false-positive notes if any, and solution documentation.",
+  "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-required-materials.html",
+  "n": 15
+ },
+ {
+  "app": "pipedrive",
+  "field": "requirements",
+  "text": "Both private and public apps must use OAuth 2.0 with working install and uninstall flows.",
+  "src": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app",
+  "n": 16
+ },
+ {
+  "app": "zendesk",
+  "field": "gotchas",
+  "text": "Scope changes after approval go through Zendesk Support, since only Marketplace Operations can edit global clients.",
+  "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/",
+  "n": 17
+ },
+ {
+  "app": "intercom",
+  "field": "limits",
+  "text": "Development workspaces cap at 20 users, can't send outbound email, and can't become production workspaces.",
+  "src": "https://developers.intercom.com/docs/build-an-integration/getting-started",
+  "n": 18
+ },
+ {
+  "app": "slack",
+  "field": "requirements",
+  "text": "Marketplace reviewers ask for a video demo of install, OAuth, setup and uninstall.",
+  "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide",
+  "n": 19
+ },
+ {
+  "app": "discord",
+  "field": "requirements",
+  "text": "The redirect_uri must be one you registered on the application.",
+  "src": "https://docs.discord.com/developers/topics/oauth2",
+  "n": 20
+ },
+ {
+  "app": "zoom",
+  "field": "limits",
+  "text": "Approved beta authorization URLs last 4 weeks, with up to two 4-week extensions.",
+  "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps",
+  "n": 21
+ },
+ {
+  "app": "linkedin",
+  "field": "limits",
+  "text": "Without approval, only open permissions work: profile, email (OpenID Connect) and w_member_social.",
+  "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access",
+  "n": 22
+ },
+ {
+  "app": "twitter",
+  "field": "gotchas",
+  "text": "First-time credit incentives ($20 plus up to $50 match) expire 3 months after they are granted.",
+  "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/free-credits.mdx",
+  "n": 23
+ },
+ {
+  "app": "reddit",
+  "field": "review",
+  "text": "Separate agreement with Reddit for commercial use or use beyond the Data API Terms: not stated",
+  "src": "https://redditinc.com/policies/data-api-terms",
+  "n": 24
+ },
+ {
+  "app": "shopify",
+  "field": "limits",
+  "text": "Before approval: protected customer data needs no review only while the app is installed solely on development stores.",
+  "src": "https://shopify.dev/docs/apps/launch/protected-customer-data",
+  "n": 25
+ },
+ {
+  "app": "xero",
+  "field": "requirements",
+  "text": "Certification needs a connect/disconnect settings page showing the connected tenant name and status.",
+  "src": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/certification-checkpoints/",
+  "n": 26
+ },
+ {
+  "app": "quickbooks",
+  "field": "review",
+  "text": "Intuit App Assessment Questionnaire, approved before production keys are shown: not stated",
+  "src": "https://developer.intuit.com/app/developer/qbo/docs/go-live/publish-app",
+  "n": 27
+ },
+ {
+  "app": "stripe",
+  "field": "requirements",
+  "text": "Each redirect URI must be listed in Connect OAuth settings, and live mode redirect URIs must use HTTPS.",
+  "src": "https://docs.stripe.com/connect/oauth-reference",
+  "n": 28
+ },
+ {
+  "app": "dropbox",
+  "field": "requirements",
+  "text": "The production application asks how the app uses the API and for an app icon.",
+  "src": "https://www.dropbox.com/developers/reference/developer-guide",
+  "n": 29
+ },
+ {
+  "app": "box",
+  "field": "gotchas",
+  "text": "Refresh tokens are single-use and expire after 60 days, after which users must re-authorize.",
+  "src": "https://github.com/box/developer.box.com/blob/main/content/guides/authentication/tokens/refresh.md",
+  "n": 30
+ },
+ {
+  "app": "asana",
+  "field": "gotchas",
+  "text": "Scope requests are not additive; always send the full set you need.",
+  "src": "https://developers.asana.com/docs/oauth",
+  "n": 31
+ },
+ {
+  "app": "trello",
+  "field": "requirements",
+  "text": "The Power-Up must be owned by a Trello Workspace.",
+  "src": "https://developer.atlassian.com/cloud/trello/guides/power-ups/managing-apps/",
+  "n": 32
+ },
+ {
+  "app": "airtable",
+  "field": "limits",
+  "text": "Keep token requests below 10 per second per token.",
+  "src": "https://airtable.com/developers/web/api/oauth-reference",
+  "n": 33
+ },
+ {
+  "app": "clickup",
+  "field": "gotchas",
+  "text": "Users pick one or more Workspaces at authorization; re-authorize to change them.",
+  "src": "https://developer.clickup.com/docs/authentication",
+  "n": 34
+ },
+ {
+  "app": "monday",
+  "field": "requirements",
+  "text": "Redirect URI must match one of the redirect URLs added to the app.",
+  "src": "https://developer.monday.com/apps/docs/oauth",
+  "n": 35
+ },
+ {
+  "app": "calendly",
+  "field": "limits",
+  "text": "Webhook subscriptions need the user on a paid Standard, Teams or Enterprise plan.",
+  "src": "https://developer.calendly.com/docs/getting-started/frequently-asked-questions",
+  "n": 36
+ },
+ {
+  "app": "mailchimp",
+  "field": "requirements",
+  "text": "Delete stored tokens when a user disconnects or uninstalls your app.",
+  "src": "https://mailchimp.com/developer/marketing/api-concepts/authentication/oauth-2",
+  "n": 37
+ },
+ {
+  "app": "jira",
+  "field": "gotchas",
+  "text": "A refresh token expires after 90 days of inactivity, and then the user must re-authorize.",
+  "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/",
+  "n": 38
+ },
+ {
+  "app": "youtube",
+  "field": "requirements",
+  "text": "Host a public home page and a privacy policy on the same domain, both linked from the consent screen.",
+  "src": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+  "n": 39
+ },
+ {
+  "app": "quickbooks",
+  "field": "gotchas",
+  "text": "Refresh tokens have a hard limit of 5 years, after which users must reconnect.",
+  "src": "https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/faq",
+  "n": 40
+ },
+ {
+  "app": "confluence",
+  "field": "requirements",
+  "text": "Report each stored account at least every 7 days by default, or per the Cycle-Period header.",
+  "src": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/",
+  "n": 41
+ },
+ {
+  "app": "confluence",
+  "field": "requirements",
+  "text": "Apps that store personal data must report those account IDs to the Personal data reporting API.",
+  "src": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/",
+  "n": 42
+ },
+ {
+  "app": "googledrive",
+  "field": "gotchas",
+  "text": "drive.file only covers files the user opens with your app or picks in the Google Picker, not the whole Drive.",
+  "src": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+  "n": 43
+ },
+ {
+  "app": "clickup",
+  "field": "gotchas",
+  "text": "Access tokens currently do not expire, but ClickUp says this may change.",
+  "src": "https://developer.clickup.com/docs/authentication",
+  "n": 44
+ },
+ {
+  "app": "microsoftteams",
+  "field": "requirements",
+  "text": "The person verifying needs Application Administrator or Cloud Application Administrator in Entra, and Partner Admin or Account Admin in Partner Center, and must sign in with MFA.",
+  "src": "https://learn.microsoft.com/en-us/entra/identity-platform/mark-app-as-publisher-verified",
+  "n": 45
+ }
+]

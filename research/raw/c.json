@@ -1,0 +1,294 @@
+[
+  {
+    "id": "hubspot",
+    "name": "HubSpot",
+    "slug": "hubspot",
+    "category": "CRM & support",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/hubspot",
+    "difficulty": "medium",
+    "oneLiner": "Unlisted marketplace apps are capped at 25 installs.",
+    "setup": { "time": "~30 min", "ev": "est" },
+    "review": { "required": false, "what": "HubSpot Marketplace listing review (needed only to lift the 25-install cap)", "wait": "Initial review within 10 business days; full process up to 60 days from first feedback", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+    "cost": { "text": "$0; no listing fee is stated in the listing requirements", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+    "limits": [
+      { "text": "Before listing: a marketplace-distribution app is limited to 25 installs, excluding developer test accounts.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot" },
+      { "text": "The 25-install cap applies to apps created or migrated on the Developer Platform from September 22, 2025.", "ev": "docs", "src": "https://developers.hubspot.com/changelog/new-marketplace-distribution-app-install-limits" },
+      { "text": "Private-distribution apps can only be installed in up to 10 allowlisted accounts.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot" },
+      { "text": "Before review, installers see an unverified-app warning and must type \"I accept the risk\" to connect.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot" }
+    ],
+    "requirements": [
+      { "text": "New apps are created with the HubSpot CLI (v7.6.0) via `hs project create`, with redirect URLs and scopes in app-hsmeta.json.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app" },
+      { "text": "Production redirect URLs must use HTTPS.", "ev": "docs", "src": "https://developers.hubspot.com/docs/api/oauth-quickstart-guide" },
+      { "text": "Listing needs at least three active installs in unaffiliated production accounts with activity in the past 30 days.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+      { "text": "Listing needs live Terms of Service and Privacy Policy URLs, a support contact, and a public setup guide.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+      { "text": "Listed apps must use OAuth as the only auth method and request only the scopes they need.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+      { "text": "Listed AI connectors must require user-level permissions or be built with HubSpot's MCP Server.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" }
+    ],
+    "gotchas": [
+      { "text": "Access tokens currently expire after 30 minutes, so the refresh flow must work.", "ev": "docs", "src": "https://developers.hubspot.com/docs/api/oauth-quickstart-guide" },
+      { "text": "You can submit only one app for listing at a time; extra submissions are rejected automatically.", "ev": "docs", "src": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+      { "text": "Composio's managed HubSpot app is still awaiting HubSpot approval, so users see a warning; your own app avoids that once listed.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/hubspot" },
+      { "text": "Composio's managed app cannot add scopes; a different scope set needs your own app.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/hubspot" }
+    ],
+    "steps": [
+      { "who": "you", "t": "Install the HubSpot CLI, run `hs account auth`, then `hs project create` with OAuth auth and marketplace distribution", "time": "10 min" },
+      { "who": "you", "t": "Add Composio's redirect URI and your scopes to app-hsmeta.json, then `hs project upload`", "time": "5 min" },
+      { "who": "you", "t": "Open the app's Auth tab and copy the client ID and secret", "time": "2 min" },
+      { "who": "agent", "t": "Create a custom HubSpot auth config in Composio with the client ID, secret and scopes", "time": "5 min" },
+      { "who": "agent", "t": "Draft the privacy policy, terms and HubSpot setup guide needed for listing", "time": "30 min" },
+      { "who": "you", "t": "Get three active unaffiliated installs, then submit the Marketplace listing for review", "time": "days to weeks" }
+    ],
+    "portal": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app",
+    "docs": "https://developers.hubspot.com/docs/api/oauth-quickstart-guide",
+    "callbackNote": "Add the redirect URI shown in Composio's dashboard (Composio's HubSpot guide uses https://backend.composio.dev/api/v3/toolkits/auth/callback) to config.auth.redirectUrls in app-hsmeta.json.",
+    "sources": [
+      { "t": "HubSpot Marketplace listing requirements", "u": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements" },
+      { "t": "HubSpot changelog: marketplace distribution install limits", "u": "https://developers.hubspot.com/changelog/new-marketplace-distribution-app-install-limits" },
+      { "t": "HubSpot: manage apps (distribution, install limits, warnings)", "u": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/manage-apps-in-hubspot" },
+      { "t": "HubSpot: create an app", "u": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/create-an-app" },
+      { "t": "HubSpot OAuth quickstart", "u": "https://developers.hubspot.com/docs/api/oauth-quickstart-guide" },
+      { "t": "Composio HubSpot toolkit", "u": "https://docs.composio.dev/toolkits/hubspot" },
+      { "t": "Composio: custom vs managed app", "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app" },
+      { "t": "Composio: HubSpot OAuth credentials guide", "u": "https://composio.dev/auth/hubspot" }
+    ],
+    "unverified": [
+      "Refresh token lifetime is not stated in the OAuth quickstart.",
+      "Whether installs beyond 25 on migrated legacy apps keep working was not confirmed in fetched docs."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "salesforce",
+    "name": "Salesforce",
+    "slug": "salesforce",
+    "category": "CRM & support",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/salesforce",
+    "difficulty": "medium",
+    "oneLiner": "New Connected Apps are restricted; use External Client Apps.",
+    "setup": { "time": "~30 min", "ev": "est" },
+    "review": { "required": false, "what": "AgentExchange (formerly AppExchange) security review, needed only to list publicly", "wait": "1-2 weeks verification plus 3-4 weeks first test; resubmissions 2-3 weeks", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" },
+    "cost": { "text": "Security review fee for paid apps; no fee if you distribute for free (amount not on current docs page)", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" },
+    "limits": [
+      { "text": "Without passing security review you can't list on AgentExchange or distribute your solution there.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" },
+      { "text": "A customer org admin may need to install or approve your app before users can connect.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/salesforce" }
+    ],
+    "requirements": [
+      { "text": "Creating Connected Apps is restricted as of Spring '26; Salesforce recommends External Client Apps instead.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/api-rest/guide/intro-oauth-and-connected-apps.html" },
+      { "text": "Creating a Connected App now needs Salesforce Support to enable an org permission, once per org.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/sfdx-dev/guide/sfdx-dev-auth-connected-app.html" },
+      { "text": "Security review requires ISV Partner Program enrollment, a Lightning Ready solution and a Partner Console provider profile.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" },
+      { "text": "API-only submissions need a Developer Edition org, false-positive notes if any, and solution documentation.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-required-materials.html" },
+      { "text": "Reviewers test external web apps and services your solution uses, following where Salesforce data goes.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-required-materials.html" }
+    ],
+    "gotchas": [
+      { "text": "OAUTH_APPROVAL_ERROR_GENERIC or 'app must be installed into org' means an org admin must approve or install the app.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/salesforce" },
+      { "text": "Distributing an External Client App to other orgs is done through a second-generation managed package.", "ev": "docs", "src": "https://trailhead.salesforce.com/content/learn/modules/external-client-app-basics/package-and-distribute-external-client-apps" },
+      { "text": "OAuth consumer credentials are global settings that must stay in a long-lived org, not in the package.", "ev": "docs", "src": "https://trailhead.salesforce.com/content/learn/modules/external-client-app-basics/package-and-distribute-external-client-apps" },
+      { "text": "Refresh token expiry is set by the app's OAuth policy, so check it before going live.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/sfdx-dev/guide/sfdx-dev-auth-connected-app.html" },
+      { "text": "Apps that skip pre-testing rarely pass review, and each resubmission adds 2-3 weeks.", "ev": "docs", "src": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" }
+    ],
+    "steps": [
+      { "who": "you", "t": "In Setup, search External Client Apps and create a new External Client App", "time": "5 min" },
+      { "who": "you", "t": "Enable OAuth, add Composio's callback URL and the api, refresh_token and id scopes", "time": "10 min" },
+      { "who": "you", "t": "Copy the consumer key and secret from the app's OAuth settings", "time": "2 min" },
+      { "who": "agent", "t": "Create a custom Salesforce auth config in Composio with the key and secret", "time": "5 min" },
+      { "who": "you", "t": "Have each customer org's admin install or approve the app", "time": "varies" },
+      { "who": "you", "t": "Optional: join the ISV Partner Program and submit for AgentExchange security review", "time": "4-6 weeks" }
+    ],
+    "portal": "Salesforce Setup > External Client Apps (in your org)",
+    "docs": "https://developer.salesforce.com/docs/platform/api-rest/guide/intro-oauth-and-connected-apps.html",
+    "callbackNote": "Add the redirect URI shown in Composio's dashboard (Composio's Salesforce guide uses https://backend.composio.dev/api/v3/toolkits/auth/callback) as the app's Callback URL.",
+    "sources": [
+      { "t": "Salesforce REST API: External Client Apps or Connected Apps", "u": "https://developer.salesforce.com/docs/platform/api-rest/guide/intro-oauth-and-connected-apps.html" },
+      { "t": "Salesforce CLI: create a connected app", "u": "https://developer.salesforce.com/docs/platform/sfdx-dev/guide/sfdx-dev-auth-connected-app.html" },
+      { "t": "How the AgentExchange security review works", "u": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-how-it-works.html" },
+      { "t": "Required materials for security review", "u": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-required-materials.html" },
+      { "t": "Pass the AgentExchange security review", "u": "https://developer.salesforce.com/docs/platform/isvforce/guide/security-review-guidelines.html" },
+      { "t": "Trailhead: package and distribute External Client Apps", "u": "https://trailhead.salesforce.com/content/learn/modules/external-client-app-basics/package-and-distribute-external-client-apps" },
+      { "t": "Metadata API: ExternalClientApplication", "u": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_externalclientapplication.htm" },
+      { "t": "Composio Salesforce toolkit", "u": "https://docs.composio.dev/toolkits/salesforce" },
+      { "t": "Composio: Salesforce OAuth credentials guide", "u": "https://composio.dev/auth/salesforce" }
+    ],
+    "unverified": [
+      "Security review fee amount: older ISVforce guide versions listed $999 (and earlier $2,550), but the current docs page no longer states an amount and the old fee pages now 404.",
+      "Whether a 'Local' External Client App can authorize users from other orgs without packaging was not confirmed in fetched Salesforce docs.",
+      "Access token lifetime is not stated in the fetched pages."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "pipedrive",
+    "name": "Pipedrive",
+    "slug": "pipedrive",
+    "category": "CRM & support",
+    "auth": "OAuth 2.0",
+    "managed": "no",
+    "managedSrc": "https://docs.composio.dev/toolkits/pipedrive",
+    "difficulty": "easy",
+    "oneLiner": "Private apps install via direct link, no review needed.",
+    "setup": { "time": "~20 min", "ev": "est" },
+    "review": { "required": false, "what": "Pipedrive Marketplace app approval (only for public, listed apps)", "wait": "Up to 21 business days", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+    "cost": { "text": "$0; no submission or listing fee is mentioned", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+    "limits": [
+      { "text": "Private apps get no Marketplace listing page but can be shared with any Pipedrive company via an unlisted install link.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app" }
+    ],
+    "requirements": [
+      { "text": "You need a developer sandbox account to access the Developer Hub.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+      { "text": "Both private and public apps must use OAuth 2.0 with working install and uninstall flows.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app" },
+      { "text": "Public apps need Terms of Service and Privacy Policy pages and agreement to the Developer Partner Agreement.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+      { "text": "Public app review needs a demo video, up-to-date test accounts, and 3-5 listing images.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+      { "text": "The callback URL in requests must match the one entered when registering the app.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-oauth-authorization" }
+    ],
+    "gotchas": [
+      { "text": "The app type (private or public) cannot be changed later in Developer Hub.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app" },
+      { "text": "Every user in a company installs the app separately; installs are per user.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app" },
+      { "text": "Access tokens last 60 minutes; refresh tokens expire after 60 days unused, forcing a full reinstall.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-oauth-authorization" },
+      { "text": "Approved public apps are unlisted by default and must be published manually.", "ev": "docs", "src": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+      { "text": "Don't click Install and Test in Pipedrive; start the connection from Composio and enter the company subdomain.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/pipedrive" },
+      { "text": "\"App not found\" usually means the client ID/secret don't match or the app isn't available to that user.", "ev": "docs", "src": "https://docs.composio.dev/toolkits/pipedrive" }
+    ],
+    "steps": [
+      { "who": "you", "t": "Request a Pipedrive developer sandbox account", "time": "5 min + wait" },
+      { "who": "you", "t": "In Developer Hub, create a private app with a unique name and Composio's callback URL", "time": "5 min" },
+      { "who": "you", "t": "Pick only the access scopes you need and copy the client ID and secret", "time": "5 min" },
+      { "who": "agent", "t": "Create a custom Pipedrive auth config in Composio with the client ID and secret", "time": "5 min" },
+      { "who": "you", "t": "Connect from Composio, entering the Pipedrive company subdomain when asked", "time": "2 min" }
+    ],
+    "portal": "https://pipedrive.readme.io/docs/developer-sandbox-account",
+    "docs": "https://pipedrive.readme.io/docs/marketplace-oauth-authorization",
+    "callbackNote": "Add the redirect URI shown in Composio's dashboard (Composio's Pipedrive guide uses https://backend.composio.dev/api/v3/toolkits/auth/callback) as the app's Callback URL.",
+    "sources": [
+      { "t": "Pipedrive Marketplace app approval process", "u": "https://pipedrive.readme.io/docs/marketplace-app-approval-process" },
+      { "t": "Pipedrive: creating a proper app (public vs private)", "u": "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app" },
+      { "t": "Pipedrive OAuth authorization", "u": "https://pipedrive.readme.io/docs/marketplace-oauth-authorization" },
+      { "t": "Pipedrive developer sandbox account", "u": "https://pipedrive.readme.io/docs/developer-sandbox-account" },
+      { "t": "Composio Pipedrive toolkit", "u": "https://docs.composio.dev/toolkits/pipedrive" },
+      { "t": "Composio: Pipedrive OAuth credentials guide", "u": "https://composio.dev/auth/pipedrive" }
+    ],
+    "unverified": [
+      "Whether the developer sandbox account is free, and how long access takes, is not stated.",
+      "No install cap for private apps is stated, but no page explicitly says there is none."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "zendesk",
+    "name": "Zendesk",
+    "slug": "zendesk",
+    "category": "CRM & support",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/zendesk",
+    "difficulty": "gated",
+    "oneLiner": "Multi-customer apps need a Zendesk-issued global client.",
+    "setup": { "time": "~45 min plus account approvals", "ev": "est" },
+    "review": { "required": true, "what": "Global OAuth client request through the Zendesk Marketplace portal", "wait": "not stated", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+    "cost": { "text": "No fee is mentioned for the global OAuth request", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+    "limits": [
+      { "text": "Before approval: a local OAuth client's tokens only access the single Zendesk instance that created it.", "ev": "docs", "src": "https://developer.zendesk.com/api-reference/introduction/security-and-auth/" },
+      { "text": "Third-party apps may not use a customer's API token or the customer's own OAuth client, listed or not.", "ev": "docs", "src": "https://support.zendesk.com/hc/en-us/articles/9590471542170-Developer-update-Enhanced-security-guidelines-for-third-party-apps-integrations-and-bots" }
+    ],
+    "requirements": [
+      { "text": "Apps distributed to multiple Zendesk customers must use global OAuth tokens.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "Requests must come from a d3v- sponsored account; non-d3v- submissions aren't accepted.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "Sponsored d3v- accounts are reserved for developers building Zendesk Marketplace apps.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/api-basics/getting-started/getting-a-trial-or-sponsored-account-for-development/" },
+      { "text": "The local client's unique identifier must start with zdg- and every field must be filled in.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "Unlisted integrations must still create a Marketplace profile, register the organization and submit for review.", "ev": "docs", "src": "https://support.zendesk.com/hc/en-us/articles/9590471542170-Developer-update-Enhanced-security-guidelines-for-third-party-apps-integrations-and-bots" },
+      { "text": "Global OAuth clients must support the refresh token flow from January 31, 2026.", "ev": "docs", "src": "https://support.zendesk.com/hc/en-us/articles/9590471542170-Developer-update-Enhanced-security-guidelines-for-third-party-apps-integrations-and-bots" }
+    ],
+    "gotchas": [
+      { "text": "Save the client secret and identifier first; you lose the client admin page after conversion to global.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "Zendesk may cap allowed scopes; requesting others returns 400 invalid_scope.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "Scope changes after approval go through Zendesk Support, since only Marketplace Operations can edit global clients.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "text": "New global clients get 30-minute access tokens and 30-day refresh tokens by default.", "ev": "docs", "src": "https://support.zendesk.com/hc/en-us/articles/10212201463962-Announcing-the-required-expiration-of-global-OAuth-access-and-refresh-tokens" },
+      { "text": "A sponsored account is suspended if used to provide real customer support.", "ev": "docs", "src": "https://developer.zendesk.com/documentation/api-basics/getting-started/getting-a-trial-or-sponsored-account-for-development/" },
+      { "text": "Integration apps must send custom headers identifying the integration, organization ID and Marketplace app ID.", "ev": "docs", "src": "https://support.zendesk.com/hc/en-us/articles/9590471542170-Developer-update-Enhanced-security-guidelines-for-third-party-apps-integrations-and-bots" }
+    ],
+    "steps": [
+      { "who": "you", "t": "Start a Zendesk trial, rename the subdomain with a d3v- prefix and file the Sponsored Account Request Form", "time": "15 min + wait" },
+      { "who": "you", "t": "Create a local OAuth client with a zdg- identifier, all fields filled and Composio's redirect URL", "time": "10 min" },
+      { "who": "you", "t": "Save the client ID and secret somewhere safe", "time": "2 min" },
+      { "who": "agent", "t": "Draft the scope list and justification for the global OAuth request", "time": "15 min" },
+      { "who": "you", "t": "In the Marketplace portal, open Global OAuth and click Request new OAuth", "time": "10 min" },
+      { "who": "agent", "t": "After approval, create a custom Zendesk auth config in Composio with the saved credentials", "time": "5 min" }
+    ],
+    "portal": "https://apps.zendesk.com",
+    "docs": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/",
+    "callbackNote": "Add the redirect URI shown in Composio's dashboard; Composio's Zendesk guide lists an older v1 URL (https://backend.composio.dev/api/v1/auth-apps/add), so confirm against the dashboard.",
+    "sources": [
+      { "t": "Zendesk: set up a global OAuth client", "u": "https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/" },
+      { "t": "Zendesk: managing global OAuth clients and app associations", "u": "https://developer.zendesk.com/documentation/apps/app-developer-guide/managing-global-oauth-clients-and-app-associations/" },
+      { "t": "Zendesk: security and authentication", "u": "https://developer.zendesk.com/api-reference/introduction/security-and-auth/" },
+      { "t": "Zendesk: trial or sponsored account for development", "u": "https://developer.zendesk.com/documentation/api-basics/getting-started/getting-a-trial-or-sponsored-account-for-development/" },
+      { "t": "Zendesk developer update: enhanced security guidelines", "u": "https://support.zendesk.com/hc/en-us/articles/9590471542170-Developer-update-Enhanced-security-guidelines-for-third-party-apps-integrations-and-bots" },
+      { "t": "Zendesk: required expiration of global OAuth tokens", "u": "https://support.zendesk.com/hc/en-us/articles/10212201463962-Announcing-the-required-expiration-of-global-OAuth-access-and-refresh-tokens" },
+      { "t": "Composio Zendesk toolkit", "u": "https://docs.composio.dev/toolkits/zendesk" },
+      { "t": "Composio: Zendesk OAuth credentials guide", "u": "https://composio.dev/auth/zendesk" }
+    ],
+    "unverified": [
+      "Global OAuth review duration is not published.",
+      "Sponsored account approval time and cost are not stated.",
+      "What happens on rejection is not described on the current global OAuth page."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "intercom",
+    "name": "Intercom",
+    "slug": "intercom",
+    "category": "CRM & support",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/intercom",
+    "difficulty": "medium",
+    "oneLiner": "Only your team can install until review passes.",
+    "setup": { "time": "~30 min", "ev": "est" },
+    "review": { "required": true, "what": "Intercom app review (required for both listed and unlisted public apps)", "wait": "Up to 7 business days", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+    "cost": { "text": "$0; development workspaces are free and no review fee is mentioned", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/getting-started" },
+    "limits": [
+      { "text": "Before approval the app is private and can only be used by you and your team.", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+      { "text": "Development workspaces cap at 20 users, can't send outbound email, and can't become production workspaces.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/getting-started" }
+    ],
+    "requirements": [
+      { "text": "Public app developers must create a development workspace to build and publish the app.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/getting-started" },
+      { "text": "OAuth redirect URLs must use HTTPS.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth" },
+      { "text": "Review needs a video showing OAuth install, end-to-end functionality, and OAuth uninstall.", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+      { "text": "Requested scopes are checked against what the app does.", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+      { "text": "Unlisted apps must be installed from your own product or website.", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" }
+    ],
+    "gotchas": [
+      { "text": "The authorization URL must use the regional host (US, EU or AU) matching the customer's workspace.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth" },
+      { "text": "You may be asked to cut scopes and resubmit, which restarts the review.", "ev": "docs", "src": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+      { "text": "OAuth is off until you tick \"Use OAuth\" on the app's Authentication page.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth" },
+      { "text": "In EU and AU, development-workspace apps can't be installed into paid workspaces.", "ev": "docs", "src": "https://developers.intercom.com/docs/build-an-integration/getting-started" }
+    ],
+    "steps": [
+      { "who": "you", "t": "Sign up for a free development workspace and create a new app in Developer Hub", "time": "10 min" },
+      { "who": "you", "t": "Tick Use OAuth, add Composio's HTTPS redirect URL and select only the scopes you need", "time": "10 min" },
+      { "who": "you", "t": "Copy the client ID and secret from Basic Information", "time": "2 min" },
+      { "who": "agent", "t": "Create a custom Intercom auth config in Composio with the client ID and secret", "time": "5 min" },
+      { "who": "you", "t": "Record the install, functionality and uninstall video", "time": "30 min" },
+      { "who": "you", "t": "Choose listed or unlisted and submit the app for review", "time": "10 min + up to 7 business days" }
+    ],
+    "portal": "https://developers.intercom.com/docs/build-an-integration/getting-started",
+    "docs": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth",
+    "callbackNote": "Add the HTTPS redirect URI shown in Composio's dashboard on the app's Authentication page; the first redirect URL is the default.",
+    "sources": [
+      { "t": "Intercom: app review and publishing", "u": "https://developers.intercom.com/docs/publish-to-the-app-store/review-publish-your-app" },
+      { "t": "Intercom: setting up OAuth", "u": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication/setting-up-oauth" },
+      { "t": "Intercom: authentication", "u": "https://developers.intercom.com/docs/build-an-integration/learn-more/authentication" },
+      { "t": "Intercom: set up a workspace", "u": "https://developers.intercom.com/docs/build-an-integration/getting-started" },
+      { "t": "Composio Intercom toolkit", "u": "https://docs.composio.dev/toolkits/intercom" },
+      { "t": "Composio: custom vs managed app", "u": "https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app" }
+    ],
+    "unverified": [
+      "Whether Intercom OAuth access tokens expire or use refresh tokens is not stated in the fetched pages.",
+      "Privacy policy and terms requirements sit in the developer terms, which were not fetched.",
+      "A search snippet said reviews take 7-14 days; the fetched page says up to seven business days."
+    ],
+    "checked": "2026-10-28"
+  }
+]

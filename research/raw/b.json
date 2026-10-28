@@ -1,0 +1,1042 @@
+[
+  {
+    "id": "github",
+    "name": "GitHub",
+    "slug": "github",
+    "category": "Developer tools",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/github",
+    "difficulty": "easy",
+    "oneLiner": "No review; new OAuth apps issue 8-hour expiring tokens",
+    "setup": {
+      "time": "~10 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "None for an OAuth app; GitHub Marketplace listing is optional",
+      "wait": "none",
+      "ev": "docs",
+      "src": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "OAuth tokens use the user's rate limit of 5,000 requests per hour.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps"
+      },
+      {
+        "text": "A private GitHub App can only be installed on the account that owns it.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Register the app with a name, homepage URL and authorization callback URL.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      },
+      {
+        "text": "Use only information you consider public in the app's fields, since users see them.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      },
+      {
+        "text": "A user or organization can own up to 100 OAuth apps.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      },
+      {
+        "text": "A GitHub App must be set to 'Any account' (public) before other accounts can install it.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "'Expire user access tokens' is on by default for new OAuth apps; uncheck it only if your code can't refresh.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      },
+      {
+        "text": "Expiring tokens last 8 hours and the refresh token 6 months; each refresh invalidates the old pair.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
+      },
+      {
+        "text": "GitHub App user tokens also expire after 8 hours by default; installation tokens expire after 1 hour.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps"
+      },
+      {
+        "text": "Non-expiring OAuth tokens are revoked automatically if unused for one year.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation"
+      },
+      {
+        "text": "Only 10 tokens per user/app/scope are kept; creating an 11th revokes an older one.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation"
+      },
+      {
+        "text": "New organizations enable OAuth app access restrictions by default, so an org owner must approve your OAuth app.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions"
+      },
+      {
+        "text": "With a GitHub App, users must install it on their account or org separately; Composio doesn't supply the install link.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/github"
+      },
+      {
+        "text": "OAuth apps act only as a user; GitHub Apps can also act as the app and get finer-grained permissions.",
+        "ev": "docs",
+        "src": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Decide between an OAuth app (simpler) and a GitHub App (fine-grained, needs install)",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Settings > Developer settings > OAuth apps > New OAuth App; fill name, homepage and callback URL",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Leave 'Expire user access tokens' on, register, then generate and copy a client secret",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a GitHub OAuth2 auth config in Composio with the client ID, secret and scopes",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test account and, for org repos, ask the org owner to approve the app",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://github.com/settings/developers",
+    "docs": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback as the authorization callback URL (up to 10 are allowed); use the exact value your Composio auth config shows.",
+    "sources": [
+      {
+        "t": "Creating an OAuth app",
+        "u": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      },
+      {
+        "t": "Authorizing OAuth apps",
+        "u": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
+      },
+      {
+        "t": "Differences between GitHub Apps and OAuth apps",
+        "u": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps"
+      },
+      {
+        "t": "Token expiration and revocation",
+        "u": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation"
+      },
+      {
+        "t": "About OAuth app access restrictions",
+        "u": "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions"
+      },
+      {
+        "t": "Refreshing user access tokens (GitHub Apps)",
+        "u": "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens"
+      },
+      {
+        "t": "Registering a GitHub App",
+        "u": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app"
+      },
+      {
+        "t": "Making a GitHub App public or private",
+        "u": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/making-a-github-app-public-or-private"
+      },
+      {
+        "t": "Composio GitHub toolkit",
+        "u": "https://docs.composio.dev/toolkits/github"
+      },
+      {
+        "t": "Composio GitHub OAuth guide",
+        "u": "https://composio.dev/auth/github"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "GitHub's comparison page still calls OAuth app tokens long-lived by default, while the creation page says expiry is on by default for new apps."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "linear",
+    "name": "Linear",
+    "slug": "linear",
+    "category": "Developer tools",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/linear",
+    "difficulty": "easy",
+    "oneLiner": "No review to use; access tokens expire after 24 hours",
+    "setup": {
+      "time": "~10 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "None to use the app; listing in Linear's integration directory is an optional form submission",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://linear.app/docs/integration-directory"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "OAuth apps get 5,000 requests and 2,000,000 complexity points per hour per user or app user.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/rate-limiting"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Configure your redirect callback URLs on the app; the token exchange must use the same redirect_uri.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "Linear highly recommends creating a dedicated workspace to own the OAuth app.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "Directory listings are for useful integrations built by formal companies, not hobby or low-effort apps.",
+        "ev": "docs",
+        "src": "https://linear.app/docs/integration-directory"
+      },
+      {
+        "text": "A directory listing needs a submission form, 320x320 color and white icons, and 1-3 showcase images at 1600x1000.",
+        "ev": "docs",
+        "src": "https://linear.app/docs/integration-directory"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Authorization-code access tokens are valid for 24 hours and come with a refresh token.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "All OAuth apps were moved to the refresh token system on April 1, 2026.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "Each refresh returns a new access and refresh token; a lost response can be replayed within 30 minutes.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "actor=app creates resources as the app instead of the authorizing user.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "Request the admin scope only when absolutely necessary.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "text": "Every admin of the workspace that owns the app can access the app's settings.",
+        "ev": "docs",
+        "src": "https://linear.app/developers/oauth-2-0-authentication"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create (or pick) a dedicated Linear workspace to own the app",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Create an OAuth2 application at linear.app/settings/api/applications/new",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio callback URL and copy the client ID and secret",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Linear OAuth2 auth config in Composio with your credentials and trimmed scopes",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test workspace and confirm token refresh works after 24 hours",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://linear.app/settings/api/applications/new",
+    "docs": "https://linear.app/developers/oauth-2-0-authentication",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback as a callback URL; use the exact value your Composio auth config shows.",
+    "sources": [
+      {
+        "t": "Linear OAuth 2.0 authentication",
+        "u": "https://linear.app/developers/oauth-2-0-authentication"
+      },
+      {
+        "t": "Linear rate limiting",
+        "u": "https://linear.app/developers/rate-limiting"
+      },
+      {
+        "t": "Linear integration directory",
+        "u": "https://linear.app/docs/integration-directory"
+      },
+      {
+        "t": "Composio Linear toolkit",
+        "u": "https://docs.composio.dev/toolkits/linear"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "Linear's own docs don't describe the 'Public' toggle that third-party guides say is needed for other workspaces to authorize the app.",
+      "Integration directory review time is not published."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "jira",
+    "name": "Jira",
+    "slug": "jira",
+    "category": "Developer tools",
+    "auth": "OAuth 2.0 (3LO)",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/jira",
+    "difficulty": "medium",
+    "oneLiner": "Private until you share it; unreviewed apps show a warning",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Optional Atlassian approval via a third-party integration listing on the Marketplace; without it users see a warning",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before sharing: a new 3LO app is private, so only you can install and use it.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Before approval: users installing an unapproved integration are warned it hasn't been reviewed by Atlassian.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Sharing doesn't list the app on the Marketplace; you must send the authorization URL to every user.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Create an 'OAuth 2.0 integration' in the developer console, configure OAuth 2.0 (3LO) and add Jira API scopes under Permissions.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Turn on 'Enable sharing' under Distribution before anyone else can authorize the app.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Apps that store personal data must report those account IDs to the Personal data reporting API.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/user-privacy-developer-guide/"
+      },
+      {
+        "text": "Report each stored account at least every 7 days by default, or per the Cycle-Period header.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/user-privacy-developer-guide/"
+      },
+      {
+        "text": "Erase or refresh a user's data when the reporting API says so; 3LO apps call POST https://api.atlassian.com/app/report-accounts/.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/user-privacy-developer-guide/"
+      },
+      {
+        "text": "For Marketplace approval, give reviewers access to a test instance of your software.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/platform/marketplace/knowledge-base/listing-a-third-party-integration-on-the-atlassian-marketplace/"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Add offline_access to the scope to get a refresh token at all.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Refresh tokens rotate; store the new one every time, since the old one is disabled.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "A refresh token expires after 90 days of inactivity, and then the user must re-authorize.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Changing scopes forces users who already consented to consent again.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "API calls go to api.atlassian.com/ex/jira/{cloudid}; get the cloudid from accessible-resources.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Site-scoped grants make users pick one site per consent, so multi-site installs mean repeating the flow.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Admins can't revoke one user's grant from Connected Apps; they can only uninstall the app.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Jira 3LO apps can't declare searchable entity properties, so they can't be used in JQL.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "In developer.atlassian.com > Developer console, create an OAuth 2.0 integration",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Authorization > OAuth 2.0 (3LO) > Configure; paste the Composio callback URL",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Permissions: add the Jira API (and User Identity API) and pick classic or granular scopes",
+        "time": "10 min"
+      },
+      {
+        "who": "agent",
+        "t": "Decide whether you store Atlassian account IDs and draft the personal data reporting job if so",
+        "time": "15 min"
+      },
+      {
+        "who": "you",
+        "t": "Distribution: enable sharing, then copy client ID and secret from Settings",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Jira OAuth2 auth config in Composio with offline_access in the scopes",
+        "time": "3 min"
+      }
+    ],
+    "portal": "https://developer.atlassian.com/console/myapps/",
+    "docs": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/",
+    "callbackNote": "Set the 3LO callback URL to https://backend.composio.dev/api/v3/toolkits/auth/callback; use the exact value your Composio auth config shows.",
+    "sources": [
+      {
+        "t": "OAuth 2.0 (3LO) apps",
+        "u": "https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/"
+      },
+      {
+        "t": "User privacy guide for app developers",
+        "u": "https://developer.atlassian.com/cloud/jira/platform/user-privacy-developer-guide/"
+      },
+      {
+        "t": "Distribute and list apps",
+        "u": "https://developer.atlassian.com/developer-guide/distribute-and-list-apps/"
+      },
+      {
+        "t": "List a third-party integration on the Marketplace",
+        "u": "https://developer.atlassian.com/platform/marketplace/knowledge-base/listing-a-third-party-integration-on-the-atlassian-marketplace/"
+      },
+      {
+        "t": "Data privacy guidelines for developers",
+        "u": "https://developer.atlassian.com/platform/marketplace/data-privacy-guidelines/"
+      },
+      {
+        "t": "Composio Jira toolkit",
+        "u": "https://docs.composio.dev/toolkits/jira"
+      },
+      {
+        "t": "Composio Jira OAuth guide",
+        "u": "https://composio.dev/auth/jira"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "The exact fields of the Distribution form (vendor name, privacy policy, personal data declaration) aren't listed in Atlassian's public docs; only third-party and community sources describe them.",
+      "Marketplace approval time for 3LO integrations is not published.",
+      "Access token lifetime isn't stated; the token response gives it in expires_in.",
+      "Composio's toolkit page says managed OAuth is available, but composio.dev/auth/jira says Composio does not provide managed Jira credentials."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "confluence",
+    "name": "Confluence",
+    "slug": "confluence",
+    "category": "Files & docs",
+    "auth": "OAuth 2.0 (3LO)",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/confluence",
+    "difficulty": "medium",
+    "oneLiner": "Must enable sharing and report stored personal data",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Optional Atlassian approval via a third-party integration listing on the Marketplace; without it users see a warning",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before sharing: a new 3LO app is private, so only you can install and use it.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Before approval: users installing an unapproved integration are warned it hasn't been reviewed by Atlassian.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Sharing doesn't list the app on the Marketplace; you must send the authorization URL to every user.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Create an 'OAuth 2.0 integration' in the developer console, configure OAuth 2.0 (3LO) and add Confluence API scopes under Permissions.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Turn on 'Enable sharing' under Distribution before anyone else can authorize the app.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Apps that store personal data must report those account IDs to the Personal data reporting API.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/"
+      },
+      {
+        "text": "Report each stored account at least every 7 days by default, or per the Cycle-Period header.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/"
+      },
+      {
+        "text": "Erase or refresh a user's data when the reporting API says so; 3LO apps call POST https://api.atlassian.com/app/report-accounts/.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/"
+      },
+      {
+        "text": "For Marketplace approval, give reviewers access to a test instance of your software.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/platform/marketplace/knowledge-base/listing-a-third-party-integration-on-the-atlassian-marketplace/"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Add offline_access to the scope to get a refresh token at all.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Refresh tokens rotate; store the new one every time, since the old one is disabled.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "A refresh token expires after 90 days of inactivity, and then the user must re-authorize.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Changing scopes forces users who already consented to consent again.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "API calls go to api.atlassian.com/ex/confluence/{cloudid}; get the cloudid from accessible-resources.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Site-scoped grants make users pick one site per consent, so multi-site installs mean repeating the flow.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "text": "Admins can't revoke one user's grant from Connected Apps; they can only uninstall the app.",
+        "ev": "docs",
+        "src": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "In developer.atlassian.com > Developer console, create an OAuth 2.0 integration",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Authorization > OAuth 2.0 (3LO) > Configure; paste the Composio callback URL",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Permissions: add the Confluence API (and User Identity API) and pick classic or granular scopes",
+        "time": "10 min"
+      },
+      {
+        "who": "agent",
+        "t": "Decide whether you store Atlassian account IDs and draft the personal data reporting job if so",
+        "time": "15 min"
+      },
+      {
+        "who": "you",
+        "t": "Distribution: enable sharing, then copy client ID and secret from Settings",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Confluence OAuth2 auth config in Composio with offline_access in the scopes",
+        "time": "3 min"
+      }
+    ],
+    "portal": "https://developer.atlassian.com/console/myapps/",
+    "docs": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/",
+    "callbackNote": "Set the 3LO callback URL to https://backend.composio.dev/api/v3/toolkits/auth/callback; use the exact value your Composio auth config shows.",
+    "sources": [
+      {
+        "t": "OAuth 2.0 (3LO) apps",
+        "u": "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/"
+      },
+      {
+        "t": "User privacy guide for app developers",
+        "u": "https://developer.atlassian.com/cloud/confluence/user-privacy-developer-guide/"
+      },
+      {
+        "t": "Distribute and list apps",
+        "u": "https://developer.atlassian.com/developer-guide/distribute-and-list-apps/"
+      },
+      {
+        "t": "List a third-party integration on the Marketplace",
+        "u": "https://developer.atlassian.com/platform/marketplace/knowledge-base/listing-a-third-party-integration-on-the-atlassian-marketplace/"
+      },
+      {
+        "t": "Data privacy guidelines for developers",
+        "u": "https://developer.atlassian.com/platform/marketplace/data-privacy-guidelines/"
+      },
+      {
+        "t": "Composio Confluence toolkit",
+        "u": "https://docs.composio.dev/toolkits/confluence"
+      },
+      {
+        "t": "Composio Confluence OAuth guide",
+        "u": "https://composio.dev/auth/confluence"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "The exact fields of the Distribution form (vendor name, privacy policy, personal data declaration) aren't listed in Atlassian's public docs; only third-party and community sources describe them.",
+      "Marketplace approval time for 3LO integrations is not published.",
+      "Access token lifetime isn't stated; the token response gives it in expires_in."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "figma",
+    "name": "Figma",
+    "slug": "figma",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/figma",
+    "difficulty": "hard",
+    "oneLiner": "Public apps need Figma approval before outside users",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Figma review of a public OAuth app (testing instructions, reviewer access)",
+      "wait": "not stated; Figma says it varies with volume",
+      "ev": "docs",
+      "src": "https://help.figma.com/hc/en-us/articles/34963247780247"
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before publishing: a draft app can only be tested by you and your plan's admins.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "Before approval: a private app only works for users in the team or org it belongs to.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "The app must be associated with a team or organization; its users don't need to belong to it.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "Public apps need testing instructions and any trial access or login credentials the reviewer needs.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "Apps need an accurate name, description and an icon that matches your brand.",
+        "ev": "docs",
+        "src": "https://help.figma.com/hc/en-us/articles/34963247780247"
+      },
+      {
+        "text": "Provide a support contact and keep it accurate.",
+        "ev": "docs",
+        "src": "https://help.figma.com/hc/en-us/articles/34963247780247"
+      },
+      {
+        "text": "Apps must not bulk-export file content or index files through the projects endpoints.",
+        "ev": "docs",
+        "src": "https://help.figma.com/hc/en-us/articles/34963247780247"
+      },
+      {
+        "text": "Users must authorize in a web browser; WebViews are not supported.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "The client secret is shown only once when you create the app.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "Any change to a published public app needs another review.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "files:read and file_read are deprecated; apps must use granular scopes.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/republish-oauth-apps/"
+      },
+      {
+        "text": "Existing apps marked 'Update required' must be republished to meet the November 17, 2025 rules.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/republish-oauth-apps/"
+      },
+      {
+        "text": "Write scopes like teams:write and folders:write work only in private apps on Enterprise.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/scopes/"
+      },
+      {
+        "text": "file_variables:read and :write are Enterprise-only scopes.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/scopes/"
+      },
+      {
+        "text": "Authorization codes expire after 30 seconds.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "Access tokens last 90 days; refreshing invalidates the previous token because Figma keeps one per user per app.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "text": "OAuth rate limits are tracked per user, per plan, per app.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/rate-limits/"
+      },
+      {
+        "text": "Users on View or Collab seats get up to 20 Tier 1 file requests a month, possibly fewer under load.",
+        "ev": "docs",
+        "src": "https://developers.figma.com/docs/rest-api/rate-limits/"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Go to figma.com/developers/apps and create an app under your team or org; save the client secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "OAuth credentials: add the Composio redirect URL; OAuth scopes: pick granular scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Figma OAuth2 auth config in Composio with the same scopes",
+        "time": "3 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft reviewer testing instructions, privacy policy and support contact",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Publish privately to test with your org, then submit as public for review",
+        "time": "15 min"
+      }
+    ],
+    "portal": "https://www.figma.com/developers/apps",
+    "docs": "https://developers.figma.com/docs/rest-api/oauth-apps/",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback on the app's OAuth credentials page; use the exact value your Composio auth config shows.",
+    "sources": [
+      {
+        "t": "Figma OAuth apps",
+        "u": "https://developers.figma.com/docs/rest-api/oauth-apps/"
+      },
+      {
+        "t": "Figma scopes",
+        "u": "https://developers.figma.com/docs/rest-api/scopes/"
+      },
+      {
+        "t": "Re-publish OAuth apps",
+        "u": "https://developers.figma.com/docs/rest-api/republish-oauth-apps/"
+      },
+      {
+        "t": "Figma rate limits",
+        "u": "https://developers.figma.com/docs/rest-api/rate-limits/"
+      },
+      {
+        "t": "Figma REST API authentication",
+        "u": "https://developers.figma.com/docs/rest-api/authentication/"
+      },
+      {
+        "t": "Figma Community Apps review guidelines",
+        "u": "https://help.figma.com/hc/en-us/articles/34963247780247"
+      },
+      {
+        "t": "Composio Figma toolkit",
+        "u": "https://docs.composio.dev/toolkits/figma"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "Figma does not publish a review duration.",
+      "The review guidelines page covers 'Figma Community Apps'; it's not explicit that every item applies to REST API OAuth apps."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "slug": "notion",
+    "category": "Productivity",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/notion",
+    "difficulty": "easy",
+    "oneLiner": "Reconnecting a user can kill their old refresh token",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "None found to use a public integration; a security review applies only to Marketplace listing (unconfirmed)",
+      "wait": "not stated",
+      "ev": "est",
+      "src": null
+    },
+    "cost": {
+      "text": "$0",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [],
+    "requirements": [
+      {
+        "text": "Set the integration type to Public to use OAuth; internal integrations only use an API token.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/notion"
+      },
+      {
+        "text": "Redirect URIs must use HTTPS, match exactly, and have no trailing slash, fragment or wildcard.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/notion"
+      },
+      {
+        "text": "Users pick which pages to share during authorization, then press Allow access.",
+        "ev": "docs",
+        "src": "https://www.notion.com/help/add-and-manage-connections-with-the-api"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Notion has no OAuth scopes; access comes from the pages and databases users share.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "text": "Actions show the integration's name and logo, not the user's; your own app lets you set them.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "text": "Connecting the same user again issues a new token pair and can invalidate the older refresh token.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "text": "Keep one connection per real user per Notion app to avoid broken refresh tokens.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "text": "A user removing the connection in Settings > Connections revokes the tokens.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "text": "On Enterprise, workspace owners can restrict which connections members may install.",
+        "ev": "docs",
+        "src": "https://www.notion.com/help/add-and-manage-connections-with-the-api"
+      },
+      {
+        "text": "With your own app, Notion webhooks need you to paste back a verification token Notion sends to Composio.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/notion"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Open notion.so/profile/integrations and create a new integration in your workspace",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Name it, pick the associated workspace and set the type to Public",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add the Composio redirect URI and pick capabilities (read, update, insert, user info)",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Copy the OAuth client ID and client secret",
+        "time": "1 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create the Notion OAuth2 auth config in Composio with your credentials",
+        "time": "3 min"
+      }
+    ],
+    "portal": "https://www.notion.so/profile/integrations",
+    "docs": "https://developers.notion.com/docs/authorization",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback under OAuth domains & URIs; it must match exactly with no trailing slash.",
+    "sources": [
+      {
+        "t": "Composio Notion toolkit",
+        "u": "https://docs.composio.dev/toolkits/notion"
+      },
+      {
+        "t": "Composio Notion OAuth guide",
+        "u": "https://composio.dev/auth/notion"
+      },
+      {
+        "t": "Notion: add and manage connections",
+        "u": "https://www.notion.com/help/add-and-manage-connections-with-the-api"
+      },
+      {
+        "t": "Composio white-labeling (callback URL)",
+        "u": "https://docs.composio.dev/docs/authentication/white-labeling-authentication"
+      }
+    ],
+    "unverified": [
+      "developers.notion.com could not be reached from this environment, so Notion's own developer docs were not read.",
+      "Search snippets say public connections need a Notion security review only to be listed on the Marketplace.",
+      "Search snippets say installation scope (any workspace vs selected workspaces) is fixed at creation and only 'any workspace' can be listed.",
+      "Which fields (privacy policy, terms of use, company details) are mandatory for a public integration was not confirmed.",
+      "Notion's access token lifetime was not confirmed."
+    ],
+    "checked": "2026-10-28"
+  }
+]

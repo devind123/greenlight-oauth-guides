@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Greenlight OAuth Guides</title>
+<script>try{const t=localStorage.getItem('gl-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="concept">Concept prototype for a Composio take-home · not an official Composio product · facts sourced and spot-checked Oct 28 · setup actions simulated, guide generation is live</div>
+
+<div class="shell" id="shell">
+  <aside class="side">
+    <div class="brand"><span class="mark">G</span><b>Greenlight</b><span class="badge">OAUTH</span></div>
+    <button class="nav" data-view="library"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Library<span class="cnt" id="libCount"></span></button>
+    <button class="nav" data-view="guide"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 13h8M8 17h5"/></svg>Gmail guide</button>
+    <button class="nav" data-agent><svg class="i" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></svg>Agent<span class="live"></span></button>
+    <button class="nav" data-view="generate"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>Generate a guide</button>
+    <button class="nav" data-view="verify"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>Verification log</button>
+    <button class="nav" data-view="planner"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16"/><path d="M3 10h18M8 3v4M16 3v4M7 14h5M7 17h8"/></svg>Launch planner</button>
+    <div class="spacer"></div>
+    <div class="promo">
+      <h4><svg class="i" viewBox="0 0 24 24" style="color:var(--ink);fill:var(--ink);stroke:none"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Repo connected</h4>
+      <p>The agent reads <b>actme/app</b> to check code readiness. It never pushes without your approval.</p>
+    </div>
+    <div class="user"><span class="avatar">A</span><div>Actme team<small>actme_workspace</small></div>
+      <button class="themebtn" id="themeBtn" aria-label="Switch to dark mode"></button></div>
+  </aside>
+
+  <main>
+  <!-- ================= GUIDE ================= -->
+  <div id="v-guide">
+    <div class="band pad"><div class="wrap">
+      <button class="back" data-view="library"><svg class="i sm" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Library</button>
+      <div class="titlerow">
+        <span class="lg" id="gLogo"></span>
+        <div><h1>Gmail</h1><p>Your own OAuth app, approved by Google.</p></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary agent" id="startAgent"><svg class="i sm" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Set up with agent</button>
+        <button class="btn" id="shareBtn"><svg class="i sm" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Share</button>
+        <button class="btn" data-plan><svg class="i sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Launch plan</button>
+        <span class="pill">Checked Oct 28</span>
+      </div>
+      <div class="stats">
+        <div><span class="k">Difficulty</span><span class="v"><span id="sDiff"></span><span class="bars" id="sBars"></span></span></div>
+        <div><span class="k">Your time <span class="ev est">est.</span></span><span class="v" id="sWork"></span></div>
+        <div><span class="k">Google review <span class="ev" id="sWaitEv"></span></span><span class="v" id="sWait"></span></div>
+        <div><span class="k">Yearly cost <span class="ev est" id="sCostEv">3rd party</span></span><span class="v" id="sCost"></span></div>
+      </div>
+      <p class="stathint" id="statHint">Ranges for now. Answer the question below to narrow them.</p>
+    </div></div>
+
+    <!-- permissions: the one question that decides everything -->
+    <div class="pad"><div class="wrap access" id="perm">
+      <div class="sec-h">
+        <h2>What should your agent do in Gmail?</h2>
+        <p>This decides how hard Google's review is.</p>
+      </div>
+      <div class="ask">
+        <div class="askl">
+          <div class="uc" id="uc" role="radiogroup" aria-label="What your agent does"></div>
+          <div class="ucalt" id="ucalt"></div>
+          <div class="finder" id="finder" hidden>
+            <div class="ph"><svg class="i sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pSearch" aria-label="Search"></div>
+            <div class="list" id="pList"></div>
+            <div class="fbar"><button class="btn sm" id="closeFinder">← Back to choices</button><span id="fCount"></span></div>
+          </div>
+        </div>
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+    </div></div>
+
+    <!-- path to launch -->
+    <div class="pad"><div class="wrap access">
+      <div class="sec-h">
+        <h2>Launch today, switch to your own app later</h2>
+      </div>
+      <div class="journey" id="journey"></div>
+      <div class="notes" id="notes"></div>
+    </div></div>
+
+    <div class="pad"><div class="wrap body">
+      <div class="mainc">
+        <section>
+          <div class="h"><h2>Set up your own app</h2><small id="progress"></small></div>
+          <div id="flow"></div>
+        </section>
+        <section>
+          <div class="h"><h2>Why Google rejects apps</h2></div>
+          <ol class="nums">
+            <li>Homepage must explain the app. A login page fails.</li>
+            <li>App name must match your homepage exactly.</li>
+            <li>Privacy policy on the same domain, with Limited Use text.</li>
+            <li>Demo video unlisted, showing consent and each scope.</li>
+          </ol>
+        </section>
+      </div>
+
+      <aside class="rail-c">
+        <div class="box">
+          <div class="bh"><svg class="i sm" viewBox="0 0 24 24" style="color:var(--ink)"><rect x="4" y="7" width="16" height="12"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></svg>Agent progress<span style="margin-left:auto;font-weight:400;font-size:12.5px;color:var(--fg3)" id="agentCount"></span></div>
+          <div class="bb">
+            <div class="meter"><i id="agentMeter" style="width:0%"></i></div>
+            <div class="ready" id="readyList"></div>
+            <button class="btn sm block" data-agent>Open agent</button>
+          </div>
+        </div>
+        <div class="box">
+          <div class="bh">Composio values</div>
+          <div class="bb">
+            <div class="urlbox"><div style="min-width:0"><span class="k">REDIRECT URI</span><span class="v">backend.composio.dev/api/v3/toolkits/auth/callback</span></div><button class="iconbtn" aria-label="Copy redirect URI" data-copy="https://backend.composio.dev/api/v3/toolkits/auth/callback"><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
+            <div class="urlbox"><div style="min-width:0"><span class="k">SCOPES</span><span class="v" id="scopeStr"></span></div><button class="iconbtn" aria-label="Copy scopes" id="copyScopes"><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
+          </div>
+        </div>
+        <div class="box" id="casaBox">
+          <div class="bh">CASA audit<span class="ev est" style="margin-left:auto">prices 3rd party</span></div>
+          <div class="bb">
+            <div class="kvs">
+              <div><span>Needed for</span><span>Restricted scopes <a class="ev docs" href="https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification" target="_blank" rel="noopener">docs ↗</a></span></div>
+              <div><span>Renews</span><span>At least every 12 months <a class="ev docs" href="https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification" target="_blank" rel="noopener">docs ↗</a></span></div>
+              <div><span>Google review</span><span>~6 weeks <a class="ev docs" href="https://support.google.com/cloud/answer/13463817" target="_blank" rel="noopener">docs ↗</a></span></div>
+              <div><span>Lab's own time</span><span>Not published</span></div>
+            </div>
+            <div class="labs">
+              <div class="lab"><b>TAC Security</b><span>$540–720</span><small>Lowest listed price</small></div>
+              <div class="lab"><b>NetSentries</b><span>~$700</span><small>Listed price</small></div>
+              <div class="lab"><b>Prescient Security</b><span>$3,000+</span><small>Full-service</small></div>
+            </div>
+            <p style="font-size:12.5px">Labs must be on the App Defense Alliance list. <a href="https://appdefensealliance.dev/casa/casa-assessors" target="_blank" rel="noopener">Full list</a></p>
+          </div>
+        </div>
+        <div class="box">
+          <div class="bh">Sources<span style="margin-left:auto;font-weight:400;font-size:12.5px;color:var(--fg3)" id="gSrcCount"></span></div>
+          <div class="bb">
+            <div class="src">
+              <a href="https://developers.google.com/workspace/gmail/api/auth/scopes" target="_blank" rel="noopener"><span>Gmail scope tiers</span><span class="ev docs">docs</span></a>
+              <a href="https://support.google.com/cloud/answer/15549945" target="_blank" rel="noopener"><span>Unverified app limits</span><span class="ev docs">docs</span></a>
+              <a href="https://support.google.com/cloud/answer/13465431" target="_blank" rel="noopener"><span>CASA requirement</span><span class="ev docs">docs</span></a>
+              <a href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification" target="_blank" rel="noopener"><span>Sensitive scope verification</span><span class="ev docs">docs</span></a>
+              <a href="https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification" target="_blank" rel="noopener"><span>Restricted scope verification</span><span class="ev docs">docs</span></a>
+              <a href="https://support.google.com/cloud/answer/13463817" target="_blank" rel="noopener"><span>Verification FAQ: review times</span><span class="ev docs">docs</span></a>
+              <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener"><span>API user data policy (Limited Use)</span><span class="ev docs">docs</span></a>
+              <a href="https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app" target="_blank" rel="noopener"><span>Composio: managed vs own app</span><span class="ev docs">docs</span></a>
+              <a href="https://docs.composio.dev/docs/authentication/controlling-scopes" target="_blank" rel="noopener"><span>Composio: controlling scopes</span><span class="ev docs">docs</span></a>
+              <a href="https://appdefensealliance.dev/casa/casa-assessors" target="_blank" rel="noopener"><span>CASA authorised labs</span><span class="ev docs">docs</span></a>
+              <a href="https://nango.dev/docs/api-integrations/google-shared/google-security-review" target="_blank" rel="noopener"><span>CASA lab prices</span><span class="ev est">3rd party</span></a>
+            </div>
+            <div class="legend"><span><span class="ev docs">docs</span> official source</span><span><span class="ev est">est.</span> our estimate or 3rd party</span><span><span class="ev est">demo</span> simulated</span></div>
+          </div>
+        </div>
+      </aside>
+    </div></div>
+  </div>
+
+  <!-- ================= LIBRARY ================= -->
+  <div id="v-library" hidden class="pad">
+    <div class="wrap lib">
+      <div class="lhead2">
+        <div><h1>OAuth app guides</h1><p>What it takes to run each app on <b>your own</b> OAuth app: effort, approval wait, limits and blockers.</p></div>
+        <div class="lstats" id="lstats"></div>
+      </div>
+      <form class="lask" id="libAsk" autocomplete="off">
+        <div class="laskrow"><span class="laskic"><svg class="i sm" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><input id="libAskIn" placeholder="Ask the agent about any app" aria-label="Ask the agent about any app"><button class="btn sm agent" type="submit">Ask</button></div>
+        <div class="lasksugs" id="libSugs"></div>
+      </form>
+      <div class="lbar">
+        <label class="lsearch"><svg class="i sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="libSearch" placeholder="Search apps" aria-label="Search apps"><kbd>/</kbd></label>
+        <div class="seg" id="libDiff" role="tablist" aria-label="Difficulty"></div>
+        <label class="ltog"><input type="checkbox" id="libManaged"><span>Composio managed</span></label>
+        <div class="seg vtog" id="libView" aria-label="View"><button class="on" data-v="grid" aria-label="Grid view"><svg class="i sm" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg></button><button data-v="list" aria-label="List view"><svg class="i sm" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      </div>
+      <div class="lcats" id="libCats"></div>
+      <div id="libOut"></div>
+      <div class="lfoot">
+        <div><b>Not in the library?</b><span>Get a draft guide for any app or website.</span></div>
+        <button class="btn primary" data-view="generate">Generate a guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VERIFICATION LOG ================= -->
+  <div id="v-verify" hidden class="pad"><div class="wrap vlog" id="vlog"></div></div>
+
+  <!-- ================= APP GUIDE (generic, from data) ================= -->
+  <div id="v-app" hidden></div>
+
+  <!-- ================= GENERATE ================= -->
+  <div id="v-generate" hidden class="pad">
+    <form class="gen" id="genForm" autocomplete="off">
+      <h1>Guide any app</h1>
+      <p>Type an app name or website. The agent reads the provider's official docs, then we check every quote against its source page.</p>
+      <div class="genbox">
+        <input id="genInput" placeholder="e.g. Typeform or zoho.com/books" aria-label="App name or website" maxlength="80">
+        <div class="genfoot">
+          <span class="genmeta"><span class="dotlive"></span>Live · Gemini + web search · quotes checked</span>
+          <button class="btn primary" type="submit" id="genGo">Generate guide</button>
+        </div>
+      </div>
+      <div class="genlib" id="genLib" hidden></div>
+      <div class="try"><span>Not in the library:</span><button type="button">Typeform</button><button type="button">Todoist</button><button type="button">Webflow</button><button type="button">zoho.com/books</button></div>
+      <div class="box genrun" id="genRun" hidden>
+        <div class="bh"><span id="genTitle">Researching</span><span class="gtime" id="genTime"></span></div>
+        <div class="log" id="genLog"></div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= PLANNER ================= -->
+  <div id="v-planner" hidden class="pad">
+    <div class="wrap plan">
+      <div><h1>Launch planner</h1><p style="color:var(--fg2);margin-top:4px">Pick your apps. See what blocks launch.</p></div>
+      <div class="pick" id="pick"></div>
+      <div class="stats" id="sum" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
+      <div class="gantt"><div class="gt" id="gt"></div></div>
+      <p class="hint">Bar lengths come from each guide's stated approval wait. Hatched bars mean the provider doesn't publish one.</p>
+      <section><div class="h"><h2>Plan for</h2></div><div style="display:grid;gap:8px" id="flags"></div></section>
+    </div>
+  </div>
+  </main>
+
+  <!-- ================= AGENT (split view) ================= -->
+  <aside class="agentcol" id="agentcol" aria-label="Greenlight agent">
+    <div class="drawer">
+      <div class="dh">
+        <span class="av"><svg class="i sm" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+        <div><b>Greenlight agent</b><small id="dStatus"><i></i>Ready</small></div>
+        <button class="x" id="closeAgent" aria-label="Close agent"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div class="dctx">
+        <span class="ctxchip" id="ctxApp"></span>
+        <span class="ctxchip ok"><svg class="i sm" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>actme/app</span>
+        <span class="ctxchip ok"><svg class="i sm" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>actme.ai</span>
+        <span class="ctxchip">Composio · actme-prod</span>
+      </div>
+      <div class="dlog" id="dlog"></div>
+      <div class="dfoot">
+        <div class="quick" id="quick">
+          <button data-q="detect">Find my tools</button>
+          <button data-q="all">Do my steps</button>
+          <button data-q="check">Check my homepage</button>
+          <button data-q="scan">Scan my repo</button>
+          <button data-q="casa">Explain CASA</button>
+        </div>
+        <form class="composer" id="composer">
+          <input id="cInput" placeholder="Ask, or tell the agent what to do" aria-label="Message the agent">
+          <button type="submit" aria-label="Send"><svg class="i sm" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        </form>
+        <div class="dnote"><span>Answers from this guide's sources · actions simulated</span><button id="copyPrompt">Use your own agent: copy prompt</button></div>
+      </div>
+    </div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="data/apps.js"></script>
+<script src="data/verify.js"></script>
+<script src="app.js"></script>
+<script src="library.js"></script>
+</body>
+</html>

@@ -1,0 +1,987 @@
+[
+  {
+    "id": "slack",
+    "name": "Slack",
+    "slug": "slack",
+    "category": "Communication",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/slack",
+    "difficulty": "medium",
+    "oneLiner": "Unlisted apps get 1 history call a minute.",
+    "setup": {
+      "time": "~20 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Slack Marketplace review (needed to lift unlisted-app limits)",
+      "wait": "Up to 10 business days preliminary, then up to 10 weeks functional",
+      "ev": "docs",
+      "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+    },
+    "cost": {
+      "text": "$0 (no fee found in Slack docs)",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before Marketplace approval: conversations.history and conversations.replies are limited to 1 request per minute for new unlisted commercial apps.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"
+      },
+      {
+        "text": "Before Marketplace approval: those two methods return at most 15 objects per request.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"
+      },
+      {
+        "text": "Internal customer-built apps keep 50+ requests per minute and up to 1,000 objects per request.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Redirect URLs must use HTTPS.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/authentication/installing-with-oauth"
+      },
+      {
+        "text": "Marketplace submission requires the app to be installed on 10 or more active workspaces.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+      },
+      {
+        "text": "Installing on other workspaces requires Activate Public Distribution under Manage Distribution.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/app-management/distribution"
+      },
+      {
+        "text": "Marketplace reviewers ask for a video demo of install, OAuth, setup and uninstall.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Slack's updated API terms say the Marketplace is the only appropriate channel for commercially distributing apps.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"
+      },
+      {
+        "text": "Workspaces that require Marketplace or approved apps show a warning or need admin approval for unlisted apps.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/slack"
+      },
+      {
+        "text": "Each preliminary resubmission resets your place in the review queue.",
+        "ev": "docs",
+        "src": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+      },
+      {
+        "text": "With your own app, Slack triggers need the Composio custom OAuth webhook setup.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/slack"
+      },
+      {
+        "text": "Every scope in the Composio auth config must also be added in the Slack app, or calls fail with insufficient scopes.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/slack"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an app at api.slack.com/apps and add the bot and user scopes you need",
+        "time": "10 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Composio's callback as a Redirect URL under OAuth & Permissions",
+        "time": "2 min"
+      },
+      {
+        "who": "you",
+        "t": "Activate Public Distribution under Manage Distribution",
+        "time": "3 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft scope justifications and the listing copy for Marketplace review",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Reach 10 active workspace installs, record a demo video, and submit to the Marketplace",
+        "time": "weeks"
+      }
+    ],
+    "portal": "https://api.slack.com/apps",
+    "docs": "https://docs.slack.dev/authentication/installing-with-oauth",
+    "callbackNote": "Add Composio's redirect URI https://backend.composio.dev/api/v3/toolkits/auth/callback under OAuth & Permissions > Redirect URLs.",
+    "sources": [
+      {
+        "t": "Composio Slack toolkit",
+        "u": "https://docs.composio.dev/toolkits/slack"
+      },
+      {
+        "t": "Slack: rate limit changes for non-Marketplace apps",
+        "u": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps"
+      },
+      {
+        "t": "Slack Marketplace review guide",
+        "u": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide"
+      },
+      {
+        "t": "Slack: installing with OAuth",
+        "u": "https://docs.slack.dev/authentication/installing-with-oauth"
+      },
+      {
+        "t": "Slack: distributing your app",
+        "u": "https://docs.slack.dev/app-management/distribution"
+      },
+      {
+        "t": "Slack conversations.history",
+        "u": "https://docs.slack.dev/reference/methods/conversations.history"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Slack does not publish a fee for creating or listing apps; $0 is inferred."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "slug": "discord",
+    "category": "Communication",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/discord",
+    "difficulty": "easy",
+    "oneLiner": "User OAuth works for anyone; bots need verification at 100+",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "App Verification (bots in 100+ servers); Privileged Intent review above 10,000 users",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://docs.discord.com/developers/events/gateway"
+    },
+    "cost": {
+      "text": "$0 (no fee found in Discord docs)",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "All bots can make up to 50 requests per second to the API (global limit).",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/topics/rate-limits"
+      },
+      {
+        "text": "Bots with privileged intents need review once more than 10,000 unique users can see the app.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Verification is required for apps in 100+ guilds.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/events/gateway"
+      },
+      {
+        "text": "App Verification requires the team owner to complete identity and application verification.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/discovery/enabling-discovery"
+      },
+      {
+        "text": "The redirect_uri must be one you registered on the application.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/topics/oauth2"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens expire (example expires_in is 604800 seconds), so use the refresh token.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/topics/oauth2"
+      },
+      {
+        "text": "Some scopes such as voice, rpc and dm_channels.read are only available to approved partners.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/topics/oauth2"
+      },
+      {
+        "text": "Several Composio Discord tools are deprecated because they need a bot token, not a user OAuth connection.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/discord"
+      },
+      {
+        "text": "Since June 10, 2026, App Verification and Privileged Intent review are separate processes.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review"
+      },
+      {
+        "text": "Approved privileged intent access must be reapplied for every year.",
+        "ev": "docs",
+        "src": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an application at discord.com/developers/applications",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Copy the client ID and secret and register Composio's redirect URI",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID, secret and scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Connect a test account and confirm the scopes work",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "If you ship a bot past 100 servers, complete App Verification in the Developer Portal",
+        "time": "varies"
+      }
+    ],
+    "portal": "https://discord.com/developers/applications",
+    "docs": "https://docs.discord.com/developers/topics/oauth2",
+    "callbackNote": "Register https://backend.composio.dev/api/v3/toolkits/auth/callback as a redirect on the application; it must match the auth config's redirect URI exactly.",
+    "sources": [
+      {
+        "t": "Composio Discord toolkit",
+        "u": "https://docs.composio.dev/toolkits/discord"
+      },
+      {
+        "t": "Discord OAuth2",
+        "u": "https://docs.discord.com/developers/topics/oauth2"
+      },
+      {
+        "t": "Discord Gateway (privileged intents)",
+        "u": "https://docs.discord.com/developers/events/gateway"
+      },
+      {
+        "t": "Discord privileged intent review guide",
+        "u": "https://docs.discord.com/developers/gateway/getting-started-with-privileged-intent-review"
+      },
+      {
+        "t": "Discord enabling discovery (App Verification)",
+        "u": "https://docs.discord.com/developers/discovery/enabling-discovery"
+      },
+      {
+        "t": "Discord rate limits",
+        "u": "https://docs.discord.com/developers/topics/rate-limits"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Discord's App Verification help article returned 403, so exact verification requirements, review time, and what happens to an unverified bot at 100 servers were not confirmed.",
+      "No fee for Discord apps found; $0 is inferred."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "zoom",
+    "name": "Zoom",
+    "slug": "zoom",
+    "category": "Communication",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/zoom",
+    "difficulty": "hard",
+    "oneLiner": "Unreviewed apps only work inside your own Zoom account.",
+    "setup": {
+      "time": "~30 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Zoom App Marketplace review, including a security review",
+      "wait": "not stated (varies with app quality)",
+      "ev": "docs",
+      "src": "https://developers.zoom.us/docs/distribute/app-review-process"
+    },
+    "cost": {
+      "text": "$0 (no fee found in Zoom docs)",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Before review: private apps can only be shared with members of your own Zoom account.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "text": "Beta apps can reach limited external users only after Zoom approves sharing the authorization URL.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "text": "Approved beta authorization URLs last 4 weeks, with up to two 4-week extensions.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "text": "Beta sharing caps: 10 additions for account-level apps and 100 for user-level apps.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Publishing to external users requires domain validation for privacy, terms, redirect, webhook and home URLs.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/publish"
+      },
+      {
+        "text": "Reviewers need test account credentials, and first submissions must use the Production client ID.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/publish"
+      },
+      {
+        "text": "Sharing a beta URL externally requires SSDLC docs, SAST and DAST results, and a privacy policy.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "text": "Published apps must provide Terms of Use, a privacy policy and user support.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute"
+      },
+      {
+        "text": "An OAuth redirect URL and an OAuth allow list are required.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/basic-info/oauth-info"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Zoom answers external beta sharing requests within 3-4 business days.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "text": "Development and production OAuth values differ, so configure both.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/basic-info/oauth-info"
+      },
+      {
+        "text": "Loopback or dev redirect URLs in production may be rejected in review.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/basic-info/oauth-info"
+      },
+      {
+        "text": "Access tokens last one hour; refresh tokens expire after 90 days.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/integrations/oauth"
+      },
+      {
+        "text": "Zoom enables no scopes by default; add each one in the Scopes tab.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/zoom"
+      },
+      {
+        "text": "Unlisted apps still go through review and still need full listing metadata.",
+        "ev": "docs",
+        "src": "https://developers.zoom.us/docs/build-flow/before-you-build"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create a General app at marketplace.zoom.us and copy the client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Composio's callback to the OAuth redirect URL and allow list, then add scopes",
+        "time": "10 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID and secret",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft the privacy policy, terms, and technical design answers",
+        "time": "1-2 hr"
+      },
+      {
+        "who": "you",
+        "t": "Verify your domains and provide test credentials in the Publish section",
+        "time": "1 hr"
+      },
+      {
+        "who": "you",
+        "t": "Submit for Marketplace review and respond to review notes",
+        "time": "weeks"
+      }
+    ],
+    "portal": "https://marketplace.zoom.us/develop/create",
+    "docs": "https://developers.zoom.us/docs/integrations/oauth",
+    "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback as the OAuth Redirect URL and to the OAuth Allow List, in both development and production.",
+    "sources": [
+      {
+        "t": "Composio Zoom toolkit",
+        "u": "https://docs.composio.dev/toolkits/zoom"
+      },
+      {
+        "t": "Composio: Zoom OAuth credentials",
+        "u": "https://composio.dev/auth/zoom"
+      },
+      {
+        "t": "Zoom build flow: Publish",
+        "u": "https://developers.zoom.us/docs/build-flow/publish"
+      },
+      {
+        "t": "Zoom: sharing private and beta apps",
+        "u": "https://developers.zoom.us/docs/distribute/sharing-private-and-beta-apps"
+      },
+      {
+        "t": "Zoom app review process",
+        "u": "https://developers.zoom.us/docs/distribute/app-review-process"
+      },
+      {
+        "t": "Zoom app distribution",
+        "u": "https://developers.zoom.us/docs/distribute"
+      },
+      {
+        "t": "Zoom: before you build",
+        "u": "https://developers.zoom.us/docs/build-flow/before-you-build"
+      },
+      {
+        "t": "Zoom OAuth information",
+        "u": "https://developers.zoom.us/docs/build-flow/basic-info/oauth-info"
+      },
+      {
+        "t": "Zoom OAuth tokens",
+        "u": "https://developers.zoom.us/docs/integrations/oauth"
+      }
+    ],
+    "unverified": [
+      "Zoom does not publish a Marketplace review duration.",
+      "No developer fee found; $0 is inferred."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn",
+    "slug": "linkedin",
+    "category": "Social & marketing",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/linkedin",
+    "difficulty": "medium",
+    "oneLiner": "Self-serve covers sign-in and member posts only.",
+    "setup": {
+      "time": "~20 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "Community Management API (Development, then Standard tier) for organization/page scopes",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+    },
+    "cost": {
+      "text": "$0 (no fee found in LinkedIn docs)",
+      "ev": "est",
+      "src": null
+    },
+    "limits": [
+      {
+        "text": "Without approval, only open permissions work: profile, email (OpenID Connect) and w_member_social.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+      },
+      {
+        "text": "Community Management Development tier allows 500 requests per app and 100 per member.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+      },
+      {
+        "text": "Rate limits are daily, reset at midnight UTC, and are not published; check the app's Analytics tab.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/shared/api-guide/concepts/rate-limits"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "Redirect URLs must be absolute HTTPS URLs with no # fragment.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow"
+      },
+      {
+        "text": "Creating the app asks for an app name, a Company page URL and a logo.",
+        "ev": "docs",
+        "src": "https://composio.dev/auth/linkedin"
+      },
+      {
+        "text": "Self-serve products are added from the Products tab of the app.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin"
+      },
+      {
+        "text": "Standard tier requests need a screencast showing each use case.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens last 60 days; programmatic refresh tokens are for approved Marketing Developer Platform partners.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens"
+      },
+      {
+        "text": "Changing an app's scopes means users must re-authenticate.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow"
+      },
+      {
+        "text": "Composio's organization tools need w_organization_social or rw_organization_admin, which are not open permissions.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/linkedin"
+      },
+      {
+        "text": "w_member_social and r_organization_admin cannot be used together.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/linkedin"
+      },
+      {
+        "text": "Community Management access must be requested on a new app with no other API products.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+      },
+      {
+        "text": "r_member_social is closed and LinkedIn is not accepting requests for it.",
+        "ev": "docs",
+        "src": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Create an app at linkedin.com/developers with a Company page and logo",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Sign In with LinkedIn using OpenID Connect and Share on LinkedIn in the Products tab",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Composio's callback as an authorized redirect URL in the Auth tab",
+        "time": "2 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID, secret and scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Draft use-case answers for the Community Management API form if you need page tools",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "Apply for Development tier, then record a screencast for Standard tier",
+        "time": "weeks"
+      }
+    ],
+    "portal": "https://www.linkedin.com/developers/apps",
+    "docs": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow",
+    "callbackNote": "Add https://backend.composio.dev/api/v3/toolkits/auth/callback under Auth > OAuth 2.0 settings > Authorized redirect URLs.",
+    "sources": [
+      {
+        "t": "Composio LinkedIn toolkit",
+        "u": "https://docs.composio.dev/toolkits/linkedin"
+      },
+      {
+        "t": "Composio: LinkedIn OAuth credentials",
+        "u": "https://composio.dev/auth/linkedin"
+      },
+      {
+        "t": "LinkedIn: getting access",
+        "u": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access"
+      },
+      {
+        "t": "LinkedIn authorization code flow",
+        "u": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow"
+      },
+      {
+        "t": "LinkedIn programmatic refresh tokens",
+        "u": "https://learn.microsoft.com/en-us/linkedin/shared/authentication/programmatic-refresh-tokens"
+      },
+      {
+        "t": "LinkedIn Community Management overview",
+        "u": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview"
+      },
+      {
+        "t": "LinkedIn rate limits",
+        "u": "https://learn.microsoft.com/en-us/linkedin/shared/api-guide/concepts/rate-limits"
+      },
+      {
+        "t": "Share on LinkedIn",
+        "u": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin"
+      },
+      {
+        "t": "Sign In with LinkedIn using OpenID Connect",
+        "u": "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2"
+      },
+      {
+        "t": "LinkedIn Advertising API tiers",
+        "u": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers"
+      }
+    ],
+    "unverified": [
+      "LinkedIn does not publish review times for Community Management tiers.",
+      "The fetched pages do not name the exact scopes Community Management grants.",
+      "No developer fee found; $0 is inferred."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "twitter",
+    "name": "X (Twitter)",
+    "slug": "twitter",
+    "category": "Social & marketing",
+    "auth": "OAuth 2.0",
+    "managed": "no",
+    "managedSrc": "https://docs.composio.dev/toolkits/twitter",
+    "difficulty": "medium",
+    "oneLiner": "No free tier: prepaid credits, $0.015 per post.",
+    "setup": {
+      "time": "~20 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": false,
+      "what": "No app review; you accept the Developer Agreement and pay per use",
+      "wait": "none",
+      "ev": "docs",
+      "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+    },
+    "cost": {
+      "text": "Pay-per-use credits, e.g. $0.005 per post read and $0.015 per post created",
+      "ev": "docs",
+      "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/pricing.mdx"
+    },
+    "limits": [
+      {
+        "text": "Pay-per-use plans are capped at 3 million Post reads per monthly billing cycle.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/pricing.mdx"
+      },
+      {
+        "text": "API requests are blocked when your credit balance or spending limit runs out.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/pricing.mdx"
+      },
+      {
+        "text": "Posts with a URL cost $0.20 per request.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/pricing.mdx"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "You must sign in at console.x.com, accept the Developer Agreement and Policy, and describe your use.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+      },
+      {
+        "text": "Callback URLs must be allowlisted, match exactly, and use https in production.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/developer-apps.mdx"
+      },
+      {
+        "text": "Choose Web App or Automated App to get a client secret (confidential client).",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/developer-apps.mdx"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Access tokens last two hours, and refresh tokens are only issued with the offline.access scope.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/authentication/oauth-2-0/authorization-code.mdx"
+      },
+      {
+        "text": "Credentials are shown once; losing them means regenerating and invalidating the old ones.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+      },
+      {
+        "text": "Composio managed credentials for Twitter were removed in February 2026.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/twitter"
+      },
+      {
+        "text": "Post analytics actions return 403 unless you are on an X Enterprise plan.",
+        "ev": "docs",
+        "src": "https://docs.composio.dev/toolkits/twitter"
+      },
+      {
+        "text": "Apps can have at most 10 callback URLs.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/fundamentals/developer-apps.mdx"
+      },
+      {
+        "text": "First-time credit incentives ($20 plus up to $50 match) expire 3 months after they are granted.",
+        "ev": "docs",
+        "src": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/free-credits.mdx"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Sign in at console.x.com and accept the Developer Agreement",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Create an app and set up OAuth 2.0 user authentication as a Web App",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Add Composio's callback URL and save the client ID and secret",
+        "time": "3 min"
+      },
+      {
+        "who": "you",
+        "t": "Buy credits and set a spending limit in the Developer Console",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID, secret and scopes, including offline.access",
+        "time": "5 min"
+      }
+    ],
+    "portal": "https://console.x.com",
+    "docs": "https://github.com/xdevplatform/docs/blob/main/fundamentals/authentication/oauth-2-0/authorization-code.mdx",
+    "callbackNote": "Composio's Twitter guide uses https://backend.composio.dev/api/v1/auth-apps/add; if you use https://backend.composio.dev/api/v3/toolkits/auth/callback instead, set it in both the X app and the auth config.",
+    "sources": [
+      {
+        "t": "Composio Twitter toolkit",
+        "u": "https://docs.composio.dev/toolkits/twitter"
+      },
+      {
+        "t": "Composio: Twitter OAuth credentials",
+        "u": "https://composio.dev/auth/twitter"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      },
+      {
+        "t": "X API pricing (docs source)",
+        "u": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/pricing.mdx"
+      },
+      {
+        "t": "X API free credits (docs source)",
+        "u": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/free-credits.mdx"
+      },
+      {
+        "t": "X API getting access (docs source)",
+        "u": "https://github.com/xdevplatform/docs/blob/main/x-api/getting-started/getting-access.mdx"
+      },
+      {
+        "t": "X OAuth 2.0 authorization code with PKCE (docs source)",
+        "u": "https://github.com/xdevplatform/docs/blob/main/fundamentals/authentication/oauth-2-0/authorization-code.mdx"
+      },
+      {
+        "t": "X developer apps (docs source)",
+        "u": "https://github.com/xdevplatform/docs/blob/main/fundamentals/developer-apps.mdx"
+      }
+    ],
+    "unverified": [
+      "docs.x.com did not resolve from this network; X facts come from the official xdevplatform/docs GitHub source that docs.x.com is built from.",
+      "Per-endpoint request rate limits were not checked."
+    ],
+    "checked": "2026-10-28"
+  },
+  {
+    "id": "reddit",
+    "name": "Reddit",
+    "slug": "reddit",
+    "category": "Social & marketing",
+    "auth": "OAuth 2.0",
+    "managed": "yes",
+    "managedSrc": "https://docs.composio.dev/toolkits/reddit",
+    "difficulty": "gated",
+    "oneLiner": "Commercial use needs a separate agreement with Reddit.",
+    "setup": {
+      "time": "~15 min",
+      "ev": "est"
+    },
+    "review": {
+      "required": true,
+      "what": "Separate agreement with Reddit for commercial use or use beyond the Data API Terms",
+      "wait": "not stated",
+      "ev": "docs",
+      "src": "https://redditinc.com/policies/data-api-terms"
+    },
+    "cost": {
+      "text": "No published price; Reddit reserves the right to charge fees",
+      "ev": "docs",
+      "src": "https://redditinc.com/policies/data-api-terms"
+    },
+    "limits": [
+      {
+        "text": "Without a separate agreement: no commercial use, and no research beyond the rate limits.",
+        "ev": "docs",
+        "src": "https://redditinc.com/policies/data-api-terms"
+      },
+      {
+        "text": "You may not derive revenue from the Data APIs without Reddit's express written approval.",
+        "ev": "docs",
+        "src": "https://redditinc.com/policies/data-api-terms"
+      }
+    ],
+    "requirements": [
+      {
+        "text": "You must provide up-to-date identification and contact details to access the Data APIs.",
+        "ev": "docs",
+        "src": "https://redditinc.com/policies/data-api-terms"
+      },
+      {
+        "text": "The redirect_uri in requests must exactly match the one registered on the app.",
+        "ev": "docs",
+        "src": "https://github.com/reddit-archive/reddit/wiki/OAuth2"
+      },
+      {
+        "text": "Use a web app type to get a client secret; installed apps get none.",
+        "ev": "docs",
+        "src": "https://github.com/reddit-archive/reddit/wiki/OAuth2"
+      },
+      {
+        "text": "Reddit's archived API rules require a unique, descriptive User-Agent.",
+        "ev": "docs",
+        "src": "https://github.com/reddit-archive/reddit/wiki/API"
+      }
+    ],
+    "gotchas": [
+      {
+        "text": "Bearer tokens expire after 1 hour; request duration=permanent to get a refresh token.",
+        "ev": "docs",
+        "src": "https://github.com/reddit-archive/reddit/wiki/OAuth2"
+      },
+      {
+        "text": "The terms ban using User Content to train ML or AI models without rightsholders' permission.",
+        "ev": "docs",
+        "src": "https://redditinc.com/policies/data-api-terms"
+      },
+      {
+        "text": "You must delete data not needed for your approved use case.",
+        "ev": "docs",
+        "src": "https://redditinc.com/policies/data-api-terms"
+      },
+      {
+        "text": "Reddit says Devvit is now its primary way to build apps, not the Data API.",
+        "ev": "docs",
+        "src": "https://developers.reddit.com/docs/guides/migrate/public-api"
+      }
+    ],
+    "steps": [
+      {
+        "who": "you",
+        "t": "Go to reddit.com/prefs/apps and create a web app",
+        "time": "5 min"
+      },
+      {
+        "who": "you",
+        "t": "Set the redirect URI to Composio's callback and copy the client ID and secret",
+        "time": "3 min"
+      },
+      {
+        "who": "agent",
+        "t": "Create a Composio auth config with your client ID, secret and scopes",
+        "time": "5 min"
+      },
+      {
+        "who": "agent",
+        "t": "Check your use case against the Data API Terms and draft an access request",
+        "time": "30 min"
+      },
+      {
+        "who": "you",
+        "t": "For commercial use, contact Reddit and sign a separate agreement",
+        "time": "weeks"
+      }
+    ],
+    "portal": "https://www.reddit.com/prefs/apps",
+    "docs": "https://github.com/reddit-archive/reddit/wiki/OAuth2",
+    "callbackNote": "Set the app's redirect URI to https://backend.composio.dev/api/v3/toolkits/auth/callback; Reddit requires an exact match.",
+    "sources": [
+      {
+        "t": "Composio Reddit toolkit",
+        "u": "https://docs.composio.dev/toolkits/reddit"
+      },
+      {
+        "t": "Reddit Data API Terms",
+        "u": "https://redditinc.com/policies/data-api-terms"
+      },
+      {
+        "t": "Reddit OAuth2 wiki (archived)",
+        "u": "https://github.com/reddit-archive/reddit/wiki/OAuth2"
+      },
+      {
+        "t": "Reddit API rules wiki (archived)",
+        "u": "https://github.com/reddit-archive/reddit/wiki/API"
+      },
+      {
+        "t": "Reddit: migrating from the Data API to Devvit",
+        "u": "https://developers.reddit.com/docs/guides/migrate/public-api"
+      },
+      {
+        "t": "Composio custom auth configs",
+        "u": "https://docs.composio.dev/docs/auth-configuration/custom-auth-configs"
+      }
+    ],
+    "unverified": [
+      "Reddit's Data API Wiki and Responsible Builder Policy pages returned 403, so the current approval process for new apps and the current rate limit were not confirmed.",
+      "Reports that self-serve API access closed in November 2025 come from community threads, not an official page I fetched.",
+      "The OAuth2 and API wikis are archived (last edited 2016 and 2015) and may be out of date.",
+      "Commercial agreement pricing and turnaround are not published."
+    ],
+    "checked": "2026-10-28"
+  }
+]
