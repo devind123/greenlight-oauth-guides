@@ -154,6 +154,22 @@ $('#v-app').addEventListener('click', e => {
   const y = window.scrollY; renderAppGuide(curApp.id); window.scrollTo(0, y);
 });
 
+/* ---------- real setup attempts ---------- */
+const PR = window.PROBES || {};
+const probeOf = a => PR[a.slug] || PR[a.id];
+const OUT = { rejects: ['t-easy', 'Checks the client ID at once'], login: ['t-med', 'Sign-in comes first'], blocked: ['t-gate', "Couldn't test"] };
+function probeBox(a) {
+  const r = probeOf(a); if (!r) return '';
+  const o = OUT[r.outcome] || OUT.blocked, host = (() => { try { return new URL(r.endpoint).host; } catch (e) { return r.endpoint; } })();
+  return `<div class="box"><div class="bh">Tested: starting the OAuth flow<span class="ev tested" style="margin-left:auto">tested</span></div><div class="bb">
+    ${r.shot ? `<a class="pshot" href="${r.shot}" target="_blank" rel="noopener" title="Open screenshot"><img src="${r.shot}" alt="${esc(a.name)} response to a placeholder client ID" loading="lazy"></a>` : ''}
+    <span class="tier ${o[0]}" style="justify-self:start">${o[1]}</span>
+    <p class="ptake">${esc(r.takeaway || '')}</p>
+    ${r.outcome === 'rejects' && r.text ? `<q class="pq">${esc((t => { try { return decodeURIComponent(t); } catch (e) { return t; } })(r.text).replace(/^Sign in with Google\s*/, ''))}</q>` : ''}
+    <small class="pmeta">Opened ${esc(host)} with Composio's redirect URI and a placeholder client ID · ${new Date(r.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</small>
+  </div></div>`;
+}
+
 /* ---------- generic guide page ---------- */
 let curApp = null;
 function renderAppGuide(id) {
@@ -165,7 +181,8 @@ function renderAppGuide(id) {
   const item = x => `<li>${I.warn}<span>${linkify(esc(unprefix(x.text)))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const req = x => `<li>${I.check}<span>${linkify(esc(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const stages = [
-    man ? { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's app", time: 'Today', line: `Works now. ${a.name}'s screen shows Composio. ${evl('docs', a.managedSrc)}` }
+    a.noOAuth ? { cls: 'now', badge: ['Start here', 'here'], title: 'Connect with an API key', time: 'Today', line: `Composio uses ${esc(a.auth || 'API key')} auth for ${esc(a.name)}: no OAuth app, no review. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
+    : man ? { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's app", time: 'Today', line: `Works now. ${a.name}'s screen shows Composio. ${evl('docs', a.managedSrc)}` }
         : a.managed === 'no' ? { cls: 'now', badge: ['Start here', 'here'], title: 'No managed app', time: '—', line: `Composio needs your own credentials for ${a.name}. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
         : { cls: 'now', badge: ['Start here', 'here'], title: a.slug ? 'Managed app unclear' : 'No Composio toolkit found', time: '—', line: a.slug ? `Composio's docs don't say. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` : `Check Composio for a ${esc(a.name)} toolkit, or build a custom integration.` },
     { cls: '', title: 'Create your own app', time: `${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>`, line: a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : 'Works for your own account right away.' },
@@ -179,6 +196,8 @@ function renderAppGuide(id) {
   <div class="band pad"><div class="wrap">
     <button class="back" data-view="library"><svg class="i sm" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Library</button>
     <div class="titlerow"><span class="lg lgbig">${logo(a, 34)}</span><div><h1>${a.name}</h1><p>${esc(cap(a.oneLiner || ''))}</p></div></div>
+    ${a.noOAuth ? `<div class="genbanner info">${I.check}<span><b>No OAuth app needed.</b> Composio connects to ${esc(a.name)} with ${esc(a.auth || 'an API key')}: each user pastes their own key. The OAuth details below only matter if you build your own OAuth flow. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div>` : ''}
+    ${a.thin ? `<div class="genbanner warn">${I.warn}<span><b>Thin guide.</b> Only ${[...(a.limits || []), ...(a.requirements || []), ...(a.gotchas || [])].length} fact(s) could be confirmed in the official docs. Treat this as a starting point.</span></div>` : ''}
     ${a.generated ? `<div class="genbanner"><span class="dotlive"></span><span><b>Generated live by the agent</b> · ${a.gen ? `${a.gen.model}, ${a.gen.pages || a.gen.searches.length} pages read, ${a.gen.seconds}s · <b>${a.gen.quotesFound} of ${a.gen.quotesChecked}</b> quotes found on the source page` : ''} · not reviewed by a person yet</span></div>` : ''}
     <div class="actions">
       <button class="btn primary agent" data-askapp>${I.bolt}Ask the agent</button>
@@ -209,9 +228,10 @@ function renderAppGuide(id) {
     </div>
     <aside class="rail-c">
       <div class="box"><div class="bh">Composio values</div><div class="bb">
-        <div class="kvs"><div><span>Auth</span><span>${esc(a.auth || 'OAuth 2.0')}</span></div><div><span>Managed app</span><span>${man ? 'Available' : a.managed === 'no' ? 'Not available' : 'Unknown'} ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span>${a.slug ? `<code>${a.slug}</code>` : 'Not found'}</span></div></div>
+        <div class="kvs"><div><span>Auth</span><span>${esc(a.auth || 'OAuth 2.0')}</span></div><div><span>Managed app</span><span>${man ? 'Available' : a.managed === 'no' ? 'Not available' : a.managed === 'n/a' ? 'Not needed (no OAuth)' : 'Unknown'} ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span>${a.slug ? `<code>${a.slug}</code>` : 'Not found'}</span></div></div>
         <div class="urlbox"><div style="min-width:0"><span class="k">REDIRECT URI</span><span class="v">backend.composio.dev/api/v3/toolkits/auth/callback</span></div><button class="iconbtn" aria-label="Copy redirect URI" data-copy="${REDIRECT}"><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
       </div></div>
+      ${probeBox(a)}
       ${a.unverified && a.unverified.length ? `<div class="box"><div class="bh">Not confirmed<span class="ev est" style="margin-left:auto">${a.unverified.length}</span></div><div class="bb"><ul class="unv">${a.unverified.map(u => `<li>${esc(u)}</li>`).join('')}</ul></div></div>` : ''}
       <div class="box"><div class="bh">Sources<span style="margin-left:auto;font-weight:400;font-size:12.5px;color:var(--fg3)">${(a.sources || []).length}</span></div><div class="bb"><div class="src">${(a.sources || []).map(s => `<a href="${s.u}" target="_blank" rel="noopener"><span>${esc(s.t)}</span><span class="ev docs">docs</span></a>`).join('')}</div></div></div>
     </aside>
@@ -234,6 +254,10 @@ answer = function (v) {
   if (named && named.id !== 'gmail' && named !== (!$('#v-app').hidden ? curApp : ctxApp)) { ctxApp = named; askApp(named); return; }
   const a = !$('#v-app').hidden ? curApp : ctxApp;
   if (!a) return baseAnswer(v);
+  if (isLong(v)) return askLLM(v, () => appRules(a, v));
+  return appRules(a, v);
+};
+function appRules(a, v) {
   const q = v.toLowerCase(), list = (arr, empty) => arr && arr.length ? `<ul class="alist">${arr.map(x => `<li>${esc(x.text)} ${evl(x.ev || 'docs', x.src)}</li>`).join('')}</ul>` : empty;
   if (/limit|cap\b|before approv|restrict/.test(q)) return reply({ html: `<b>${a.name}, before approval:</b>${list(a.limits, ' No limits found in the docs.')}` });
   if (/require|need|privacy|policy|verify|verification/.test(q)) return reply({ html: `<b>${a.name} requires:</b>${list(a.requirements, ' Nothing beyond a standard OAuth app.')}` });
@@ -243,8 +267,8 @@ answer = function (v) {
   if (/managed|composio/.test(q)) return reply({ html: a.managed === 'yes' ? `Yes, Composio has a managed ${a.name} app. ${evl('docs', a.managedSrc)}` : `Composio needs your own ${a.name} credentials. ${evl('docs', a.managedSrc)}` });
   if (/step|how do i|set ?up|start/.test(q)) return reply({ html: `<ol class="fixlist">${(a.steps || []).map(s => `<li>${esc(s.t)}${s.who === 'agent' ? ' <span class="who w-agent">Agent</span>' : ''}</li>`).join('')}</ol>` });
   if (/unverified|not sure|confirm/.test(q)) return reply({ html: a.unverified && a.unverified.length ? `I couldn't confirm:<ul class="alist">${a.unverified.map(u => `<li>${esc(u)}</li>`).join('')}</ul>` : 'Everything in this guide has a source.' });
-  return reply({ html: `I only answer about ${a.name} from this guide's sources. Try one of these:`, next: ['What are the limits before approval?', 'How long is the review?', 'What does it require?'] });
-};
+  return askLLM(v);
+}
 
 /* ---------- agent: knows every app in the library ---------- */
 const chipList = list => `<div class="aplist">${list.map(a => `<button data-app="${a.id}">${logo(a, 16)}<span>${a.name}</span><i style="background:${DIFF[a.difficulty].col}"></i></button>`).join('')}</div>`;
@@ -445,6 +469,10 @@ function renderVerify() {
       <div><span class="snum">4</span><b>Live guides</b><p>Generated guides check themselves: code confirms each quote is on its page, and moves the rest to "Not confirmed".</p></div>
     </div>
     <section><div class="h"><h2>What we learned and corrected</h2></div><div class="vlearn">${LEARNED.map(([t, d, id]) => { const a = id && APP(id); return `<div>${a ? logo(a, 22) : '<span class="lg-img" style="width:22px;height:22px"><b>•</b></span>'}<span><b>${t}</b><small>${d}</small></span></div>`; }).join('')}</div></section>
+    <section><div class="h"><h2>Setup attempts</h2><small>${Object.keys(PR).length} providers · real browser · placeholder client ID</small></div>
+      <p class="hint" style="margin-bottom:10px">An agent started each provider's OAuth flow with Composio's redirect URI and a placeholder client ID, then recorded what the provider did. It shows how each provider fails, which is what you'll see while debugging your own setup.</p>
+      <div class="pgrid">${Object.entries(OUT).map(([k, o]) => { const list = Object.values(PR).filter(r => r.outcome === k); return `<div class="pcol"><div class="pch"><span class="tier ${o[0]}">${o[1]}</span><b>${list.length}</b></div><div class="aplist">${list.map(r => { const a = APPS.find(x => x.slug === r.id || x.id === r.id); return a ? `<a class="pchipl" href="${r.shot || '#'}" target="_blank" rel="noopener" title="${esc(r.text || '')}">${logo(a, 16)}<span>${a.name}</span></a>` : ''; }).join('')}</div></div>`; }).join('')}</div>
+    </section>
     <section><div class="h"><h2>Sample re-check</h2><div class="seg" id="vSeg"><button data-vf="all" class="${vFilter === 'all' ? 'on' : ''}">All ${V.length}</button><button data-vf="confirmed" class="${vFilter === 'confirmed' ? 'on' : ''}">Confirmed ${ok}</button><button data-vf="fixed" class="${vFilter === 'fixed' ? 'on' : ''}">Corrected ${part + bad}</button></div></div>
       <div class="vtable">${rows.map(v => { const a = APP(v.app); return `<div class="vrow ${v.verdict}">
         <span class="vapp">${a ? logo(a, 20) : ''}<span>${a ? a.name : v.app}</span></span>
@@ -455,7 +483,17 @@ function renderVerify() {
 document.addEventListener('click', e => { const b = e.target.closest('[data-vf]'); if (!b) return; vFilter = b.dataset.vf; renderVerify(); });
 { const s0 = show; show = function (v, arg) { s0(v, arg); if (v === 'verify') renderVerify(); }; }
 
+/* ---------- what the model may use when the agent asks for help ---------- */
+const slim = a => ({ name: a.name, category: a.category, difficulty: a.difficulty, composioAuth: a.auth, composioManaged: a.managed, managedSource: a.managedSrc, oneLiner: a.oneLiner, setupTime: a.setup && a.setup.time, review: a.review, cost: a.cost, limits: a.limits, requirements: a.requirements, gotchas: a.gotchas, steps: a.steps, notConfirmed: a.unverified, whoCanConnect: (CH.aud || {})[a.id], permissions: CH.perms[a.id] && CH.perms[a.id].options.map(o => ({ task: o.task, scope: o.scope, tier: o.tier, src: o.src })), setupAttempt: probeOf(a) && { outcome: probeOf(a).outcome, providerSaid: probeOf(a).text, takeaway: probeOf(a).takeaway } });
+window.agentContext = () => {
+  if (!$('#v-app').hidden && curApp) return { page: 'guide', app: slim(curApp), composio: { managedAppTradeoffs: 'Users see "Composio wants to access your account"; default scopes may not cover everything; quota shared across all Composio users; 15-minute minimum polling', src: COMPOSIO_SRC } };
+  if (!$('#v-guide').hidden) { const g = APP('gmail'); return { page: 'gmail guide', app: slim(g), chosenScopes: need(), tier: maxTier() >= 0 ? TIERS[maxTier()].n : 'not chosen yet', tiers: TIERS.map(t => ({ tier: t.n, review: t.review, wait: t.wait, needs: t.needs, yearlyCost: t.cost })), scopeTiers: Object.fromEntries(Object.entries(SC).map(([k, v]) => [k, TIERS[v.t].n])), toolScopes: TOOLS.map(t => ({ tool: t.n, scopes: t.s, tier: TIERS[t.tier].n })), toolScopeNote: 'Tool-to-scope mapping is inferred from Google API docs; gmail.labels only manages labels, applying labels to messages needs gmail.modify', sources: Object.values(SRCS).map(s => s[1]), nextStep: (current() || {}).t }; }
+  if (ctxApp) return { page: 'library', app: slim(ctxApp) };
+  return { page: 'library', apps: APPS.filter(a => !a.generated).map(a => ({ name: a.name, difficulty: a.difficulty, managed: a.managed, approvalWait: shortWait(a), keyLimit: a.limits && a.limits[0] && a.limits[0].text, src: a.limits && a.limits[0] && a.limits[0].src })) };
+};
+
 /* ---------- boot ---------- */
+{ const g = APP('gmail'); if (g && $('#gProbe')) $('#gProbe').innerHTML = probeBox(g); }
 const gsc = $$('#v-guide .src a'); $('#gSrcCount').textContent = `${gsc.length} · ${[...gsc].filter(a => a.querySelector('.ev.est')).length} third-party`;
 renderLibrary(); renderPlan();
 function route() { const h = (location.hash || '').slice(1); if (h.startsWith('gen/')) { openShared(h.slice(4)); return; } if (h.startsWith('app/')) show('app', h.slice(4)); else show(VIEWS.includes(h) ? h : 'guide'); }

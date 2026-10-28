@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import handler from './api/generate.js';
+import askHandler from './api/ask.js';
 
 const root = new URL('.', import.meta.url).pathname;
 if (existsSync(join(root, '.env.local'))) for (const line of readFileSync(join(root, '.env.local'), 'utf8').split('\n')) {
@@ -15,6 +16,7 @@ const port = +(process.env.PORT || 4321);
 http.createServer(async (req, res) => {
   const path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (path === '/api/generate') return handler(req, res);
+  if (path === '/api/ask') return askHandler(req, res);
   const file = normalize(join(root, path === '/' ? 'index.html' : path));
   if (!file.startsWith(root) || /\/(\.env|lib\/|api\/)/.test(file)) { res.writeHead(404); return res.end(); }
   try { const body = await readFile(file); res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' }); res.end(body); }

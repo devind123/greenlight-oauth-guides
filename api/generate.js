@@ -22,7 +22,8 @@ export default async function handler(req, res) {
   const ck = app.toLowerCase();
   if (cache.has(ck) && now - cache.get(ck).at < 6 * 3600e3) { send({ step: 'cache', label: 'Generated earlier today', state: 'done' }); send({ guide: cache.get(ck).guide }); return res.end(); }
   try {
-    const guide = await generateGuide(app, key, send);
+    /* watchdog: always answer before the platform's time limit */
+    const guide = await Promise.race([generateGuide(app, key, send), new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error('This one took too long. Try again, or try the app\'s website instead of its name.'), { status: 408 })), 100000))]);
     cache.set(ck, { at: Date.now(), guide });
     send({ guide });
   } catch (e) {

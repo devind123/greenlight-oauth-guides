@@ -649,15 +649,37 @@ const DO = [
   [/^(create|make) (the )?(composio )?auth config/, 'authcfg'],
   [/^(do|run|start)( all| my)? (steps|setup|it all|everything)|^set (it )?up/, 'all'],
 ];
+const isLong = v => v.trim().split(/\s+/).length >= 9;
 function answer(v) {
   const q = v.toLowerCase().trim();
   for (const [re, task] of DO) if (re.test(q)) { runTask(task); return; }
+  if (isLong(v) && window.agentContext) return askLLM(v, () => ruleAnswer(v));
+  return ruleAnswer(v);
+}
+function ruleAnswer(v) {
+  const q = v.toLowerCase().trim();
   /* capability questions: "can my agent ...", "how do I ..." about Gmail actions */
   const kb = KB.find(e => e.k.test(q) && !(e.k.source.includes('scopes?') && VERBS.some(([re]) => re.test(q))));
   const verb = VERBS.find(([re]) => re.test(q));
   const r = (verb && (!kb || /can (my|the|it|i)|able to|let it|allow|want (it|my agent) to|need to (read|send|delete|draft|label)/.test(q))) ? toolAnswer(verb[1]) : kb ? kb.a() : null;
-  reply(r || { html: 'I don\'t have a sourced answer for that yet, and I won\'t guess. Here\'s what I can help with:', next: ['What\'s next?', 'How long will review take?', 'Can my agent read emails?', 'What does CASA cost?'] });
+  if (r) return reply(r);
+  askLLM(v);
 }
+/* questions the built-in answers don't cover go to the model, grounded in this guide's data */
+async function askLLM(v, fallback) {
+  const ctx = window.agentContext ? window.agentContext() : null;
+  const fail = () => fallback ? fallback() : reply(NO_ANSWER);
+  if (!ctx) return fail();
+  const dots = add('<span class="typing"><i></i><i></i><i></i></span><small class="thinking">Reading this guide\'s sources…</small>', 'msg');
+  try {
+    const r = await fetch('/api/ask', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: v, ctx: JSON.stringify(ctx) }) }).then(x => x.json());
+    dots.remove();
+    if (r.error || !r.answer) return fail();
+    const el = say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from this guide's data${r.covered ? '' : ' · not covered by the guide'}</small>`);
+    dlog.scrollTop = dlog.scrollHeight; return el;
+  } catch (e) { dots.remove(); return fail(); }
+}
+const NO_ANSWER = { html: 'I don\'t have a sourced answer for that yet, and I won\'t guess. Here\'s what I can help with:', next: ['What\'s next?', 'How long will review take?', 'Can my agent read emails?', 'What does CASA cost?'] };
 async function reply(r) {
   const dots = add('<span class="typing"><i></i><i></i><i></i></span>', 'msg'); await sleep(450 + Math.random() * 350); dots.remove();
   const el = say(r.html + (r.src ? cite(...r.src) : ''));

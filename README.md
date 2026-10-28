@@ -58,6 +58,30 @@ npm run dev                     # http://localhost:4321
 6. **Agent vs. you, step by step.** Each step says who does it. Agent steps are drafting the privacy policy, writing scope justifications and creating the Composio auth config. Steps that need your accounts (Google Cloud Console, recording a demo video, submitting) are yours, with links and walkthroughs.
 7. **No database.** The library is static data. A generated guide is compressed into its share link, so anyone can open it with no account or storage.
 
+## What I learned
+
+1. **The app isn't the unit of difficulty; the developer's choices are.** The same Gmail integration can take 3–10 days or about 6 weeks plus a yearly security audit, depending on the scopes. Many providers need no review at all if only your own team connects (Google Internal apps, Figma, Linear, single-tenant Microsoft apps). So every guide asks three questions first: Composio's app or your own, who connects, and, where it matters, what your agent does.
+2. **Most developers shouldn't start with their own OAuth app.** 33 of the 37 apps have a Composio managed app that works today. The real decision is *when* to switch. Composio's own docs give the reasons: users should see your name, you need custom scopes, or you hit the shared quota.
+3. **Providers rarely publish how long review takes, and their own pages disagree.**
+   - Google's guide says 3–5 business days for sensitive scopes; its FAQ says 10.
+   - Asana's distribution and submission pages contradict each other.
+   - Composio's toolkit page and its older auth page disagree about Jira.
+   - Shopify, Xero, Intuit, Zoom and Figma state no review time.
+
+   So "Not stated" is a real, useful answer, and guessing would have been the worst thing to do.
+4. **Docs go stale fast.**
+   - Xero's limits changed in March 2026.
+   - Salesforce restricted new Connected Apps in Spring '26.
+   - Composio dropped its managed X app in February 2026.
+
+   That's why every guide carries a checked date and links to its sources, and why live generation re-reads the docs instead of relying on what a model remembers.
+5. **Some "OAuth" toolkits don't need OAuth at all.** Composio connects Freshdesk and Close with API keys, so those users need no OAuth app and no review. The generator now says so.
+6. **How a provider fails matters for debugging.** Starting each provider's real OAuth flow showed that:
+   - 14 providers reject a bad client ID immediately;
+   - 17 make users sign in first, so a wrong client ID or redirect URI only shows up after login;
+   - 4 block automated browsers.
+7. **A free, small model is good enough when code checks its work.** Making it quote each claim, and dropping quotes that aren't on the page, mattered more than model size. In 16 live test generations, most confirmed 80–100% of their quotes. The exceptions were one Pipedrive run at 4 of 7, and one Strava run that found almost nothing; a result like that is now flagged as a "thin guide".
+
 ## Verification
 
 From the research: **506** claims are backed by a source, and **87** items are honestly marked "Not confirmed".
@@ -75,6 +99,30 @@ Other things we found and fixed include:
 
 Details are in the in-app Verification log, `research/verify.json` and `research/sample.json`.
 
+## Setup attempts (tested)
+
+`scripts/probe.mjs` opened each provider's real OAuth authorize endpoint in a headless browser, using Composio's redirect URI and a placeholder client ID. It recorded the status, the visible error and a screenshot (`probes/`). This is shown on every guide as a `tested` box and summarised in the Verification log.
+
+We didn't go further, for example creating real apps and completing consent. That needs provider accounts and credentials, which the brief asks us to keep out.
+
+## Demo script (5 minutes)
+
+1. **Library:** filter Hard, then ask the agent bar *"Which apps have install caps?"*
+2. **Gmail guide:**
+   - Pick "Read and draft replies": Restricted, about 6 weeks, plus an audit.
+   - Switch to "Send emails": no audit.
+   - Open a step, run "Test connection" (simulated), which fails with `redirect_uri_mismatch`, then press "Fix with agent".
+3. **A library guide, e.g. Google Drive:**
+   - Toggle "Composio's app": live today, with what you give up.
+   - Toggle "Only my team".
+   - Pick "Open files the user picks" (no review) vs. "Edit all files" (restricted).
+4. **Generate:** type an app they name, or *Canva*, *Freshdesk* or *Strava*. Show the live steps, the quote count, and the share link opening in a new tab.
+5. **Verification log:** the 45-claim re-check, the corrections, and the setup-attempt results.
+
+## Time spent
+
+Well over the suggested 6–8 hours. Much of it went into research and fact-checking (about 15 research and fact-check agents) and repeated UI iteration. The core slice, a library plus live generation plus a verification sample, could be built within the budget. The rest is depth.
+
 ## Limitations
 
 - **Setup actions are simulated.** Repo scanning, opening pull requests, the test connection and decoding Google's emails show the intended flow but don't run. They would need real provider accounts, a Composio project and credentials, which the brief asks us to keep out. Each is labelled `demo`.
@@ -85,7 +133,10 @@ Details are in the in-app Verification log, `research/verify.json` and `research
 - **Library coverage.** Only 45 of 506 sourced claims were independently re-checked; the rest are sourced but not individually re-verified. A few official sites couldn't be read during research: Notion's and Box's developer sites, and some Reddit and Discord help pages. Those guides lean on Composio's docs and official doc repos, and say so.
 - **Some permission tiers are inferred.** Google labels Drive and Sheets scope tiers, but not Calendar or YouTube. Those show "inferred" (not on Google's restricted list). Microsoft admin consent comes from the Graph permissions reference table.
 - **Gmail tool-to-scope mapping is inferred** from Google's API docs, because Composio doesn't publish a per-tool scope map. It's tagged `inferred`.
-- **The side-panel agent has no model behind it.** It answers from the guides' data and your current state: chosen tools, tier and step status. Only guide generation calls a model.
+- **The side-panel agent is mostly built-in answers.**
+  - Short questions and buttons get instant answers from the guide data and your current state.
+  - Longer questions go to Gemini (`api/ask.js`). It may only use the guide data the page sends, and may only cite URLs that appear in it. It says when the guide doesn't cover something.
+  - The repo-scan, pull-request and test-connection actions are still simulated.
 - **The rate limit is basic.** It allows 6 generations per 10 minutes per visitor and is held in memory per server instance.
 - **Logos** come from Composio's public toolkit logo service and are used only to identify apps.
 
@@ -97,6 +148,8 @@ app.js                      Gmail guide, permissions, steps, agent
 library.js                  library, generic guide page, live generation UI, verification log, planner
 data/apps.js, data/verify.js  generated guide data and fact-check results
 api/generate.js             Vercel function: streams progress, then the guide
+api/ask.js                  Vercel function: grounded answers for the side-panel agent
+scripts/probe.mjs           real OAuth-flow attempts -> research/probes.json, data/probes.js, probes/*.jpg
 lib/generate.js             the research pipeline and quote verification
 dev-server.mjs              local server (static + /api/generate)
 research/                   agent brief, raw research per batch, sample + verification results
