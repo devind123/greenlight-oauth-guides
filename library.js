@@ -527,9 +527,13 @@ $('#genForm').onsubmit = async e => {
   const t0 = Date.now(); clearInterval(genTimer); genTimer = setInterval(() => $('#genTime').textContent = Math.round((Date.now() - t0) / 1000) + 's', 500);
   const lines = {};
   const line = (k, html, state) => { let el = lines[k]; if (!el) { el = lines[k] = document.createElement('div'); el.className = 'ln'; log.appendChild(el); } el.innerHTML = `<span class="ic">${state === 'run' ? '<span class="spin"></span>' : state === 'err' ? I.cross : I.check}</span>${html}`; };
-  const done = () => { genBusy = false; clearInterval(genTimer); $('#genGo').disabled = false; $('#genGo').textContent = 'Generate guide'; };
+  let finished = false;
+  const done = () => { genBusy = false; clearInterval(genTimer); clearTimeout(slowT); $('#genGo').disabled = false; $('#genGo').textContent = 'Generate guide'; };
+  const fail = msg => { line('err', `<span>${esc(msg)}</span><button type="button" class="btn sm" style="margin-left:auto" onclick="document.getElementById('genForm').requestSubmit()">Try again</button>`, 'err'); };
+  const slowT = setTimeout(() => { if (!finished) line('slow', '<span>Taking longer than usual. The free model may be busy; it will finish or tell you within a minute.</span>', 'run'); }, 25000);
+  const ctl = new AbortController(), hardT = setTimeout(() => ctl.abort(), 75000);
   try {
-    const r = await fetch('/api/generate?app=' + encodeURIComponent(app));
+    const r = await fetch('/api/generate?app=' + encodeURIComponent(app), { signal: ctl.signal });
     if (!r.ok || !r.body) throw new Error(r.status === 404 ? 'Live generation needs the server. Run "npm run dev" or use the deployed link.' : 'Server error ' + r.status);
     const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '';
     for (;;) {
@@ -539,7 +543,8 @@ $('#genForm').onsubmit = async e => {
         const raw = buf.slice(0, i); buf = buf.slice(i + 1); if (!raw.trim()) continue;
         const m = JSON.parse(raw);
         if (m.error) {
-          line('err', `<span>${esc(m.error)}</span>`, 'err');
+          finished = true; clearTimeout(hardT); lines.slow && lines.slow.remove();
+          fail(m.error);
           if (m.partial) { const p = m.partial, el = document.createElement('div'); el.className = 'genpartial';
             el.innerHTML = `<b>What the agent found before the model got busy</b>${p.comp ? `<div>Composio toolkit <code>${esc(p.comp.slug)}</code> · managed auth: ${esc(p.comp.managed)} <a class="ev docs" href="${esc(p.comp.url)}" target="_blank" rel="noopener">docs ↗</a></div>` : '<div>No Composio toolkit found.</div>'}${p.pages.length ? `<div>Official pages read:</div><ul>${p.pages.map(u => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\//, ''))}</a></li>`).join('')}</ul>` : ''}<button type="button" class="btn sm" id="genRetry">Try again</button>`;
             log.appendChild(el); $('#genRetry').onclick = () => $('#genForm').requestSubmit(); }
@@ -547,6 +552,7 @@ $('#genForm').onsubmit = async e => {
         }
         if (m.step) line(m.step, `<span>${esc(m.label)}</span>${m.detail ? `<small>${esc(m.detail)}</small>` : ''}`, m.state);
         if (m.guide) {
+          finished = true; clearTimeout(hardT); lines.slow && lines.slow.remove();
           const g = m.guide;
           line('ready', `<span><b style="font-weight:500">${esc(g.name)} guide ready</b> · ${g.gen.quotesFound} of ${g.gen.quotesChecked} quotes confirmed</span><button class="btn sm agent" type="button" id="genOpen" style="margin-left:auto">Open guide</button>`, 'done');
           $('#genOpen').onclick = () => openGenerated(g);
@@ -554,7 +560,9 @@ $('#genForm').onsubmit = async e => {
         }
       }
     }
-  } catch (err) { line('err', `<span>${esc(err.message)}</span>`, 'err'); }
+  } catch (err) { finished = true; lines.slow && lines.slow.remove(); fail(err.name === 'AbortError' ? 'This took too long. Try again; it usually works on the second go.' : err.message); }
+  clearTimeout(hardT);
+  if (!finished) { lines.slow && lines.slow.remove(); fail('The connection closed before the guide was ready. Try again.'); }
   done();
 };
 

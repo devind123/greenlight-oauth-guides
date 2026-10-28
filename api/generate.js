@@ -2,7 +2,7 @@
    The Gemini key comes from the GEMINI_API_KEY environment variable and never reaches the browser. */
 import { generateGuide } from '../lib/generate.js';
 
-export const config = { maxDuration: 120 };
+export const config = { maxDuration: 60 };
 const hits = new Map(); /* best-effort per-IP limit on a warm instance */
 const cache = new Map();
 
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   if (cache.has(ck) && now - cache.get(ck).at < 6 * 3600e3) { send({ step: 'cache', label: 'Generated earlier today', state: 'done' }); send({ guide: cache.get(ck).guide }); return res.end(); }
   try {
     /* watchdog: always answer before the platform's time limit */
-    const guide = await Promise.race([generateGuide(app, key, send), new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error('This one took too long. Try again, or try the app\'s website instead of its name.'), { status: 408 })), 100000))]);
+    const guide = await Promise.race([generateGuide(app, key, send), new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error('This one took too long. Try again, or try the app\'s website instead of its name.'), { status: 408 })), 55000))]);
     cache.set(ck, { at: Date.now(), guide });
     send({ guide });
   } catch (e) {
