@@ -866,7 +866,7 @@ a.ev{text-decoration:none}
 .ucrow.multi .cbox{width:16px;height:16px;border:1.5px solid var(--fg3);display:grid;place-items:center}
 .ucrow.multi.on .cbox{background:var(--fg);border-color:var(--fg)}
 .ucrow.multi.on .cbox:after{content:"";width:8px;height:4px;border-left:1.6px solid var(--bg);border-bottom:1.6px solid var(--bg);transform:rotate(-45deg) translate(1px,-1px)}
-.ucrow small{font-family:var(--mono);font-size:11px}
+.ucrow.multi small{font-family:var(--mono);font-size:11px}
 .ucm .inf{font-family:var(--mono);font-size:10px;color:var(--warn)}
 .gask .ucalt{justify-content:space-between}
 .gask .result{min-height:100%}
@@ -881,3 +881,8 @@ a.ev{text-decoration:none}
 .acard.mini:hover{border-color:var(--fg)}
 .gask .result{min-height:0;height:100%}
 @container main (max-width:860px){.gask{height:auto !important}}
+.node.skipped .step{opacity:.5}.node.skipped .st b{text-decoration:line-through;color:var(--fg3)}
+a.ev{cursor:pointer}a.ev:not([href]){cursor:default}
+.gflow .group{grid-template-columns:28px minmax(0,1fr)}
+.gflow .step .more{padding-top:0}
+.step .st{min-width:0}.step .st b{overflow-wrap:anywhere}

@@ -1,0 +1,4 @@
+[{"id":"gmail",
+  "private":{"works":"yes","who":"Only people in your own Google Workspace or Cloud Identity organization","review":"No review needed","text":"An Internal app lets anyone in your Workspace org connect Gmail with no verification, no unverified-app screen and no 100-user cap.","src":"https://support.google.com/cloud/answer/13464323","quote":"Your app will not be subject to the unverified app screen or the 100-user cap if it's designated as internal-only."},
+  "public":{"text":"Any Google user needs a published, verified app: sensitive scopes need review, restricted scopes also need a yearly security assessment.","src":"https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification","quote":""},
+  "notes":"Same Internal rule Google documents for all Workspace APIs; added from the Google Drive research."}]

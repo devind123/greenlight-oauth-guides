@@ -51,7 +51,7 @@ document.addEventListener('click', e => {
   const v = e.target.closest('[data-view]'); if (v) show(v.dataset.view);
   const c = e.target.closest('[data-copy]'); if (c) copy(c.dataset.copy, 'Copied');
   if (e.target.closest('[data-agent]')) toggleAgent();
-  if (e.target.closest('[data-plan]')) { picked.add('gmail'); renderPlan(); show('planner'); toast('Gmail is in your launch plan'); }
+  { const pl = e.target.closest('[data-plan]'); if (pl) { const id = pl.dataset.plan || 'gmail'; picked.add(id); renderPlan(); show('planner'); const ap = (window.APPS_DATA || []).find(x => x.id === id); toast(`${ap ? ap.name : 'App'} is in your launch plan`); } }
 });
 
 /* ================= GUIDE DATA ================= */
@@ -60,10 +60,10 @@ $('#ctxApp').innerHTML = L.gmail(14) + 'Gmail';
 
 /* Google's tiers. Index = severity. */
 const TIERS = [
-  { n: 'Non-sensitive', cls: 't-easy', col: 'var(--ok)', lv: 1, diff: 'Easy', work: '~1 hr', wait: '2–3 days', waitEv: 'docs', needs: 'Brand check', cost: '$0', costEv: 'docs', review: 'Brand verification' },
-  { n: 'Sensitive', cls: 't-med', col: 'var(--warn)', lv: 2, diff: 'Medium', work: '1–2 hrs', wait: '3–10 days', waitEv: 'docs', needs: 'Demo video', cost: '$0', costEv: 'docs', review: 'Google review' },
-  { n: 'Restricted', cls: 't-hard', col: 'var(--bad)', lv: 4, diff: 'Hard', work: '3–4 hrs', wait: '~6 wks', waitEv: 'docs', needs: 'CASA audit', cost: '$540+', costEv: 'est', review: 'Google review + CASA audit' },
-  { n: 'Full access', cls: 't-hard', col: 'var(--bad)', lv: 5, diff: 'Hardest', work: '4+ hrs', wait: '6+ wks', waitEv: 'est', needs: 'CASA + strong case', cost: '$540+', costEv: 'est', review: 'Google review + CASA audit' },
+  { n: 'Non-sensitive', cls: 't-easy', col: 'var(--ok)', lv: 1, diff: 'Easy', work: '~1 hr', wait: '2–3 days', waitEv: 'docs', needs: 'Brand check', cost: '$0', costEv: 'docs', review: 'Brand verification', src: 'https://support.google.com/cloud/answer/13463817' },
+  { n: 'Sensitive', cls: 't-med', col: 'var(--warn)', lv: 2, diff: 'Medium', work: '1–2 hrs', wait: '3–10 days', waitEv: 'docs', needs: 'Demo video', cost: '$0', costEv: 'docs', review: 'Google review', src: 'https://support.google.com/cloud/answer/13463817' },
+  { n: 'Restricted', cls: 't-hard', col: 'var(--bad)', lv: 4, diff: 'Hard', work: '3–4 hrs', wait: '~6 wks', waitEv: 'docs', needs: 'CASA audit', cost: '$540+/yr', costEv: 'est', review: 'Google review + CASA audit', src: 'https://support.google.com/cloud/answer/13463817' },
+  { n: 'Full access', cls: 't-hard', col: 'var(--bad)', lv: 5, diff: 'Hardest', work: '4+ hrs', wait: '6+ wks', waitEv: 'est', needs: 'CASA + strong case', cost: '$540+/yr', costEv: 'est', review: 'Google review + CASA audit' },
 ];
 /* scope -> tier, and which scopes it already covers */
 const SC = {
@@ -124,12 +124,13 @@ const SRC = {
 };
 /* The journey most teams take, in plain words. */
 function renderPaths() {
-  const mt = maxTier(), tr = curTier();
+  const mt = maxTier(), tr = curTier(), gs = window.gmailState ? window.gmailState() : { aud: 'public' };
   const ev = (e, href) => `<a class="ev ${e}" href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${e === 'est' ? 'est.' : 'docs'} ↗</a>`;
   const tag = e => `<span class="ev ${e}">${e === 'est' ? 'est.' : 'docs'}</span>`;
   const STAGES = [
     { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's app", time: 'Today', line: `Works now. Google's screen says "Composio". ${ev('docs', SRC.composio)}` },
     { cls: '', title: 'Test your own app', time: `~30 min ${tag('est')}`, line: `Up to 100 invited users. Access expires every 7 days. ${ev('docs', SRC.caps)}` },
+    gs.aud === 'private' ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Use it in your team', time: `No review ${ev('docs', gs.privSrc)}`, line: 'Internal apps skip verification and the user cap. Only your Workspace org can connect.' } :
     { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved by Google', time: `${tr.wait} ${tag(tr.waitEv)}`, line: `Your name on the screen, no user cap.${mt >= 2 ? ' Yearly security audit.' : ''} ${ev('docs', SRC.restricted)}` },
   ];
   $('#journey').innerHTML = STAGES.map((s, i) => `${i ? '<span class="jarrow" aria-hidden="true"><svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' : ''}
@@ -140,7 +141,7 @@ function renderPaths() {
     </div>`).join('');
   $('#notes').innerHTML = `
     <div class="note warnnote">${I.warn}<span><b>Don't go live unapproved.</b> Users see a warning, and the user cap never resets. ${ev('docs', SRC.caps)}</span></div>
-    <div class="note">${I.bulb}<span><b>Only your own team?</b> Set the app to Internal. No review needed.</span><button class="btn sm" data-goto="consent">How</button></div>`;
+`;
 }
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-goto]'); if (!g) return;
@@ -151,9 +152,9 @@ document.addEventListener('click', e => {
 
 /* ---------- permissions ---------- */
 /* Before the developer answers, every number is a range. */
-const NONE = { n: 'Not chosen', lv: 0, col: 'var(--line2)', diff: 'Easy to hard', work: '1–4+ hrs', wait: '2 days – 6+ wks', waitEv: 'est', needs: '—', cost: '$0 – $540+', costEv: 'est', review: 'Google review' };
+const NONE = { n: 'Not chosen', lv: 0, col: 'var(--line2)', diff: 'Easy to hard', work: '1–4+ hrs', wait: '2 days – 6+ wks', waitEv: 'est', needs: '—', cost: '$0 – $540+/yr', costEv: 'est', review: 'Google review' };
 const curTier = () => maxTier() < 0 ? NONE : TIERS[maxTier()];
-const evTag = e => `<span class="ev ${e}">${e === 'est' ? 'est.' : 'docs'}</span>`;
+const evTag = (e, src) => e === 'docs' && src ? `<a class="ev docs" href="${src}" target="_blank" rel="noopener">docs ↗</a>` : `<span class="ev ${e}">${e === 'est' ? 'est.' : 'docs'}</span>`;
 /* the 56 tools grouped by what they do */
 const GROUPS = [['read', 'Read mail'], ['send', 'Send & reply'], ['drafts', 'Drafts'], ['labels', 'Labels'], ['organise', 'Organise & trash'], ['settings', 'Settings & filters'], ['contacts', 'Contacts'], ['delete', 'Permanent delete']];
 const groupOf = id => { const x = id.slice(6); return /^(DELETE_MESSAGE|BATCH_DELETE_MESSAGES|DELETE_THREAD)$/.test(x) ? 'delete' : /DRAFT/.test(x) ? 'drafts' : /LABEL/.test(x) ? 'labels' : /CONTACT|PEOPLE/.test(x) ? 'contacts' : /FILTER|SEND_AS|SETTINGS|AUTO_FORWARD|VACATION|LANGUAGE|FORWARDING_ADDR|SMIME|CSE|IMAP|POP/.test(x) ? 'settings' : /SEND_EMAIL|REPLY|FORWARD_MESSAGE/.test(x) ? 'send' : /TRASH|BATCH_MODIFY|IMPORT|INSERT/.test(x) ? 'organise' : 'read'; };
@@ -207,21 +208,24 @@ function renderAccess() {
     <div class="rs"><span class="k">Your tier</span><div class="rtier">${tr ? tr.n : 'Not chosen yet'}</div>
       <div class="tmeter">${TIERS.map((x, i) => `<i style="${i <= mt ? 'background:' + col : ''}"></i>`).join('')}</div>
       <div class="mlab">${TIERS.map((x, i) => `<span class="${i === mt ? 'on' : ''}">${x.n}</span>`).join('')}</div></div>
-    <div class="rs rkv"><div><span>Google review</span><b>${tr ? `${tr.wait} ${evTag(tr.waitEv)}` : '2 days – 6+ wks'}</b></div><div><span>Google asks for</span><b>${tr ? tr.needs : 'Brand check to audit'}</b></div><div><span>Yearly cost</span><b>${tr ? tr.cost : '$0 – $540+'}</b></div></div>
+    <div class="rs rkv"><div><span>Google review</span><b>${tr ? `${tr.wait} ${evTag(tr.waitEv, tr.src)}` : '2 days – 6+ wks'}</b></div><div><span>Google asks for</span><b>${tr ? tr.needs : 'Brand check to audit'}</b></div><div><span>Yearly cost</span><b>${tr ? tr.cost : '$0 – $540+'}</b></div></div>
     <div class="rs"><div class="rsh"><span class="k">Ask Google for</span><button class="iconbtn" data-copyscopes aria-label="Copy scopes"${empty ? ' disabled' : ''}><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
       <div class="rline">${empty ? '<span class="ghost w1"></span>' : ns.slice(0, 1).map(s => `<code>${s}</code>`).join('') + (scopeExtra ? `<span class="xp" tabindex="0">${scopeExtra}${scopePop}</span>` : '')}</div></div>
     <div class="rs rtools"><div class="rsh"><span class="k">Your agent can${empty ? '' : ` · ${covered.length} tool${covered.length > 1 ? 's' : ''}`}</span>${tools && !empty && !browsing ? '<button class="btn sm" data-custom>Adjust</button>' : ''}</div>
       <div class="tgrid">${empty ? '<span class="ghost"></span><span class="ghost"></span><span class="ghost"></span><span class="ghost"></span>' : shown.map(tpill).join('') + (covered.length > MAXP ? `<span class="xp tp" tabindex="0">+${covered.length - shown.length} more${toolPop}</span>` : '')}</div></div>`;
 
-  /* header stats */
-  const ct = curTier();
+  /* header stats (respect the route / team choice shared with every guide) */
+  const gs = window.gmailState ? window.gmailState() : { route: 'own', aud: 'public' };
+  let ct = curTier();
+  if (gs.route === 'managed') ct = { diff: 'Easy', lv: 1, col: 'var(--ok)', work: '0 min', wait: 'None', waitEv: 'docs', src: gs.managedSrc, cost: '$0', costEv: 'docs' };
+  else if (gs.aud === 'private') ct = Object.assign({}, ct, { diff: 'Easy', lv: 1, col: 'var(--ok)', wait: 'None', waitEv: 'docs', src: gs.privSrc, cost: '$0', costEv: 'docs' });
   $('#sDiff').textContent = ct.diff;
   $('#sBars').innerHTML = [0, 1, 2, 3, 4].map(k => `<i style="${k < ct.lv ? 'background:' + ct.col : ''}"></i>`).join('');
   $('#sBars').hidden = empty;
   $('#sWork').textContent = ct.work; $('#sWait').textContent = ct.wait; $('#sCost').textContent = ct.cost;
-  $('#sWaitEv').textContent = ct.waitEv === 'est' ? 'est.' : 'docs'; $('#sWaitEv').className = 'ev ' + ct.waitEv;
+  { const e = $('#sWaitEv'), src = ct.src || (ct.waitEv === 'docs' ? 'https://support.google.com/cloud/answer/13463817' : null); e.textContent = ct.waitEv === 'est' ? 'est.' : 'docs ↗'; e.className = 'ev ' + ct.waitEv; if (ct.waitEv === 'docs' && src) e.href = src; else e.removeAttribute('href'); }
   $('#sCostEv').textContent = ct.costEv === 'est' ? '3rd party' : 'docs'; $('#sCostEv').className = 'ev ' + (ct.costEv === 'est' ? 'est' : 'docs');
-  $('#statHint').hidden = !empty;
+  $('#statHint').hidden = !empty || gs.route === 'managed' || gs.aud === 'private';
   $('#casaBox').hidden = mt < 2;
   $('#scopeStr').textContent = n.join(' ') || 'Choose permissions first';
 
@@ -282,8 +286,8 @@ const FLOW = [
   { g: 'Prepare', tot: '~1 hr', steps: [
     { k: 'project', w: 'you', t: 'Create a Google Cloud project', d: 'Then enable the Gmail API.', time: '5 min', open: CONSOLE + '/projectcreate', done: true, how: 'marked', later: true },
     { k: 'privacy', w: 'agent', t: 'Draft the privacy policy', d: "Includes Google's Limited Use text.", time: '2 min' },
-    { k: 'consent', w: 'you', t: 'Configure the consent screen', time: '15 min', open: CONSOLE + '/auth/branding', later: true, url: 'console.cloud.google.com/auth/branding', f: [['App name', 'Actme'], ['User type', 'External (Internal for your own org only)'], ['Homepage', 'https://actme.ai']], btn: 'Save and continue', warn: 'App name must match your homepage exactly.' },
-    { k: 'client', w: 'you', t: 'Add redirect URI and scopes', time: '10 min', open: CONSOLE + '/auth/clients', check: 'Test connection', url: 'console.cloud.google.com/auth/clients', f: [['Redirect URI', REDIRECT], ['Scopes', 'see Composio values']], btn: 'Create', warn: 'A mismatched redirect URI is the top setup failure.' }] },
+    { k: 'consent', w: 'you', t: 'Configure the consent screen', time: '15 min', open: CONSOLE + '/auth/branding', later: true, url: 'console.cloud.google.com/auth/branding', f: [['App name', 'Actme'], ['User type', 'External (Internal for your own org only)'], ['Homepage', 'https://actme.ai']], btn: 'Save and continue', warn: 'Consent-screen branding (app name, home page, privacy policy) must accurately represent your app.', warnSrc: 'https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification' },
+    { k: 'client', w: 'you', t: 'Add redirect URI and scopes', time: '10 min', open: CONSOLE + '/auth/clients', check: 'Test connection', url: 'console.cloud.google.com/auth/clients', f: [['Redirect URI', REDIRECT], ['Scopes', 'see Composio values']], btn: 'Create', warn: 'Add the redirect URI exactly as Composio\'s dashboard shows it.', warnSrc: 'https://docs.composio.dev/docs/authentication/custom-app-vs-managed-app' }] },
   { g: 'Submit', tot: '~1 hr', steps: [
     { k: 'justify', w: 'agent', t: 'Write scope justifications', d: 'One per scope, plus the demo video script.', time: '2 min' },
     { k: 'video', w: 'you', t: 'Record the demo video', d: 'Follow the script the agent wrote.', time: '45 min' },
@@ -330,16 +334,17 @@ function renderFlow() {
   $('#flow').innerHTML = FLOW.map(g => `<div class="group"><div class="gl"><span>${g.g}</span><span>${g.g === 'Wait' ? tr.wait : (g.tot || '')}</span></div>${g.steps.map(s => {
     const [cls, lab] = WHO[s.w];
     const t = s.wait ? tr.review : s.t, isOpen = s.k === openStep;
-    const state = s.fail ? 'failed' : s.done ? 'done' : s.running || s.checking ? 'running' : s.wait && S('submit').done ? 'review' : '';
+    const skip = (window.gmailState ? window.gmailState().aud === 'private' : false) && ['justify', 'video', 'submit', 'wait'].includes(s.k);
+    const state = skip ? 'skipped' : s.fail ? 'failed' : s.done ? 'done' : s.running || s.checking ? 'running' : s.wait && S('submit').done ? 'review' : '';
     const body = `${s.url ? `<div class="sim"><div class="zoom"><div class="bar"><i></i><i></i><i></i><span>${s.url}</span></div><div class="sb"><div></div><div></div><div></div></div><div class="form">${s.f.map(x => `<div class="f"><span>${x[0]}</span><div>${x[1]}</div></div>`).join('')}</div><div class="go">${s.btn}</div><div class="ring"></div></div><div class="cur"></div></div>
       ${s.f.map(x => `<div class="copyrow"><span style="min-width:0;overflow-wrap:anywhere"><span class="k">${x[0]}</span>${x[1]}</span>${x[1].startsWith('see') || x[1].includes('(') ? '' : `<button class="btn sm" data-copy="${x[1]}">Copy</button>`}</div>`).join('')}
-      <div class="caution">${I.warn}<span>${s.warn} <span class="ev docs">docs</span></span></div>` : ''}
+      <div class="caution">${I.warn}<span>${s.warn} <a class="ev docs" href="${s.warnSrc}" target="_blank" rel="noopener">docs ↗</a></span></div>` : ''}
       ${s.fail ? `<div class="sfail"><b>${I.cross}Google said <code>${s.fail.code}</code></b><div class="kv"><span>Expected</span><code>${s.fail.exp}</code><span>Found</span><code>${s.fail.got}</code></div><div class="acts"><button class="btn sm agent" data-fix="${s.k}">${AGENT_ICON}Fix with agent</button></div></div>` : ''}
       ${s.later && !s.done ? '<p class="hint">We confirm this with a test connection in step 4.</p>' : ''}
       ${s.wait && s.sub ? `<p class="hint">Submitted ${s.sub}. Google replies by email. Paste it here and the agent explains what they want.</p>` : ''}
       ${stepActions(s)}`;
     return `<div class="node ${state}${cur === s ? ' cur' : ''}" id="n-${s.k}"><div class="rail"><span class="dot" aria-hidden="true"></span></div>
-    <div class="step${s.wait ? ' wait' : ''}${isOpen ? ' open' : ''}"><button class="sh" data-step="${s.k}" aria-expanded="${isOpen}"><span class="who ${cls}">${lab}</span><span class="st"><b>${t}</b>${s.d ? `<small>${s.d}</small>` : ''}</span>${s.url ? `<span class="wtag" title="Has a step-by-step visual walkthrough"><svg class="i sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>Walkthrough</span>` : ''}${stepStatus(s, tr)}<span class="chev">${I.chev}</span></button>
+    <div class="step${s.wait ? ' wait' : ''}${isOpen ? ' open' : ''}"><button class="sh" data-step="${s.k}" aria-expanded="${isOpen}"><span class="who ${cls}">${lab}</span><span class="st"><b>${t}</b>${s.d ? `<small>${s.d}</small>` : ''}</span>${s.url ? `<span class="wtag" title="Has a step-by-step visual walkthrough"><svg class="i sm" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>Walkthrough</span>` : ''}${skip ? '<span class="stat mut">Not needed for Internal apps</span>' : stepStatus(s, tr)}<span class="chev">${I.chev}</span></button>
     <div class="more">${body}</div></div></div>`;
   }).join('')}</div>`).join('');
   const done = ALL().filter(s => s.done).length;

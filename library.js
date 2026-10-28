@@ -57,7 +57,7 @@ function renderLibrary() {
   if (LS.view === 'list') {
     out.innerHTML = `<div class="ltable" role="table"><div class="lrow lhd" role="row"><span>App</span><span>Difficulty</span><span>Approval wait</span><span>Key limit</span><span>Composio</span></div>${list.map(a => {
       const d = DIFF[a.difficulty];
-      return `<button class="lrow" data-app="${a.id}" role="row"><span class="lname">${logo(a, 26)}<span><b>${a.name}</b><small>${a.category}</small></span></span><span><span class="tier ${d.cls}">${d.n}</span></span><span>${esc(shortWait(a))}</span><span class="lim">${a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : '<span class="mute">No limit found</span>'}</span><span>${a.managed === 'yes' ? '<span class="mchip">Managed</span>' : a.managed === 'no' ? '<span class="mute">Bring your own</span>' : '<span class="mute">Unknown</span>'}</span></button>`;
+      return `<button class="lrow" data-app="${a.id}" role="row"><span class="lname">${logo(a, 26)}<span><b>${a.name}</b><small>${a.category}</small></span></span><span><span class="tier ${d.cls}">${d.n}</span></span><span>${esc(shortWait(a))}</span><span class="lim">${a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : '<span class="mute">No limit found</span>'}</span><span>${a.managed === 'yes' ? '<span class="mchip">Managed</span>' : a.managed === 'no' ? '<span class="mute">Own app</span>' : '<span class="mute">Unknown</span>'}</span></button>`;
     }).join('')}</div>`;
   } else {
     out.innerHTML = `<div class="lgrid">${list.map(a => {
@@ -97,7 +97,7 @@ const familyOf = id => /^google|^youtube/.test(id) ? 'google' : /outlook|teams/.
 /* apps researched later define their own ordered tiers in the data */
 const famTiers = (fam, P) => fam === 'own' ? { order: P.order, t: Object.fromEntries(P.order.map(k => [k, { n: (P.tiers[k] || {}).n || k, review: (P.tiers[k] || {}).effect }])) } : PERM_TIERS[fam];
 const CO = window.COMPOSIO || {};
-const hasKey = a => ((CO[a.id] || {}).auths || []).includes('API key');
+const hasKey = a => ((CO[a.id] || {}).auths || []).includes('API key') || (!!a.generated && /api key/i.test(a.auth || '') && /oauth/i.test(a.auth || ''));
 const AS = {};
 function stateOf(a) { return AS[a.id] || (AS[a.id] = { route: 'own', aud: 'public', perms: new Set() }); }
 function viewOf(a, st) {
@@ -124,7 +124,7 @@ function setupPanel(a, st, vw) {
   const man = a.managed === 'yes', A = (CH.aud || {})[a.id], P = CH.perms[a.id], fam = familyOf(a.id);
   const seg = (name, opts, cur) => `<div class="seg" role="radiogroup">${opts.map(([v, l]) => `<button type="button" data-set="${name}" data-val="${v}" class="${cur === v ? 'on' : ''}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
   const rows = [];
-  const routes = [...(man ? [['managed', "Composio's app"]] : []), ['own', 'Your own OAuth app'], ...(hasKey(a) ? [['apikey', 'API key']] : [])];
+  const routes = [...(man ? [['managed', "Composio's managed app"]] : []), ['own', 'Your own OAuth app'], ...(hasKey(a) ? [['apikey', 'API key']] : [])];
   if (routes.length > 1) rows.push(`<div class="srow"><span class="sk">How users connect</span>${seg('route', routes, st.route)}<span class="shint">${st.route === 'managed' ? 'Ready today. Nothing to set up.' : st.route === 'apikey' ? 'Each user pastes their own key. No OAuth app.' : 'Your name on the consent screen.'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works !== 'no' && !/^same as public/i.test(A.private.text || '')) rows.push(`<div class="srow"><span class="sk">Who connects</span>${seg('aud', [['private', 'Only my team'], ['public', 'Any customer']], st.aud)}<span class="shint">${st.aud === 'private' ? esc(A.private.who || '') : 'Customers outside your organization'}</span></div>`);
   if (st.route === 'own' && A && A.private && A.private.works === 'no') rows.push(`<div class="srow"><span class="sk">Who connects</span><span class="tier t-hard">No private option</span><span class="shint">${esc(A.private.text || '')} ${A.private.src ? evl('docs', A.private.src) : ''}</span></div>`);
@@ -214,6 +214,68 @@ function probeBox(a) {
   </div></div>`;
 }
 
+/* ---------- shared guide sections (Gmail uses them too) ---------- */
+function factsSections(a) {
+  const item = x => `<li>${I.warn}<span>${linkify(esc(unprefix(x.text)))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
+  const req = x => `<li>${I.check}<span>${linkify(esc(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
+  return `${a.limits && a.limits.length ? `<section><div class="h"><h2>Before approval</h2></div><ul class="checks">${clip(a.limits, item)}</ul></section>` : ''}
+      ${a.requirements && a.requirements.length ? `<section><div class="h"><h2>What ${esc(a.name)} requires</h2></div><ul class="checks req">${clip(a.requirements, req)}</ul></section>` : ''}
+      ${a.gotchas && a.gotchas.length ? `<section><div class="h"><h2>Watch out for</h2></div><ul class="checks">${clip(a.gotchas, item)}</ul></section>` : ''}`;
+}
+/* interactive steps for every guide: status, open one at a time, portal, mark done, run (simulated), ask agent */
+function stepsSection(a, st) {
+  const S = a.steps || []; if (!S.length) return '';
+  const done = st.done || (st.done = new Set()), cur = S.findIndex((s, i) => !done.has(i)), open = st.open == null ? cur : st.open;
+  const rows = S.map((s, i) => {
+    const isDone = done.has(i), isOpen = i === open, ag = s.who === 'agent', url = (s.t.match(/https?:\/\/\S+|\b[a-z0-9-]+(\.[a-z0-9-]+)+\/\S*/i) || [])[0];
+    const status = isDone ? (ag ? `<span class="stat ok">${I.check}Done by agent</span>` : `<span class="stat mut">${I.check}Marked done</span>`) : `<span class="stat mut">${esc(s.time || '')}</span>`;
+    const acts = ag
+      ? (isDone ? `<button class="btn sm ghost" data-gs-undo="${i}">Undo</button>` : `<button class="btn sm agent" data-gs-run="${i}">${I.play}Run</button>`)
+      : `${a.portal ? `<a class="btn sm" href="${a.portal}" target="_blank" rel="noopener">Open ${esc(a.name)} developer portal ↗</a>` : ''}${isDone ? `<button class="btn sm ghost" data-gs-undo="${i}">Undo</button>` : `<button class="btn sm primary" data-gs-done="${i}">Mark done</button>`}`;
+    return `<div class="node${isDone ? ' done' : ''}${i === cur ? ' cur' : ''}"><div class="rail"><span class="dot" aria-hidden="true"></span></div>
+      <div class="step${isOpen ? ' open' : ''}"><button class="sh" data-gs-step="${i}" aria-expanded="${isOpen}"><span class="who ${ag ? 'w-agent' : 'w-you'}">${ag ? 'Agent' : 'You'}</span><span class="st"><b>${esc(s.t)}</b></span>${status}<span class="chev">${I.chev}</span></button>
+      <div class="more">${url ? `<p class="hint">${linkify(esc(s.t))}</p>` : ''}<div class="acts">${acts}<button class="btn sm askag" data-gs-ask="${i}">${AGENT_ICON}Ask agent</button></div></div></div></div>`;
+  }).join('');
+  return `<section><div class="h"><h2>Set up your own app</h2><small>${done.size} of ${S.length} done</small></div><div class="gflow"><div class="group">${rows}</div></div></section>`;
+}
+function agentBox(a, st) {
+  const S = a.steps || [], ag = S.map((s, i) => [s, i]).filter(([s]) => s.who === 'agent'); if (!ag.length) return '';
+  const n = ag.filter(([s, i]) => (st.done || new Set()).has(i)).length;
+  return `<div class="box"><div class="bh">${AGENT_ICON}Agent progress<span style="margin-left:auto;font-weight:400;font-size:12.5px;color:var(--fg3)">${n} of ${ag.length} agent steps</span></div><div class="bb"><div class="meter"><i style="width:${n / ag.length * 100}%"></i></div><button class="btn sm block" data-askapp>Open agent</button></div></div>`;
+}
+$('#v-app').addEventListener('click', async e => {
+  if (!curApp) return;
+  const a = curApp, st = stateOf(a), S = a.steps || [], q = s => e.target.closest(s);
+  const rerender = () => { const y = window.scrollY; renderAppGuide(a.id); window.scrollTo(0, y); };
+  let x;
+  if (q('a')) return;
+  if ((x = q('[data-gs-step]'))) { const i = +x.dataset.gsStep, cur = S.findIndex((s, k) => !(st.done || new Set()).has(k)), open = st.open == null ? cur : st.open; st.open = open === i ? -1 : i; return rerender(); }
+  if ((x = q('[data-gs-done]'))) { (st.done || (st.done = new Set())).add(+x.dataset.gsDone); st.open = null; return rerender(); }
+  if ((x = q('[data-gs-undo]'))) { (st.done || new Set()).delete(+x.dataset.gsUndo); st.open = +x.dataset.gsUndo; return rerender(); }
+  if ((x = q('[data-gs-run]'))) {
+    const i = +x.dataset.gsRun; openAgent(); ctxApp = a; add(`Run: ${esc(S[i].t)}`, 'msg me');
+    await reply({ html: `<span class="ev est">demo</span> In a real setup I'd do this now: <b>${esc(S[i].t)}</b>. I'd work in your repo or Composio project and ask before changing anything. Marked as done by the agent.`, card: a });
+    (st.done || (st.done = new Set())).add(i); st.open = null; return rerender();
+  }
+  if ((x = q('[data-gs-ask]'))) { const i = +x.dataset.gsAsk; openAgent(); ctxApp = a; const v = `How do I do this step for ${a.name}: ${S[i].t}?`; add(esc(v), 'msg me'); return askLLM(v, () => appRules(a, 'steps')); }
+});
+
+/* ---------- Gmail uses the same choices and sections as every guide ---------- */
+window.gmailState = () => { const g = APP('gmail'), st = stateOf(g), A = (CH.aud || {}).gmail; return { route: st.route, aud: st.aud, managedSrc: (CO.gmail || {}).src || COMPOSIO_SRC, privSrc: A && A.private && A.private.src }; };
+function renderGmailExtras() {
+  const g = APP('gmail'); if (!g || !$('#gSetup')) return;
+  const st = stateOf(g), managed = st.route === 'managed';
+  $('#gSetup').innerHTML = setupPanel(g, st, viewOf(g, st));
+  $('#gManaged').hidden = !managed; $('#gOwn').hidden = managed;
+  if (managed) $('#gManaged').innerHTML = managedBody(g);
+  $('#gFacts').innerHTML = factsSections(g);
+}
+$('#v-guide').addEventListener('click', e => {
+  const b = e.target.closest('#gSetup [data-set], #gManaged [data-set]'); if (!b) return;
+  const st = stateOf(APP('gmail')); st[b.dataset.set] = b.dataset.val;
+  const y = window.scrollY; renderGmailExtras(); update(); window.scrollTo(0, y);
+});
+
 /* ---------- generic guide page ---------- */
 let curApp = null;
 function renderAppGuide(id) {
@@ -226,7 +288,7 @@ function renderAppGuide(id) {
   const req = x => `<li>${I.check}<span>${linkify(esc(x.text))} ${evl(x.ev || 'docs', x.src)}</span></li>`;
   const stages = [
     a.noOAuth ? { cls: 'now', badge: ['Start here', 'here'], title: 'Connect with an API key', time: 'Today', line: `Composio uses ${esc(a.auth || 'API key')} auth for ${esc(a.name)}: no OAuth app, no review. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
-    : man ? { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's app", time: 'Today', line: `Works now. ${a.name}'s screen shows Composio. ${evl('docs', a.managedSrc)}` }
+    : man ? { cls: 'now', badge: ["You're here", 'here'], title: "Use Composio's managed app", time: 'Today', line: `Works now. ${a.name}'s screen shows Composio. ${evl('docs', a.managedSrc)}` }
         : a.managed === 'no' ? { cls: 'now', badge: ['Start here', 'here'], title: 'No managed app', time: '—', line: `Composio needs your own credentials for ${a.name}. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` }
         : { cls: 'now', badge: ['Start here', 'here'], title: a.slug ? 'Managed app unclear' : 'No Composio toolkit found', time: '—', line: a.slug ? `Composio's docs don't say. ${a.managedSrc ? evl('docs', a.managedSrc) : ''}` : `Check Composio for a ${esc(a.name)} toolkit, or build a custom integration.` },
     { cls: '', title: 'Create your own app', time: `${a.setup ? a.setup.time : '—'} <span class="ev est">est.</span>`, line: a.limits && a.limits[0] ? esc(unprefix(a.limits[0].text)) : 'Works for your own account right away.' },
@@ -235,7 +297,6 @@ function renderAppGuide(id) {
     : rv.required ? { cls: 'goal', badge: ['Goal', 'goal'], title: 'Get approved', time: `${esc(shortWait(a))} ${rv.ev ? evl(rv.ev, rv.src) : ''}`, line: `${esc(first(rv.what || 'Provider review'))}. Then any user can connect.` }
                 : { cls: 'goal', badge: ['Goal', 'goal'], title: 'Ship to everyone', time: 'No review', line: 'No provider review found in the docs.' },
   ];
-  const steps = (a.steps || []).map((s, i) => `<div class="gstep"><span class="gn">${i + 1}</span><span class="who ${s.who === 'agent' ? 'w-agent' : 'w-you'}">${s.who === 'agent' ? 'Agent' : 'You'}</span><span class="gtt">${linkify(esc(s.t))}</span><span class="time">${s.time || ''}</span></div>`).join('');
   V.innerHTML = `
   <div class="band pad"><div class="wrap">
     <button class="back" data-view="library"><svg class="i sm" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Library</button>
@@ -244,9 +305,10 @@ function renderAppGuide(id) {
     ${a.thin ? `<div class="genbanner warn">${I.warn}<span><b>Thin guide.</b> Only ${[...(a.limits || []), ...(a.requirements || []), ...(a.gotchas || [])].length} fact(s) could be confirmed in the official docs. Treat this as a starting point.</span></div>` : ''}
     ${a.generated ? `<div class="genbanner"><span class="dotlive"></span><span><b>Generated live by the agent</b> · ${a.gen ? `${a.gen.model}, ${a.gen.pages || a.gen.searches.length} pages read, ${a.gen.seconds}s · <b>${a.gen.quotesFound} of ${a.gen.quotesChecked}</b> quotes found on the source page` : ''} · not reviewed by a person yet</span></div>` : ''}
     <div class="actions">
-      <button class="btn primary agent" data-askapp>${I.bolt}Ask the agent</button>
+      <button class="btn primary agent" data-askapp>${I.bolt}Set up with agent</button>
       <button class="btn" ${a.generated ? 'data-sharegen' : `data-copy="${location.origin + location.pathname}#app/${a.id}"`}><svg class="i sm" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Share</button>
       ${a.portal ? `<a class="btn" href="${a.portal}" target="_blank" rel="noopener">Developer portal ↗</a>` : ''}
+      ${a.generated ? '' : `<button class="btn" data-plan="${a.id}"><svg class="i sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Launch plan</button>`}
       <span class="pill">Checked ${a.checked ? new Date(a.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '—'}</span>
     </div>
     <div class="stats">
@@ -260,18 +322,16 @@ function renderAppGuide(id) {
   ${permSection(a, st, vw)}
   ${st.route === 'managed' ? managedBody(a) : st.route === 'apikey' ? apiKeyBody(a) : `
   <div class="pad"><div class="wrap access">
-    <div class="sec-h"><h2>${man ? 'Launch today, switch to your own app later' : 'Bring your own app from day one'}</h2></div>
+    <div class="sec-h"><h2>${man ? 'Launch today, switch to your own app later' : 'Your own OAuth app from day one'}</h2></div>
     <div class="journey">${stages.map((s, i) => `${i ? '<span class="jarrow" aria-hidden="true"><svg class="i sm" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' : ''}<div class="stage ${s.cls}"><span class="stop"><span class="snum">${i + 1}</span><b class="stitle">${s.title}</b>${s.badge ? `<span class="sbadge ${s.badge[1]}">${s.badge[0]}</span>` : ''}</span><span class="stime">${s.time}</span><span class="sline">${s.line}</span></div>`).join('')}</div>
   </div></div>
   <div class="pad"><div class="wrap body">
     <div class="mainc">
-      ${a.limits && a.limits.length ? `<section><div class="h"><h2>Before approval</h2></div><ul class="checks">${clip(a.limits, item)}</ul></section>` : ''}
-      ${a.requirements && a.requirements.length ? `<section><div class="h"><h2>What ${a.name} requires</h2></div><ul class="checks req">${clip(a.requirements, req)}</ul></section>` : ''}
-      ${a.gotchas && a.gotchas.length ? `<section><div class="h"><h2>Watch out for</h2></div><ul class="checks">${clip(a.gotchas, item)}</ul></section>` : ''}
-      ${steps ? `<section><div class="h"><h2>Steps</h2><small>${(a.steps || []).filter(s => s.who === 'agent').length} of ${(a.steps || []).length} by the agent</small></div><div class="gsteps">${steps}</div>
-        <div class="acts" style="margin-top:10px">${a.portal ? `<a class="btn sm" href="${a.portal}" target="_blank" rel="noopener">Open ${a.name} developer portal ↗</a>` : ''}<button class="btn sm askag" data-askapp>${AGENT_ICON}Ask agent</button></div></section>` : ''}
+      ${factsSections(a)}
+      ${stepsSection(a, st)}
     </div>
     <aside class="rail-c">
+      ${agentBox(a, st)}
       <div class="box"><div class="bh">Composio values</div><div class="bb">
         <div class="kvs"><div><span>Auth options</span><span>${esc(((CO[a.id] || {}).auths || [a.auth || 'OAuth 2.0']).join(' · '))}</span></div><div><span>Managed app</span><span>${man ? 'Available' : a.managed === 'no' ? 'Not available' : a.managed === 'n/a' ? 'Not needed (no OAuth)' : 'Unknown'} ${a.managedSrc ? evl('docs', a.managedSrc) : ''}</span></div><div><span>Toolkit</span><span>${a.slug ? `<code>${a.slug}</code>` : 'Not found'}</span></div></div>
         <div class="urlbox"><div style="min-width:0"><span class="k">REDIRECT URI</span><span class="v">backend.composio.dev/api/v3/toolkits/auth/callback</span></div><button class="iconbtn" aria-label="Copy redirect URI" data-copy="${REDIRECT}"><svg class="i sm" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg></button></div>
@@ -282,7 +342,7 @@ function renderAppGuide(id) {
     </aside>
   </div></div>`}`;
 }
-document.addEventListener('click', e => { if (!e.target.closest('[data-askapp]') || !curApp) return; openAgent(); askApp(curApp, true); });
+document.addEventListener('click', e => { if (!e.target.closest('[data-askapp]')) return; const a = !$('#v-guide').hidden ? APP('gmail') : curApp; if (!a) return; openAgent(); askApp(a, true); });
 $('#v-app').addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (!b) return; b.parentElement.querySelectorAll('.hid').forEach(x => x.hidden = false); b.remove(); });
 
 /* ---------- agent: knows the open app ---------- */
@@ -394,7 +454,7 @@ renderPlan = function () {
   $('#gt').innerHTML = `<div class="nm" style="color:var(--fg3);font-size:12.5px">App</div><div class="lane"><div class="scale">${[...Array(W)].map((_, i) => `<span>${i ? 'Wk ' + i : 'Today'}</span>`).join('')}</div></div>` +
     rows.sort((x, y) => (y.w === null ? 99 : y.w) - (x.w === null ? 99 : x.w)).map(({ a, w, m }) => {
       const end = w === null ? W : Math.max(w, 0.25), label = w === 0 ? 'Own app this week, no review' : w === null ? (a.id === 'gmail' ? 'Depends on the permissions you pick' : 'Review · wait not stated') : esc(first((a.review || {}).what || 'Review')).slice(0, 40);
-      return `<div class="nm">${logo(a, 18)}${a.name}${!m ? '<span class="tier t-hard" style="margin-left:auto;font-size:11px">no managed</span>' : ''}</div><div class="lane">${m ? `<div class="gb m" style="left:0;width:${Math.max(pc(end), 28)}%">Managed, live</div>` : ''}<div class="gb ${m ? 'o' : 'w'}${w === null ? ' unk' : ''}" style="left:${pc(0.15)}%;width:${Math.max(pc(end - 0.15), 26)}%" title="${esc(reviewTxt(a))}">${label}</div></div>`;
+      return `<div class="nm">${logo(a, 18)}${a.name}${!m ? '<span class="tier t-hard" style="margin-left:auto;font-size:11px">own app only</span>' : ''}</div><div class="lane">${m ? `<div class="gb m" style="left:0;width:${Math.max(pc(end), 28)}%">Managed, live</div>` : ''}<div class="gb ${m ? 'o' : 'w'}${w === null ? ' unk' : ''}" style="left:${pc(0.15)}%;width:${Math.max(pc(end - 0.15), 26)}%" title="${esc(reviewTxt(a))}">${label}</div></div>`;
     }).join('');
   const flags = [];
   rows.forEach(({ a, m, w }) => {
@@ -639,6 +699,7 @@ answer = function (v) {
 };
 
 /* ---------- boot ---------- */
+renderGmailExtras(); update();
 { const g = APP('gmail'); if (g && $('#gProbe')) $('#gProbe').innerHTML = probeBox(g); }
 const gsc = $$('#v-guide .src a'); $('#gSrcCount').textContent = `${gsc.length} · ${[...gsc].filter(a => a.querySelector('.ev.est')).length} third-party`;
 renderLibrary(); renderPlan();

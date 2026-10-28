@@ -43,18 +43,23 @@
       <div class="actions">
         <button class="btn primary agent" id="startAgent"><svg class="i sm" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Set up with agent</button>
         <button class="btn" id="shareBtn"><svg class="i sm" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Share</button>
-        <button class="btn" data-plan><svg class="i sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Launch plan</button>
+        <a class="btn" href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener">Developer portal ↗</a>
+        <button class="btn" data-plan="gmail"><svg class="i sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Launch plan</button>
         <span class="pill">Checked Oct 28</span>
       </div>
       <div class="stats">
         <div><span class="k">Difficulty</span><span class="v"><span id="sDiff"></span><span class="bars" id="sBars"></span></span></div>
         <div><span class="k">Your time <span class="ev est">est.</span></span><span class="v" id="sWork"></span></div>
-        <div><span class="k">Google review <span class="ev" id="sWaitEv"></span></span><span class="v" id="sWait"></span></div>
-        <div><span class="k">Yearly cost <span class="ev est" id="sCostEv">3rd party</span></span><span class="v" id="sCost"></span></div>
+        <div><span class="k">Approval wait <a class="ev" id="sWaitEv" target="_blank" rel="noopener"></a></span><span class="v" id="sWait"></span></div>
+        <div><span class="k">Cost <span class="ev est" id="sCostEv">3rd party</span></span><span class="v" id="sCost"></span></div>
       </div>
       <p class="stathint" id="statHint">Ranges for now. Answer the question below to narrow them.</p>
     </div></div>
 
+    <!-- same choices as every guide: Composio's managed app or your own, team or customers -->
+    <div id="gSetup"></div>
+    <div id="gManaged" hidden></div>
+    <div id="gOwn">
     <!-- permissions: the one question that decides everything -->
     <div class="pad"><div class="wrap access" id="perm">
       <div class="sec-h">
@@ -86,6 +91,7 @@
 
     <div class="pad"><div class="wrap body">
       <div class="mainc">
+        <div id="gFacts"></div>
         <section>
           <div class="h"><h2>Set up your own app</h2><small id="progress"></small></div>
           <div id="flow"></div>
@@ -93,10 +99,10 @@
         <section>
           <div class="h"><h2>Why Google rejects apps</h2></div>
           <ol class="nums">
-            <li>Homepage must explain the app. A login page fails.</li>
-            <li>App name must match your homepage exactly.</li>
-            <li>Privacy policy on the same domain, with Limited Use text.</li>
-            <li>Demo video unlisted, showing consent and each scope.</li>
+            <li>Your home page must be public, not only for signed-in users, and clearly about the app. <a class="ev docs" href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification" target="_blank" rel="noopener">docs ↗</a></li>
+            <li>Consent-screen branding (app name, home page, privacy policy) must accurately represent your app. <a class="ev docs" href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification" target="_blank" rel="noopener">docs ↗</a></li>
+            <li>The privacy policy must be on the same domain as the home page, linked from the consent screen, and say how you use Google user data. <a class="ev docs" href="https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification" target="_blank" rel="noopener">docs ↗</a></li>
+            <li>The demo video must show the same app you submitted, including the complete consent screen. <a class="ev docs" href="https://support.google.com/cloud/answer/13464321" target="_blank" rel="noopener">docs ↗</a></li>
           </ol>
         </section>
       </div>
@@ -156,6 +162,7 @@
         </div>
       </aside>
     </div></div>
+    </div>
   </div>
 
   <!-- ================= LIBRARY ================= -->
@@ -172,7 +179,7 @@
       <div class="lbar">
         <label class="lsearch"><svg class="i sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="libSearch" placeholder="Search apps" aria-label="Search apps"><kbd>/</kbd></label>
         <div class="seg" id="libDiff" role="tablist" aria-label="Difficulty"></div>
-        <label class="ltog"><input type="checkbox" id="libManaged"><span>Composio managed</span></label>
+        <label class="ltog"><input type="checkbox" id="libManaged"><span>Managed by Composio</span></label>
         <div class="seg vtog" id="libView" aria-label="View"><button class="on" data-v="grid" aria-label="Grid view"><svg class="i sm" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg></button><button data-v="list" aria-label="List view"><svg class="i sm" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
       </div>
       <div class="lcats" id="libCats"></div>
