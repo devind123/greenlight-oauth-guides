@@ -697,7 +697,7 @@ async function reply(r) {
     r.acts.forEach(([label, fn]) => { const b = document.createElement('button'); b.className = 'btn sm'; b.textContent = label; b.onclick = () => { row.querySelectorAll('button').forEach(x => x.disabled = true); const out = fn(); if (out) reply({ html: out }); }; row.appendChild(b); });
     el.appendChild(row);
   }
-  if (r.next) { r.next.forEach(x => window.__chips && window.__chips.add(x)); add(r.next.map(x => `<button class="sug" data-say="${esc(x)}">${x}</button>`).join(''), 'sugs'); }
+  if (r.next) { r.next.forEach(x => window.__chips && window.__chips.add(x)); add(r.next.map(x => `<button class="sug" data-say="${esc(x)}">${esc(x)}</button>`).join(''), 'sugs'); }
   dlog.scrollTop = dlog.scrollHeight;
 }
 dlog.addEventListener('click', e => {
