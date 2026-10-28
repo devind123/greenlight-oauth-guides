@@ -671,10 +671,22 @@ const SMALL = [
   [/what (is|does) (this|greenlight|this site|this app)|who are you|what can you do|^help\b|how does this work/, () => ({ html: 'Greenlight shows what it takes to run an app on <b>your own</b> OAuth app: effort, approval wait, limits and blockers, all sourced. I can explain any guide, compare apps, find apps by requirement, and write a guide live for apps that aren\'t in the library.', next: ['How do I set up Gmail?', 'Which apps have install caps?', 'Generate a guide for Webflow'] })],
 ];
 const NAV = [[/\b(library|all apps|app list)\b/, 'library', 'Here\'s the library.'], [/\bplanner|launch plan/, 'planner', 'Opened the launch planner.'], [/verification|audit|fact.?check|sources checked/, 'verify', 'Opened the verification log.'], [/\bgenerate\b|new guide|write a guide/, 'generate', 'Opened guide generation.']];
+/* fix common misspellings of the words we route on, so "genearte a guide" still works */
+const VOCAB = ['generate', 'guide', 'guides', 'library', 'compare', 'review', 'approval', 'limits', 'install', 'managed', 'verification', 'planner', 'permissions', 'scopes', 'requirements', 'difficult', 'easiest', 'hardest', 'which', 'create', 'research', 'connect', 'integrate'];
+const fixTypos = s => s.replace(/[a-z]{5,}/g, w => { if (VOCAB.includes(w) || findApps(w).length) return w; let best = null, bd = 3; for (const k of VOCAB) { const d = lev(w, k); if (d < bd && d <= (k.length >= 8 ? 2 : 1)) { bd = d; best = k; } } return best || w; });
+let awaitingGen = false;
+function startGeneration(target) { show('generate'); $('#genInput').value = target; genCheckLib(); $('#genForm').requestSubmit(); return reply({ html: `Researching <b>${esc(target)}</b> live: Composio's docs first, then the provider's official pages. Watch the steps on the page; the guide opens when it's ready (usually 10–60 seconds).` }); }
 const prevAnswer = answer;
 answer = function (v) {
   window.__cardNext = null;
-  const q = v.toLowerCase().trim().replace(/[?!.]+$/, '');
+  const q = fixTypos(v.toLowerCase().trim().replace(/[?!.]+$/, ''));
+  /* the previous message asked "which app?" */
+  if (awaitingGen) { awaitingGen = false; const have = findApps(q)[0]; if (have && have.name.toLowerCase().split(' (')[0] === q.replace(/^(for|the)\s+/, '').trim()) return reply({ html: `${esc(have.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(have)}</div>` }); if (!/^(no|nothing|never ?mind|cancel|stop)\b/.test(q)) return startGeneration(v.trim().replace(/^(for|the)\s+/i, '').replace(/[?!.]+$/, '')); return reply({ html: 'Okay, no guide generated.' }); }
+  /* "generate a guide" without saying which app */
+  if (/\b(generate|create|make|write|research)\b.*\bguide\b/.test(q) && /(app|one|something|anything)\s+(that\s+)?(is ?n.?t|not|isnt)\s+in\s+(the\s+)?library|^(please\s+)?(generate|create|make|write)\s+(a|me a|new)?\s*(new\s+)?guide$|new app/.test(q)) {
+    awaitingGen = true; show('generate'); $('#genInput').focus();
+    return reply({ html: 'Sure. Which app should I research? Type its name or website, e.g. <b>Typeform</b> or <b>zoho.com/books</b>. I\'ll open the guide when it\'s ready.', next: ['Typeform', 'Webflow', 'Todoist'] });
+  }
   for (const [re, f] of SMALL) if (re.test(q)) return reply(f());
   const apps = findApps(q);
   /* "generate a guide for X": open the guide if we have it, otherwise start live generation */
@@ -704,6 +716,90 @@ answer = function (v) {
     return appRules(a, v);
   }
   return prevAnswer(v);
+};
+
+/* ================= MODEL-FIRST AGENT =================
+   Typed messages go to the model, which picks one action (see lib/generate.js routeAgent).
+   The page runs it with real data. Suggestion chips, and any failure, use the built-in rules. */
+const HIST = [];
+window.__chips = window.__chips || new Set();
+LIB_SUGS.forEach(s => window.__chips.add(s));
+const trimList = arr => (arr || []).slice(0, 6).map(x => ({ text: String(x.text || '').slice(0, 220), src: x.src }));
+function routeContext(v) {
+  const page = !$('#v-guide').hidden ? 'gmail' : !$('#v-app').hidden ? 'guide' : ['library', 'generate', 'planner', 'verify'].find(x => !$('#v-' + x).hidden) || 'library';
+  const cur = page === 'gmail' ? APP('gmail') : page === 'guide' ? curApp : null;
+  const focus = [...new Set([cur, ctxApp, ...findApps(v).slice(0, 2)].filter(Boolean))].slice(0, 3);
+  const ctx = {
+    page, currentApp: cur && cur.id, lastDiscussedApp: ctxApp && ctxApp.id,
+    apps: APPS.filter(a => !a.generated || a === cur).map(a => ({ id: a.id, name: a.name, category: a.category, difficulty: a.difficulty, composioManaged: a.managed, approvalWait: shortWait(a), reviewRequired: !!(a.review && a.review.required), keyLimit: a.limits && a.limits[0] ? unprefix(a.limits[0].text).slice(0, 90) : '' })),
+    focusApps: focus.map(a => { const s = slim(a); return { ...s, limits: trimList(s.limits), requirements: trimList(s.requirements), gotchas: trimList(s.gotchas), steps: (s.steps || []).slice(0, 7) }; }),
+    composioManagedApp: { tradeoffs: 'Users see "Composio wants to access your account"; default scopes may not cover everything; quota shared across all Composio users; 15-minute minimum polling', src: COMPOSIO_SRC },
+  };
+  if (page === 'gmail' || focus.some(a => a.id === 'gmail')) ctx.gmail = { chosenTier: maxTier() >= 0 ? TIERS[maxTier()].n : 'not chosen yet', chosenScopes: need(), tiers: TIERS.map(t => ({ tier: t.n, review: t.review, wait: t.wait, needs: t.needs, cost: t.cost })), presets: PRESETS.map(p => ({ preset: p.k, label: p.n, tier: TIERS[p.tier].n })), toolScopes: TOOLS.map(t => `${t.n}: ${t.s.join('+')} (${TIERS[t.tier].n})`), sources: Object.values(SRCS).map(s => s[1]) };
+  return ctx;
+}
+const FILTERQ = { needs_review: 'which apps need a review', no_review: 'which apps need no review', install_caps: 'which apps have install caps', own_app_only: 'which apps need my own app', managed: 'which apps are managed', security_audit: 'which apps need a security audit', easy: 'which apps are easy', medium: 'which apps are medium', hard: 'which apps are hard', gated: 'which apps are gated' };
+function execute(r, v) {
+  const A = id => APP(id);
+  switch (r.action) {
+    case 'overview': { const a = A(r.app); if (a) return reply(overview(a)); break; }
+    case 'open_guide': { const a = A(r.app); if (a) { ctxApp = a; show('app', a.id); return reply({ html: `Opened the ${esc(a.name)} guide.`, next: ['What are the limits before approval?', 'How long is the review?'] }); } break; }
+    case 'generate_guide': {
+      const t = String(r.target || '').trim(); if (!t) break;
+      const have = findApps(t)[0];
+      if (have && have.name.toLowerCase().split(' (')[0] === t.toLowerCase().replace(/\.com$/, '')) { window.__chips.add(`Generate a fresh ${have.name} guide anyway`); return reply({ html: `${esc(have.name)} is already in the library, researched and fact-checked:<div class="cards">${appCard(have)}</div>`, next: [`Generate a fresh ${have.name} guide anyway`] }); }
+      return startGeneration(t);
+    }
+    case 'clarify': { if (/which app|what app|app name|website/i.test(r.answer || '')) awaitingGen = /generat|guide|research/i.test(v + ' ' + (r.answer || '')); return reply({ html: esc(r.answer || 'Which app do you mean?'), next: r.suggestions }); }
+    case 'compare': { const ls = (r.apps || []).map(A).filter(Boolean); if (ls.length >= 2) return reply(compare(ls)); if (ls.length === 1) return reply(overview(ls[0])); break; }
+    case 'list_apps': { const q = r.filter === 'category' ? `which ${String(r.category || '').toLowerCase()} apps` : FILTERQ[r.filter]; const res = q && crossAnswer(q); if (res) return reply(res); break; }
+    case 'navigate': { const map = { library: 'library', gmail: 'guide', planner: 'planner', verify: 'verify', generate: 'generate' }, names = { library: 'the library', gmail: 'the Gmail guide', planner: 'the launch planner', verify: 'the verification log', generate: 'guide generation' }; if (map[r.view]) { show(map[r.view]); return reply({ html: `Opened ${names[r.view]}.` }); } break; }
+    case 'set_choice': {
+      const onGmail = !$('#v-guide').hidden, a = onGmail ? APP('gmail') : (!$('#v-app').hidden ? curApp : null); if (!a) break;
+      const okv = { route: ['managed', 'own', 'apikey'], aud: ['private', 'public'] };
+      r.choice = Object.keys(okv).find(k => okv[k].includes(r.value)); if (!r.choice) break;
+      if (r.value === 'managed' && a.managed !== 'yes') return reply({ html: `${esc(a.name)} has no Composio managed app, so you need your own OAuth app.` });
+      if (r.value === 'apikey' && !hasKey(a)) return reply({ html: `Composio doesn't offer API key auth for ${esc(a.name)}.` });
+      stateOf(a)[r.choice] = r.value;
+      if (onGmail) { renderGmailExtras(); update(); } else renderAppGuide(a.id);
+      const label = { managed: "Composio's managed app", own: 'your own OAuth app', apikey: 'an API key', private: 'only your team', public: 'any customer' }[r.value];
+      return reply({ html: `Switched ${esc(a.name)} to <b>${label}</b>. The stats and steps above are updated.` });
+    }
+    case 'gmail_preset': { const p = PRESETS.find(x => x.k === r.preset); if (!p) break; show('guide'); selTools.clear(); setMode('tools'); browsing = false; p.tools.forEach(id => selTools.add(id)); update(); return reply({ html: `Set Gmail to <b>${esc(p.n)}</b>: ${esc(TIERS[p.tier].n)}, review ${esc(TIERS[p.tier].wait)}, ${esc(TIERS[p.tier].needs)}.`, card: APP('gmail') }); }
+    case 'agent_task': { const ok = ['detect', 'scan', 'privacy', 'justify', 'authcfg', 'all', 'email', 'script']; if (!ok.includes(r.task)) break; if ($('#v-guide').hidden) show('guide'); runTask(r.task); return true; }
+    case 'answer': {
+      if (!r.answer) break;
+      const apps = (r.apps || []).map(A).filter(Boolean).slice(0, 2);
+      if (apps[0]) ctxApp = apps[0];
+      say(esc(r.answer) + (r.sources && r.sources.length ? `<div class="cites">${r.sources.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><span class="ev docs">docs</span>${esc(u.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60))}</a>`).join('')}</div>` : '') + `<small class="aimeta">Answered by ${esc(r.model || 'Gemini')} from the guides' data</small>` + (apps.length ? `<div class="cards">${apps.map(appCard).join('')}</div>` : ''));
+      if (r.suggestions && r.suggestions.length) { r.suggestions.forEach(s => window.__chips.add(s)); add(r.suggestions.map(x => `<button class="sug" data-say="${esc(x)}">${esc(x)}</button>`).join(''), 'sugs'); }
+      dlog.scrollTop = dlog.scrollHeight; return true;
+    }
+  }
+  return null;
+}
+const ruleRouter = answer;
+answer = async function (v) {
+  const fresh = v.match(/^generate a fresh (.+) guide anyway$/i);
+  if (fresh) return startGeneration(fresh[1]);
+  // bare greetings/thanks and "what is this" have fixed answers; no need to ask the model
+  const lv = v.trim().toLowerCase();
+  if (/^(hi|hey|hello|yo|hola|good (morning|afternoon|evening)|thanks|thank you|thx|ty|cool|great|nice|ok|okay|got it)( there| so much| a lot)?[\s!.,]*$/.test(lv) || SMALL[2][0].test(lv)) { HIST.push({ role: 'user', text: v }); return ruleRouter(v); }
+  if (window.__chips.has(v)) { HIST.push({ role: 'user', text: v }); return ruleRouter(v); }
+  HIST.push({ role: 'user', text: v });
+  const dots = add('<span class="typing"><i></i><i></i><i></i></span><small class="thinking">Thinking…</small>', 'msg');
+  let r = null;
+  try {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 10000);
+    r = await fetch('/api/agent', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ message: v, history: HIST.slice(-7, -1), context: routeContext(v) }), signal: ctl.signal }).then(x => x.json());
+    clearTimeout(t);
+  } catch (e) { r = null; }
+  dots.remove();
+  if (r && !r.error) {
+    const done = execute(r, v);
+    if (done !== null) { if (r.action !== 'clarify') awaitingGen = false; HIST.push({ role: 'assistant', text: r.answer || `${r.action} ${r.app || r.target || r.filter || r.view || r.preset || r.task || (r.apps || []).join(',')}` }); return done; }
+  }
+  return ruleRouter(v);
 };
 
 /* ---------- boot ---------- */

@@ -137,16 +137,16 @@ Well over the suggested 6–8 hours. Much of it went into research and fact-chec
 - **Generated guides are not reviewed by a person.** Their banner says so and shows how many quotes were confirmed.
   - They take 30–60 s.
   - They use Gemini's free tier, which is sometimes overloaded. A fallback chain across four models covers most of that. If all four are busy, the page shows what it found and offers a retry.
-  - Free Gemini 3 models can't use Google Search grounding. So we search with DuckDuckGo, which works locally but is blocked from Vercel's servers. In production the agent falls back to official doc URLs it knows, and each one is fetched and checked.
+  - Free Gemini 3 models can't use Google Search grounding. So the server searches DuckDuckGo itself, falling back to Bing when DuckDuckGo blocks Vercel's servers, and then to official doc URLs it knows. Every page is fetched and its quotes checked.
 - **Library coverage.** Every sourced claim was re-checked once against its page (Oct 29). Docs change, so the checked date matters. Permission tiers marked "inferred" (Google Calendar and YouTube) aren't published by Google. A few official sites couldn't be read during research: Notion's and Box's developer sites, and some Reddit and Discord help pages. Those guides lean on Composio's docs and official doc repos, and say so.
 - **Some permission tiers are inferred.** Google labels Drive and Sheets scope tiers, but not Calendar or YouTube. Those show "inferred" (not on Google's restricted list). Microsoft admin consent comes from the Graph permissions reference table.
 - **Gmail tool-to-scope mapping is inferred** from Google's API docs, because Composio doesn't publish a per-tool scope map. It's tagged `inferred`.
-- **The side-panel agent understands any of the 37 apps by name, typos included** ("gmai" → Gmail). It answers with a guide card you can click, handles lists and comparisons ("which apps need a review", "slack vs discord"), navigation, and "generate a guide for X".
-- **Its answers are mostly built-in.**
-  - Short questions and buttons get instant answers from the guide data and your current state.
-  - Longer questions go to Gemini (`api/ask.js`). It may only use the guide data the page sends, and may only cite URLs that appear in it. It says when the guide doesn't cover something.
+- **The side-panel agent: the model decides, the page acts.**
+  - Every typed message goes to Gemini (`api/agent.js`) with the page you're on, the last few turns and the relevant guides' data. The model picks one action: answer, open a guide, generate a new guide, ask a clarifying question, compare, list apps by a filter, navigate, change a choice on the current guide ("only my team will use this"), set a Gmail preset, or run an agent task. The page then carries it out with the real data, so typos and loose phrasing ("genearte a guide for an app that isnt in the librarby") work.
+  - Answers may only use the guide data the page sends, and may only cite URLs that appear in it. App IDs and links the model returns are checked against the library before use.
+  - If the model is busy or slow (10 s), built-in rules answer instead, with fuzzy app-name matching ("gmai" → Gmail). Suggestion chips, greetings and buttons always use the rules, so they're instant.
   - The repo-scan, pull-request and test-connection actions are still simulated.
-- **The rate limit is basic.** It allows 6 generations per 10 minutes per visitor and is held in memory per server instance.
+- **The rate limit is basic.** It allows 6 generations and 40 agent messages per 10 minutes per visitor, held in memory per server instance.
 - **Logos** come from Composio's public toolkit logo service and are used only to identify apps.
 
 ## Project layout
@@ -157,10 +157,11 @@ app.js                      Gmail guide, permissions, steps, agent
 library.js                  library, generic guide page, live generation UI, verification log, planner
 data/apps.js, data/verify.js  generated guide data and fact-check results
 api/generate.js             Vercel function: streams progress, then the guide
-api/ask.js                  Vercel function: grounded answers for the side-panel agent
+api/agent.js                Vercel function: the side-panel agent picks an action (model-first)
+api/ask.js                  Vercel function: grounded answers for longer questions
 scripts/probe.mjs           real OAuth-flow attempts -> research/probes.json, data/probes.js, probes/*.jpg
 lib/generate.js             the research pipeline and quote verification
-dev-server.mjs              local server (static + /api/generate)
+dev-server.mjs              local server (static + /api/generate, /api/ask, /api/agent)
 research/                   agent brief, raw research per batch, sample + verification results
 scripts/build_data.py       raw research -> data/apps.js, data/verify.js
 scripts/build_choices.py    research/choices -> data/choices.js (audience + permission catalogues)
