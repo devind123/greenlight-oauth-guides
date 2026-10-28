@@ -1,4 +1,4 @@
-<img src="logo.svg" width="56" alt="Greenlight logo: a traffic light with the bottom light lit">
+<img src="logo.svg" width="56" alt="Greenlight logo: three stacked squares, the bottom one lit lime">
 
 # Greenlight: OAuth app guides for agent builders
 
