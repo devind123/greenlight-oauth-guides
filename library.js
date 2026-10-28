@@ -309,7 +309,6 @@ function renderAppGuide(id) {
       <button class="btn" ${a.generated ? 'data-sharegen' : `data-copy="${location.origin + location.pathname}#app/${a.id}"`}><svg class="i sm" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Share</button>
       ${a.portal ? `<a class="btn" href="${a.portal}" target="_blank" rel="noopener">Developer portal ↗</a>` : ''}
       ${a.generated ? '' : `<button class="btn" data-plan="${a.id}"><svg class="i sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Launch plan</button>`}
-      <span class="pill">Checked ${a.checked ? new Date(a.checked).toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '—'}</span>
     </div>
     <div class="stats">
       <div><span class="k">Difficulty</span><span class="v">${d.n}${dbars(vw.diff)}</span></div>
@@ -317,6 +316,7 @@ function renderAppGuide(id) {
       <div><span class="k">Approval wait ${vw.waitTag}</span><span class="v" title="${esc(vw.waitFull)}">${esc(vw.wait)}</span></div>
       <div><span class="k">Cost ${a.cost ? evl(a.cost.ev || 'est', a.cost.src) : ''}</span><span class="v vcl" title="${a.cost ? esc(a.cost.text) : ''}">${st.route === 'managed' ? '$0' : a.cost ? esc(first(a.cost.text)) : '—'}</span></div>
     </div>
+    <div class="statfoot"><span></span><span class="checked">Checked ${a.checked ? new Date(a.checked + 'T12:00:00').toLocaleDateString('en', { month: 'short', day: 'numeric' }) : '—'}</span></div>
   </div></div>
   ${setupPanel(a, st, vw)}
   ${permSection(a, st, vw)}
