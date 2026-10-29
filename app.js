@@ -42,6 +42,7 @@ function show(v, arg) {
   /* real history entries, so the browser's back button moves between pages */
   const want = '#' + (v === 'app' ? 'app/' + arg : v);
   try { if (location.hash !== want) history[window.__navReplace ? 'replaceState' : 'pushState'](null, '', want); } catch (e) {}
+  if (window.vaTrack) window.vaTrack();
   window.scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => {

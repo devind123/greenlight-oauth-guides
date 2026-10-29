@@ -9,14 +9,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="styles.css">
-<!-- Vercel Web Analytics (cookieless). The site routes with #hashes, so each view is reported as a path:
-     #app/slack -> /app/slack, #guide -> /gmail. Shared generated guides (#gen/<whole guide>) are reported as /gen only. -->
+<!-- Vercel Web Analytics (cookieless). The site routes with #hashes, which Vercel's script treats as one page,
+     so each view is reported as a path: #app/slack -> /app/slack, #guide -> /gmail. Generated guides
+     (#gen/<whole guide>, #app/gen-*) are reported as /gen only, so a guide's contents never leave in the URL. -->
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-window.va('beforeSend', function (e) {
-  try { var u = new URL(e.url), h = u.hash.replace(/^#\/?/, ''); u.pathname = '/' + (h.indexOf('gen/') === 0 ? 'gen' : h === 'guide' ? 'gmail' : (h || 'library')); u.hash = ''; u.search = ''; e.url = u.toString(); } catch (x) {}
-  return e;
-});
+window.vaPath = function (href) { var h = new URL(href).hash.replace(/^#\/?/, ''); return '/' + (h.indexOf('gen/') === 0 || h.indexOf('app/gen-') === 0 ? 'gen' : h === 'guide' ? 'gmail' : (h || 'library')); };
+window.va('beforeSend', function (e) { try { var u = new URL(e.url); u.pathname = vaPath(e.url); u.hash = ''; u.search = ''; e.url = u.toString(); } catch (x) {} return e; });
+/* called after every in-app navigation; the first load is counted by Vercel's script itself */
+(function () { var last = null; try { last = vaPath(location.href); } catch (x) {} window.vaTrack = function () { try { var p = vaPath(location.href); if (p !== last) { last = p; window.va('pageview', {}); } } catch (x) {} }; })();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
