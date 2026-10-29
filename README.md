@@ -148,6 +148,7 @@ Well over the suggested 6–8 hours. Much of it went into research and fact-chec
   - If the model is busy or slow (10 s), built-in rules answer instead, with fuzzy app-name matching ("gmai" → Gmail). Suggestion chips, greetings and buttons always use the rules, so they're instant.
   - The repo-scan, pull-request and test-connection actions are still simulated.
 - **The rate limit is basic.** It allows 6 generations and 40 agent messages per 10 minutes per visitor, held in memory per server instance.
+- **Analytics.** Vercel Web Analytics (cookieless) counts page views. Hash routes are reported as paths (`#app/slack` → `/app/slack`), and shared generated guides only as `/gen`, so a guide's contents never leave in the URL.
 - **Logos** come from Composio's public toolkit logo service and are used only to identify apps.
 
 ## Project layout

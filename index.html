@@ -9,6 +9,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="styles.css">
+<!-- Vercel Web Analytics (cookieless). The site routes with #hashes, so each view is reported as a path:
+     #app/slack -> /app/slack, #guide -> /gmail. Shared generated guides (#gen/<whole guide>) are reported as /gen only. -->
+<script>
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+window.va('beforeSend', function (e) {
+  try { var u = new URL(e.url), h = u.hash.replace(/^#\/?/, ''); u.pathname = '/' + (h.indexOf('gen/') === 0 ? 'gen' : h === 'guide' ? 'gmail' : (h || 'library')); u.hash = ''; u.search = ''; e.url = u.toString(); } catch (x) {}
+  return e;
+});
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="concept">Concept prototype for a Composio take-home · not an official Composio product · facts sourced and fully re-checked Oct 29 · setup actions simulated, guide generation is live</div>
